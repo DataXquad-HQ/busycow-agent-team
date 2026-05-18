@@ -1,7 +1,0 @@
-# Only true secrets belong here. DB IDs, page IDs, and delivery config
-# are saved to agent memory during the SETUP phase and read from there.
-
-# Notion
-# Create an integration at: https://www.notion.so/my-integrations
-# Grant it read/write access to the workspace containing the inventory databases.
-NOTION_TOKEN=*** Notion integration token

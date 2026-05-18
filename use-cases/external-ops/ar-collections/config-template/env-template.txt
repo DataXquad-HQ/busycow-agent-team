@@ -1,7 +1,0 @@
-# AR Collections — Environment Variables Template
-# Copy this file to .env and fill in the values.
-# Only secrets belong here. All other config (database IDs, schedule, etc.)
-# is stored in agent memory under "AR Collections config".
-
-NOTION_TOKEN=
-TELEGRAM_BOT_TOKEN=

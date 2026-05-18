@@ -1,4 +1,0 @@
-# Environment Variables — Project Management Use Case
-
-NOTION_TOKEN=your_notion_integration_token_here
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here

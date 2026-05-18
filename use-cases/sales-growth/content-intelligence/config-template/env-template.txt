@@ -1,8 +1,0 @@
-# Only true secrets belong here. DB IDs, page IDs, and delivery config
-# are saved to agent memory during the SETUP phase and read from there.
-
-# Notion
-NOTION_TOKEN=your_n...oken
-
-# Telegram
-TELEGRAM_BOT_TOKEN=your_t...oken
