@@ -8,19 +8,25 @@ System-level skills that every Hermes + Lark + GBrain setup needs.
 
 | Skill | Purpose |
 |-------|---------|
-| `managing-skills` | Sync skill changes to the Skills Registry Base |
-| `managing-cron-jobs` | Sync cron job changes to the Cron Registry Base |
+| `hermes-agent` | Hermes CLI reference — config, tools, setup commands |
 | `maintaining-gbrain` | Run GBrain dream/maintenance cycle |
 | `maintaining-memory` | Memory routing rules + cleanup procedures |
 | `capturing-to-gbrain` | Store durable knowledge into GBrain |
+| `google-workspace` | Gmail, Calendar, Drive, Sheets, Docs via CLI |
+| `lark-mcp-setup` | Connect Lark MCP for native Lark tool access |
+| `native-mcp` | Register and call any MCP server from Hermes |
 
-## What SETUP Creates in Lark
+## What SETUP Creates
 
-- **Skills Registry Base** — tracks all installed skills (Name, Description, Source, Category)
-- **Cron Registry Base** — tracks all scheduled jobs (Name, Schedule, Destination, Status)
+- GBrain initialized with routing rules in `SOUL.md`
+- Lark MCP connected (native Lark tools available)
+- **Hermes Dashboard open on port 9119** — browse skills, cron jobs, memory, and sessions
+- 7 core skills installed
+
+> Skills and cron jobs are managed through the Dashboard — no separate Lark Base registry needed.
 
 ## Install
 
 ```
-Run this setup: https://raw.githubusercontent.com/BusyCow/busycow-playbooks/main/core/SETUP.md
+Run this setup: https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/SETUP.md
 ```

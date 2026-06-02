@@ -7,7 +7,7 @@ This setup installs the **three core pillars** of the BusyCow stack:
 2. **Lark MCP** — native Lark tool access for the agent
 3. **Google Workspace** — external email, calendar, Drive (optional)
 
-Then it creates the **Hermes Registry** base and installs all core skills.
+Then it opens the **Hermes Dashboard** and installs all core skills.
 
 ---
 
@@ -102,37 +102,52 @@ gws gmail list
 
 ---
 
-## Step 4 — Create Hermes Registry Base in Lark
+## Step 4 — Open Hermes Dashboard
 
-Call the Lark API to create a new Bitable app named **"Hermes Registry"**.
+The Hermes Dashboard is the primary interface for inspecting skills, cron jobs, memory, and agent activity. This is a required step — open the port before proceeding.
 
-Inside this app, create two tables:
+### 4a. Start the Dashboard
 
-### Table: Skills
-
-| Field | Type |
-|-------|------|
-| Name | Text (primary) |
-| Description | Text |
-| Source | Single Select: `our own` / `hermes` / `3rd-party` |
-| Category | Single Select: `Sales` / `Internal Ops` / `Finance` / `System` / `Utility` / `Content` |
-| Status | Single Select: `Active` / `Deprecated` |
-
-### Table: Cron Jobs
-
-| Field | Type |
-|-------|------|
-| Name | Text (primary) |
-| Schedule | Text |
-| Destination | Text |
-| Status | Single Select: `Active` / `Paused` / `Disabled` |
-| Last Run | DateTime |
-| Notes | Text |
-
-After creating, save to Memory:
+```bash
+hermes dashboard
 ```
-Memory entry: "Hermes Registry Base: [app_token] | Skills: [table_id] | Cron Jobs: [table_id]"
+
+By default, the dashboard runs on **port 9119**.
+
+### 4b. Open the Port (if on a cloud VM)
+
+If your Hermes instance runs on a remote VM (GCP, AWS, etc.), open port 9119 in your firewall or security group:
+
+**GCP example:**
+```bash
+gcloud compute firewall-rules create hermes-dashboard \
+  --allow tcp:9119 \
+  --source-ranges 0.0.0.0/0 \
+  --description "Hermes Dashboard"
 ```
+
+**Or restrict to your IP only (recommended):**
+```bash
+gcloud compute firewall-rules create hermes-dashboard \
+  --allow tcp:9119 \
+  --source-ranges <YOUR_IP>/32 \
+  --description "Hermes Dashboard"
+```
+
+### 4c. Verify
+
+Open in your browser:
+```
+http://<YOUR_VM_IP>:9119
+```
+
+You should see the Hermes Dashboard with:
+- **Skills** tab — all installed skills, searchable
+- **Cron Jobs** tab — scheduled jobs, status, last run
+- **Memory** tab — persistent memory entries
+- **Sessions** tab — recent agent sessions
+
+> **Note:** Skills and cron jobs are managed directly through the Dashboard. No separate Lark Base registry is needed.
 
 ---
 
@@ -142,42 +157,24 @@ Fetch and install each skill by loading the raw URL and calling `skill_manage(ac
 
 ```
 1. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/hermes-agent.md
-2. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/managing-skills.md
-3. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/managing-cron-jobs.md
-4. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/maintaining-gbrain.md
-5. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/maintaining-memory.md
-6. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/capturing-to-gbrain.md
-7. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/google-workspace.md
-8. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/lark-mcp-setup.md
-9. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/native-mcp.md
+2. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/maintaining-gbrain.md
+3. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/maintaining-memory.md
+4. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/capturing-to-gbrain.md
+5. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/google-workspace.md
+6. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/lark-mcp-setup.md
+7. https://raw.githubusercontent.com/DataXquad-HQ/busycow-playbooks/main/core/skills/native-mcp.md
 ```
 
----
-
-## Step 6 — Register Core Skills in Skills Registry
-
-Add each skill to the Skills Registry Base:
-
-| Name | Source | Category |
-|------|--------|----------|
-| hermes-agent | hermes | System |
-| managing-skills | hermes | System |
-| managing-cron-jobs | hermes | System |
-| maintaining-gbrain | hermes | System |
-| maintaining-memory | hermes | System |
-| capturing-to-gbrain | hermes | System |
-| google-workspace | hermes | System |
-| lark-mcp-setup | hermes | System |
-| native-mcp | hermes | System |
+After installing, verify in the Dashboard (port 9119) that all 7 skills appear under the **Skills** tab.
 
 ---
 
-## Step 7 — Verify
+## Step 6 — Verify
 
 - "What's in my GBrain?" → should return brain stats
-- "List my installed skills" → should show 9 core skills
-- "What's in the Skills Registry?" → should return 9 entries in Lark
+- "List my installed skills" → should show 7 core skills (also visible in Dashboard)
 - "List my Lark chats" → should return chat list (Lark MCP working)
+- Dashboard at `http://<YOUR_VM_IP>:9119` → Skills + Cron tabs populated
 - (If Google Workspace): `gws gmail list` → should return emails
 
 ---
