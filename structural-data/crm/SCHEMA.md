@@ -47,44 +47,59 @@ Create via Settings → Data Model or via the metadata API.
 
 ## Field Definitions
 
-### Account (standard object — renamed from Company)
+### Account (Twenty object: `company`)
 
-> **Purpose:** Account master record (object renamed from Company in Twenty). This is a fact sheet — who the company is, what they do, where they sit. The `overview` field is the canonical "account bio". `enrichmentOverview` holds the latest market/news intel updated by enrichment runs.
->
-> **App column key:** `Standard` = built into Twenty, no creation needed — only rename if label differs. `Custom` = must be created via Settings → Data Model or metadata API.
+> **Purpose:** Account master record — clients, prospects, partners. `companyOverview` 是這間公司的基本事實（是誰、做什麼）；`enrichmentOverview` 是最新市場消息，由 enrichment run 寫入。
 
-| Field | App | Type | Options | Description |
-|-------|-----|------|---------|-------------|
-| `name` | **Standard** *(rename → "Account Name")* | TEXT | — | Account display name — the company's common name (Twenty built-in primary field) |
-| `domainName` | **Standard** *(rename → "Website")* | LINKS | — | Official company website / domain (Twenty built-in as "Domain Name") |
-| `annualRevenue` | **Standard** | CURRENCY | — | Annual revenue or estimated ARR (Twenty built-in) |
-| `address` | **Standard** | ADDRESS | — | Registered / HQ address (Twenty built-in) |
-| `companyLinkedIn` | **Standard** *(rename → "LinkedIn")* | LINKS | — | LinkedIn company page URL (Twenty built-in as "Company Linkedin") |
-| `createdAt` | **Standard** | DATE_TIME | — | Record creation timestamp (Twenty built-in, system field) |
-| `updatedAt` | **Standard** | DATE_TIME | — | Last update timestamp (Twenty built-in, system field) |
-| `deletedAt` | **Standard** | DATE_TIME | — | Soft-delete timestamp (Twenty built-in, system field) |
-| `createdBy` | **Standard** | ACTOR | — | Who created this record (Twenty built-in, system field) |
-| `updatedBy` | **Standard** | ACTOR | — | Who last updated this record (Twenty built-in, system field) |
-| `registeredNameEn` | Custom | TEXT | — | Official registered company name in English |
-| `registeredNameCh` | Custom | TEXT | — | Official registered company name in Chinese |
-| `overview` | Custom | TEXT | — | Account bio: who they are, what they do, their core business. This is a stable fact, not news. |
-| `status` | Custom | SELECT | `HOT` / `WARM` / `COLD` | Sales temperature — derived from Contact activity and last contact date |
-| `accountType` | Custom *(field name: "Type")* | MULTI_SELECT | `CLIENT` / `PARTNER` / `PROSPECT` / `VENDOR` / `DIRECT` | The role(s) this account plays in our ecosystem |
-| `industry` | Custom | SELECT | `TECH_SAAS` / `HEALTHCARE` / `MANUFACTURING_TRADING` / `WATER_UTILITIES` / `RETAIL_ECOMMERCE` / `LOGISTICS_TRANSPORT` / `CONSTRUCTION_PROPERTY` / `FINANCE_INSURANCE` / `EDUCATION` / `GOVERNMENT_PUBLIC` / `FNB_HOSPITALITY` / `OTHER` | Primary industry vertical |
-| `country` | Custom | SELECT | `TAIWAN` / `HONG_KONG` / `MALAYSIA` / `OMAN` / `SINGAPORE` / `JAPAN` / `CHINA` / `OTHER` | Primary country of operation |
-| `companyEmail` | Custom | TEXT | — | General company contact email |
-| `lastContactDate` | Custom | DATE_TIME | — | Date of most recent interaction with any contact at this account |
-| `lastEnrichedDate` | Custom | DATE_TIME | — | Timestamp of the last enrichment run for this account |
-| `enrichmentOverview` | Custom | TEXT | — | Latest market intel, news, or enrichment summary. Updated by enrichment runs — not a stable fact. |
+#### 🔧 System（內部系統欄位，無法修改）
 
-**Relations (auto-created by Twenty or via metadata API):**
-- `people` → Contact (one company, many contacts)
-- `opportunities` → Deal
-- `partnerships` → Partnership
-- `engagementsAccount` → Engagement
-- `contractsAsClient` → Contract
-- `notes` → Note (Twenty built-in)
-- `tasks` → Task (Twenty built-in, see Task schema below)
+| Field Name | Label | Type |
+|---|---|---|
+| `id` | Id | UUID |
+| `createdAt` | Creation date | DATE_TIME |
+| `updatedAt` | Last update | DATE_TIME |
+| `deletedAt` | Deleted at | DATE_TIME |
+| `createdBy` | Created by | ACTOR |
+| `updatedBy` | Updated by | ACTOR |
+| `position` | Position | POSITION |
+| `searchVector` | Search vector | TS_VECTOR |
+
+#### 📦 App（Twenty 預設內建）
+
+| Field Name | Label | Type |
+|---|---|---|
+| `name` | Company Name | TEXT |
+| `domainName` | Website | LINKS |
+| `address` | HQ Address | ADDRESS |
+| `annualRevenue` | Annual Revenue | CURRENCY |
+| `linkedinLink` | Company Linkedin | LINKS |
+| `accountOwner` | Account Owner | RELATION |
+| `people` | People | RELATION |
+| `opportunities` | Opportunities | RELATION |
+| `noteTargets` | Notes | RELATION |
+| `taskTargets` | Tasks | RELATION |
+| `attachments` | Attachments | RELATION |
+| `timelineActivities` | Timeline Activities | RELATION |
+
+#### ✏️ Custom（我們自己加的）
+
+| Field Name | Label | Type | Options |
+|---|---|---|---|
+| `accountStatus` | Status | SELECT | `HOT` / `WARM` / `COLD` |
+| `accountType` | Type | MULTI_SELECT | `CLIENT` / `PARTNER` / `PROSPECT` / `VENDOR` / `DIRECT` |
+| `country` | Country | SELECT | `TAIWAN` / `HONG_KONG` / `MALAYSIA` / `OMAN` / `SINGAPORE` / `JAPAN` / `CHINA` / `OTHER` |
+| `industry` | Industry | MULTI_SELECT | `TECH_SAAS` / `HEALTHCARE` / `MANUFACTURING_TRADING` / `WATER_UTILITIES` / `RETAIL_ECOMMERCE` / `LOGISTICS_TRANSPORT` / `CONSTRUCTION_PROPERTY` / `FINANCE_INSURANCE` / `EDUCATION` / `GOVERNMENT_PUBLIC` / `FNB_HOSPITALITY` / `OTHER` |
+| `enrichmentOverview` | Enrichment Overview | TEXT | — |
+| `companyOverview` | Company Overview | TEXT | — |
+| `registeredNameEn` | Registered Name (EN) | TEXT | — |
+| `registeredNameCh` | Registered Name (CH) | TEXT | — |
+| `companyEmail` | Company Email | EMAILS | — |
+| `companyPhone` | Company Phone | PHONES | — |
+| `lastEnrichedDate` | Last Enriched Date | DATE_TIME | — |
+| `lastContactDate` | Last Contact Date | DATE_TIME | — |
+| `pic` | *(pic)* | TEXT | — |
+| `partnerships` | Partnerships | RELATION | — |
+| `engagements` | Engagements | RELATION | — |
 
 ---
 
