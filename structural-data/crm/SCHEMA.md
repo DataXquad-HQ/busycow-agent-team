@@ -18,9 +18,9 @@ These exist in every fresh Twenty workspace. No setup needed — only extend wit
 
 | Object | GraphQL query | Purpose |
 |--------|--------------|---------|
-| Company | `companies` | Account master record — clients, prospects, partners |
-| Person | `people` | Individual contact |
-| Opportunity | `opportunities` | Sales deal / pipeline opportunity |
+| Account | `accounts` | Account master record — clients, prospects, partners |
+| Contact | `people` | Individual contact |
+| Deal | `opportunities` | Sales deal / pipeline opportunity |
 | Note | `notes` | Information record — meeting summaries, research, intel (Twenty built-in) |
 | Task | `tasks` | Action items with due dates and assignees |
 
@@ -47,16 +47,16 @@ Create via Settings → Data Model or via the metadata API.
 
 ## Field Definitions
 
-### Company (standard object — extended)
+### Account (standard object — renamed from Company)
 
-> **Purpose:** Account master record. This is a fact sheet — who the company is, what they do, where they sit. The `overview` field is the canonical "company bio". `enrichmentOverview` holds the latest market/news intel updated by enrichment runs.
+> **Purpose:** Account master record (object renamed from Company in Twenty). This is a fact sheet — who the company is, what they do, where they sit. The `overview` field is the canonical "company bio". `enrichmentOverview` holds the latest market/news intel updated by enrichment runs.
 
 | Field | Type | Options | Description |
 |-------|------|---------|-------------|
 | `name` | TEXT *(auto)* | — | Company display name (Twenty built-in primary field) |
 | `registeredNameEn` | TEXT | — | Official registered company name in English |
 | `registeredNameCh` | TEXT | — | Official registered company name in Chinese |
-| `overview` | TEXT | — | Company bio: who they are, what they do, their core business. This is a stable fact, not news. |
+| `overview` | TEXT | — | Account bio: who they are, what they do, their core business. This is a stable fact, not news. |
 | `status` | SELECT | `HOT` / `WARM` / `COLD` | Sales temperature — derived from Contact activity and last contact date |
 | `accountType` | MULTI_SELECT | `CLIENT` / `PARTNER` / `PROSPECT` / `VENDOR` / `DIRECT` | The role(s) this company plays in our ecosystem |
 | `industry` | SELECT | `TECH_SAAS` / `HEALTHCARE` / `MANUFACTURING_TRADING` / `WATER_UTILITIES` / `RETAIL_ECOMMERCE` / `LOGISTICS_TRANSPORT` / `CONSTRUCTION_PROPERTY` / `FINANCE_INSURANCE` / `EDUCATION` / `GOVERNMENT_PUBLIC` / `FNB_HOSPITALITY` / `OTHER` | Primary industry vertical |
@@ -70,8 +70,8 @@ Create via Settings → Data Model or via the metadata API.
 | `enrichmentOverview` | TEXT | — | Latest market intel, news, or enrichment summary. Updated by enrichment runs — not a stable fact. |
 
 **Relations (auto-created by Twenty or via metadata API):**
-- `people` → Person (one company, many contacts)
-- `opportunities` → Opportunity
+- `people` → Contact (one company, many contacts)
+- `opportunities` → Deal
 - `partnerships` → Partnership
 - `engagementsAccount` → Engagement
 - `contractsAsClient` → Contract
@@ -80,9 +80,9 @@ Create via Settings → Data Model or via the metadata API.
 
 ---
 
-### Person (standard object — extended)
+### Contact (standard object — renamed from Person)
 
-> **Purpose:** Individual contact master record. Source tracks how we first met this person — it lives on the Contact, not the Company.
+> **Purpose:** Individual contact master record (object renamed from Person in Twenty). Source tracks how we first met this person — it lives on the Contact, not the Company.
 
 | Field | Type | Options | Description |
 |-------|------|---------|-------------|
@@ -98,7 +98,7 @@ Create via Settings → Data Model or via the metadata API.
 | `notes` | TEXT | — | Personal context, preferences, background notes |
 
 **Relations:**
-- `company` → Company (many-to-one)
+- `company` → Account (many-to-one)
 - `engagementsContact` → Engagement
 - `partnerPartnerships` → Partnership (as primary contact)
 - `notes` → Note (Twenty built-in)
@@ -106,9 +106,9 @@ Create via Settings → Data Model or via the metadata API.
 
 ---
 
-### Opportunity (standard object — extended)
+### Deal (standard object — renamed from Opportunity)
 
-> **Purpose:** Sales pipeline deal. One opportunity = one sales motion for one product/service to one account.
+> **Purpose:** Sales pipeline deal (object renamed from Opportunity in Twenty). One deal = one sales motion for one product/service to one account.
 
 | Field | Type | Options | Description |
 |-------|------|---------|-------------|
@@ -129,8 +129,8 @@ Create via Settings → Data Model or via the metadata API.
 | `docLink` | LINKS | — | Link to proposal, contract draft, or supporting document |
 
 **Relations:**
-- `pointOfContact` → Person (primary contact / decision maker, Twenty built-in)
-- `company` → Company (Twenty built-in)
+- `pointOfContact` → Contact (primary contact / decision maker, Twenty built-in)
+- `company` → Account (Twenty built-in)
 - `quotations` → Quotation
 - `contracts` → Contract
 - `engagements` → Engagement
@@ -155,7 +155,7 @@ Create via Settings → Data Model or via the metadata API.
 | `outputLink` | LINKS | — | Link to the deliverable produced by this task (quotation PDF, deck, document) |
 
 **Relations (Twenty built-in):**
-- `taskTargets` → linked to any object (Company, Person, Opportunity, Partnership, etc.) via Twenty's polymorphic task target system
+- `taskTargets → linked to any object (Account, Contact, Deal, Partnership, etc.) via Twenty's polymorphic task target system
 
 ---
 
@@ -173,8 +173,8 @@ Create via Settings → Data Model or via the metadata API.
 | `description` | TEXT | — | Partnership context: commission structure, territory, terms background |
 
 **Relations:**
-- `account` → Company (the partner company, many-to-one)
-- `primaryContact` → Person (decision maker at the partner)
+- `account` → Account (the partner company, many-to-one)
+- `primaryContact` → Contact (decision maker at the partner)
 - `engagements` → Engagement
 - `contracts` → Contract
 - `notes` → Note (Twenty built-in)
@@ -197,9 +197,9 @@ Create via Settings → Data Model or via the metadata API.
 | `nextAction` | TEXT | — | The single most important next step from this interaction |
 
 **Relations:**
-- `account` → Company (always linked)
-- `contact` → Person (who we spoke to)
-- `deal` → Opportunity (which deal this touches, optional)
+- `account` → Account (always linked)
+- `contact` → Contact (who we spoke to)
+- `deal` → Deal (which deal this touches, optional)
 - `partnership` → Partnership (which partnership this touches, optional)
 - `notes` → Note (Twenty built-in)
 - `tasks` → Task (Twenty built-in)
@@ -222,7 +222,7 @@ Create via Settings → Data Model or via the metadata API.
 | `notes` | TEXT | — | Internal notes about this quotation |
 
 **Relations:**
-- `deal` → Opportunity (the deal this quotation belongs to, many-to-one)
+- `deal` → Deal (the deal this quotation belongs to, many-to-one)
 - `items` → QuotationItem (line items)
 - `notes` → Note (Twenty built-in)
 - `tasks` → Task (Twenty built-in)
@@ -263,8 +263,8 @@ Create via Settings → Data Model or via the metadata API.
 | `notes` | TEXT | — | Internal notes, key terms summary, renewal flags |
 
 **Relations:**
-- `client` → Company (the counterparty — client or partner company)
-- `deal` → Opportunity (if this contract is for a sales deal, optional)
+- `client` → Account (the counterparty — client or partner company)
+- `deal` → Deal (if this contract is for a sales deal, optional)
 - `partnership` → Partnership (if this contract is for a partnership agreement, optional)
 - `notes` → Note (Twenty built-in)
 - `tasks` → Task (Twenty built-in)
@@ -274,20 +274,20 @@ Create via Settings → Data Model or via the metadata API.
 ## Relations Map
 
 ```
-Company ──< Person              (company has many contacts)
-Company ──< Opportunity         (company has many deals)
-Company ──< Partnership         (company has many partnership records)
-Company ──< Engagement          (company has many interactions)
-Company ──< Contract            (company has many contracts as client)
+Account ──< Contact             (account has many contacts)
+Account ──< Deal                (account has many deals)
+Account ──< Partnership         (account has many partnership records)
+Account ──< Engagement          (account has many interactions)
+Account ──< Contract            (account has many contracts as client)
 
-Person ──< Engagement           (contact appears in many interactions)
-Person ──  Partnership          (contact is primary contact on a partnership)
+Contact ──< Engagement           (contact appears in many interactions)
+Contact ──  Partnership          (contact is primary contact on a partnership)
 
-Opportunity ──< Engagement      (deal has many interactions)
-Opportunity ──< Quotation       (deal has many quotations)
-Opportunity ──< Contract        (deal has one or more contracts)
-Opportunity ──< Note            (Twenty built-in)
-Opportunity ──< Task            (Twenty built-in)
+Deal ──< Engagement      (deal has many interactions)
+Deal ──< Quotation       (deal has many quotations)
+Deal ──< Contract        (deal has one or more contracts)
+Deal ──< Note            (Twenty built-in)
+Deal ──< Task            (Twenty built-in)
 
 Partnership ──< Engagement      (partnership has many interactions)
 Partnership ──< Contract        (partnership has one or more contracts)
@@ -314,4 +314,5 @@ Quotation ──< QuotationItem     (quotation has many line items)
 
 | Date | Change |
 |------|--------|
-| 2026-06-11 | Full rewrite — aligned to live Twenty instance. Added Partnership, Engagement, Contract objects. Extended Company, Person, Opportunity, Task. Added field types, options, and descriptions throughout. Renamed `description` → `overview` on Company (bio vs enrichment distinction). Removed `businessLine` from shared schema (product-specific, not universal). Added Note and Task conventions. |
+| 2026-06-11 | Full rewrite — aligned to live Twenty instance. Added Partnership, Engagement, Contract objects. Extended Account, Contact, Deal, Task. Added field types, options, and descriptions throughout. Renamed `description` → `overview` on Account (bio vs enrichment distinction). Removed `businessLine` from shared schema (product-specific, not universal). Added Note and Task conventions. |
+| 2026-06-11 | Renamed standard objects to business terms: Company → Account, Person → Contact, Opportunity → Deal. Partnership added as core object alongside the four. |
