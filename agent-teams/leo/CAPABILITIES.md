@@ -8,7 +8,7 @@
 >
 > See `skills/README.md` for the full customisation checklist before installing.
 
-**Version:** 6.2 | **Last Updated:** 2026-06-12
+**Version:** 6.3 | **Last Updated:** 2026-06-12
 
 ---
 
@@ -219,10 +219,10 @@ For existing People in CRM with no active Opportunity or Partnership and no enga
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ✅ Monthly re-engagement cron built; ⚠️ daily sequence-check cron pending | ✅ Flow B (re-engagement) complete; ⚠️ Flow A (cold sequence) skill built but sequence tracking not yet automated | ⚠️ Personalisation is company-level; deep pain-point customisation pending |
+| ✅ Monthly re-engagement cron built ✅; daily sequence-check cron built ✅ | ✅ Flow B (re-engagement) complete; ⚠️ Flow A sequence tracking relies on engagement count — no dedicated sequence state field | ⚠️ Personalisation is company-level; deep pain-point customisation pending |
 
 **Skills** *(building blocks):* `mql-outreach` · `lead-nurturing` · `follow-up-email`
-**Cron:** → `lead-nurturing-monthly` (1st of month, 09:00) · → *(pending)* `outreach-sequence-check` (daily 10:00)
+**Cron:** → `lead-nurturing-monthly` (1st of month, 09:00) · → `outreach-sequence-check` (daily 10:00)
 
 ---
 
@@ -320,7 +320,7 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 | C5 Partnership Progressing | ✅ / ⚠️ | ✅ | ⚠️ |
 | C6 Pipeline Health Monitoring | ✅ / ⚠️ | ⚠️ | ⚠️ |
 
-**Pending:** `outreach-sequence-check` cron (C3 Flow A automation) · `weekly-pipeline-review` (C6)
+**Pending:** `weekly-pipeline-review` (C6)
 
 ---
 
