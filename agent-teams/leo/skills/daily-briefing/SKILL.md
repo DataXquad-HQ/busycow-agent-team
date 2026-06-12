@@ -1,81 +1,45 @@
 ---
 name: daily-briefing
+version: 4.0
+author: BD Lead Agent
 description: >
-  Generate and deliver the daily action briefing for the BD team. Pulls AT_RISK
-  opportunities and today's due tasks from Twenty CRM, organises by priority, sends to
-  Feishu. Runs automatically at 08:00 Taiwan time via cron, or on-demand.
+  Generate and deliver the daily task briefing. Pulls today's due and overdue
+  tasks from Twenty CRM, plus a preview of the next 3 days. Delivers to Feishu.
+  Runs automatically at 08:00 daily via cron, or on-demand.
+  Weekly opportunity/partnership health is handled by weekly-pipeline-review.
 triggers:
-  - "daily briefing"
-  - "今天有什麼要做"
-  - "morning briefing"
-version: "3.1"
-author: Leo (BD Director Agent)
+  - daily briefing
+  - 今天有什麼要做
+  - morning briefing
+  - 今天的任務
 ---
-
-# Daily Briefing
 
 ## Purpose
 
-Every morning at 08:00 Taiwan time: read overnight diagnostics from Twenty CRM, pull AT_RISK opportunities and today's due tasks, format into a clean briefing, and send to Feishu.
+Every morning: pull today's due tasks (including overdue), show what needs to happen. Brief and actionable.
 
-No computation — just reads already-processed data and formats it. Reads from the `healthCheck` field (written by `deal-progressing` and `deal-health-check`) — not `dealStatus`.
+Opportunity and Partnership health is NOT in the daily briefing. That is in the weekly-pipeline-review. The logic: AT_RISK opportunities already have [STALL] tasks created by deal-health-check. Those tasks appear in the daily briefing automatically — no need to list opportunities separately.
 
----
+No computation or analysis. Just reads tasks and formats them.
 
 ## CRM Reference
+Twenty CRM: http://localhost:3001 (always localhost)
+GraphQL endpoint: http://localhost:3001/graphql
 
-**Twenty CRM:** `http://localhost:3001` (always localhost)
-**GraphQL endpoint:** `http://localhost:3001/graphql`
+## Data Pull
 
----
-
-## Data Pull (parallel)
-
-### 1. AT_RISK Opportunities
-
-```graphql
-query {
-  opportunities(
-    filter: {
-      and: [
-        { healthCheck: { eq: "AT_RISK" } }
-        { stage: { neq: "CLOSED_WON" } }
-        { stage: { neq: "CLOSED_LOST" } }
-      ]
-    }
-    orderBy: { lastUpdateDate: AscNullsFirst }
-  ) {
-    edges {
-      node {
-        id name stage
-        lastUpdateDate
-        currentStatusSummary
-        nextActionSummary
-        healthCheck
-        company { name }
-        owner { name { firstName lastName } }
-      }
-    }
-  }
-}
-```
-
-### 2. NEEDS_FOLLOWUP Opportunities (secondary tier)
-
-Same query, replace `AT_RISK` with `NEEDS_FOLLOWUP`, and include `currentStatusSummary` and `nextActionSummary` fields.
-
-### 3. Today's Due Tasks
-
+### 1. Overdue + Today's Tasks
 ```graphql
 query {
   tasks(
     filter: {
       and: [
-        { status: { neq: "DONE" } }
+        { status: { notIn: ["DONE"] } }
         { dueAt: { lte: "{today_end_iso}" } }
       ]
     }
-    orderBy: { taskPriority: AscNullsLast }
+    orderBy: [{ taskPriority: AscNullsLast }, { dueAt: AscNullsLast }]
+    first: 50
   ) {
     edges {
       node {
@@ -84,82 +48,71 @@ query {
         dueAt
         taskPriority
         status
-        assignee { name { firstName lastName } }
+        agentAdvice
+        taskTargets {
+          edges {
+            node {
+              opportunity { id name company { name } }
+              partnership { id name company { name } }
+            }
+          }
+        }
       }
     }
   }
 }
 ```
 
----
+### 2. Next 3 Days Preview
+Same query but filter: dueAt > today AND dueAt <= today+3 days
 
 ## Algorithm
-
-```
-1. Fetch AT_RISK opportunities + NEEDS_FOLLOWUP opportunities + today's tasks (parallel)
-2. Sort opportunities by lastUpdateDate ascending (oldest = most urgent)
-3. Sort tasks by taskPriority (HIGH first)
-4. Format briefing
-5. Send to Feishu origin chat
-```
-
----
+1. Fetch overdue+today tasks
+2. Fetch next-3-days tasks
+3. Separate overdue (dueAt < today) from due-today
+4. Sort all by priority (URGENT first), then by dueAt
+5. Format and deliver
 
 ## Message Format
 
 ```
-🎯 Daily Briefing — {YYYY-MM-DD}
+📋 Daily Briefing — {YYYY-MM-DD}
 
-🔴 AT RISK ({n})
-• {Company} — {Opportunity Name}
-  └ {currentStatusSummary}
-  └ Next: {nextActionSummary}
+🔥 需要處理 ({n} 個任務)
+• [URGENT] {Task title} — {Company if linked}
+• [HIGH] {Task title} — {Company if linked}
+• [MEDIUM] {Task title}
+
+📅 未來 3 天 ({n} 個任務)
+• {Task title} — due {date} — {Company if linked}
 • ...
-[if none: No opportunities at risk ✅]
 
-🟡 Needs Follow-up ({n})
-• {Company} — {Opportunity Name} — {nextActionSummary}
-[if none: omit section]
+[If nothing due: All clear ✔️ 沒有需要處理的任務]
 
-✅ Tasks Due Today ({n})
-• [{priority}] {Task title}
-• ...
-[if none: No tasks due today]
-
----
+———
 {TIME} · Leo
 ```
 
----
+Rules:
+- Show [priority label] for URGENT and HIGH tasks only. MEDIUM and LOW show no label.
+- If task is linked to an Opportunity or Partnership, show the company name after em dash
+- If task is overdue (dueAt < today), add ⚠️ overdue marker
+- If no tasks due today AND no tasks in next 3 days: send 'All clear ✔️' message (do not go silent — confirm briefing ran)
+- agentAdvice is NOT shown in the briefing — it is for the human to read when they open the task
 
 ## Output Delivery
-
-- **Cron:** Deliver to origin Feishu chat (`deliver: "origin"`)
-- **Manual:** Reply in conversation
-- **If nothing to report:** Still send — "No opportunities at risk. No tasks due today. ✅" — confirms the briefing ran.
-
----
+- Cron: deliver to origin Feishu chat
+- Manual: reply in conversation
 
 ## Cron Integration
-
-**Schedule:** `0 8 * * *` (08:00 Taiwan = 00:00 UTC)
-**Dependencies:** `daily-deal-health-check` should complete before this (runs at 03:00).
-**Delivery:** origin Feishu chat
-
----
+Schedule: 0 0 * * * (08:00 Taiwan = 00:00 UTC)
+Dependency: deal-health-check runs at 03:00 — stall tasks are created before briefing fires
 
 ## Pitfalls
-
-1. **Always use localhost** — never external URL.
-
-2. **`amount.amountMicros`** — divide by 1,000,000 to display USD.
-
-3. **`dueAt` filter for "today"** — use `lte: "{today_end_iso}"` to catch overdue tasks too, not just exactly-today.
-
-4. **`title` is RICH_TEXT on tasks** — extract `.text` from the object.
-
-5. **Don't send empty briefing silently** — even if no AT_RISK opportunities and no tasks, send a confirmation message so the team knows the briefing ran.
-
-6. **`taskPriority` options** — `HIGH` / `MEDIUM` / `LOW` (our custom field, not Twenty's built-in status).
-
-7. **Read `healthCheck` field — not `dealStatus` — for opportunity health status.**
+1. Always use localhost — never external URL
+2. dueAt filter for today: use lte: today_end_iso to catch overdue tasks too
+3. title is structured TEXT — extract .text from object
+4. taskPriority sort: URGENT > HIGH > MEDIUM > LOW
+5. Do NOT include opportunity/partnership health analysis — that is weekly-pipeline-review
+6. Do NOT go silent if no tasks — always deliver briefing so human knows it ran
+7. If deal-health-check created stall tasks overnight, they appear automatically — no special handling needed

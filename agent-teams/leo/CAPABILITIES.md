@@ -8,7 +8,7 @@
 >
 > See `skills/README.md` for the full customisation checklist before installing.
 
-**Version:** 6.3 | **Last Updated:** 2026-06-12
+**Version:** 6.4 | **Last Updated:** 2026-06-12
 
 ---
 
@@ -283,19 +283,37 @@ Leo's boundary ends at **Signed**. What comes after — enablement, joint go-to-
 
 > **Attention the sales rep buys back:** No need to manually review the pipeline state or remember what needs attention today.
 
-**Outcome:** The sales rep starts every day oriented, and has a clear weekly picture of what is moving, what is at risk, and whether the business is on track.
+**Two distinct rhythms — different purpose, different format:**
 
-**Leo owns:** Daily morning briefing. Weekly pipeline health review across all Opportunities and Partnerships — momentum, conversion trends, revenue forecast vs target, systemic risks.
+**Daily (08:00) — Task Briefing:**
+Simple action list. What needs to happen today. AT_RISK opportunities are already represented as `[STALL]` tasks created by `deal-health-check` — they appear in the task list automatically. No opportunity analysis in the daily briefing.
 
-**Trigger:** Daily automatic (08:00) / Weekly automatic (Friday 17:00) / on-demand
+```
+🔥 需要處理 (n tasks)     ← overdue + due today
+📅 未來 3 天 (n tasks)    ← preview
+```
+
+**Weekly (Friday 17:00) — Pipeline Review:**
+Strategic picture. Group all Opportunities and Partnerships by `healthCheck`. Identify what's moving, what's at risk, what needs focus next week. Priority 1/2/3 recommendations.
+
+```
+📊 Opportunities: AT_RISK / NEEDS_FOLLOWUP / AWAITING / ON_TRACK
+🤝 Partnerships: AT_RISK / NEEDS_FOLLOWUP / ON_TRACK
+🎯 Focus for next week: Priority 1 / 2 / 3
+```
+
+**Trigger:**
+- Daily: automatic 08:00 cron
+- Weekly: automatic Friday 17:00 cron / on-demand
+
 **Boundary:** No company-level financial forecasting. No product decisions.
 
 | **Trigger** | **Execution** | **Quality** |
 |-|-|-|
-| ✅ Daily briefing automatic; ⚠️ weekly cron not yet built | ⚠️ Weekly review skill not yet built; on-demand pipeline review works ✅ | ⚠️ No conversion trend or forecast vs target output yet |
+| ✅ Both crons built and running | ✅ Daily task briefing complete; ✅ Weekly pipeline review complete | ⚠️ No revenue forecast vs target yet; no conversion trend analysis |
 
-**Skills** *(building blocks):* `daily-briefing` · `reviewing-sales-pipeline` · `reviewing-partnership-pipeline` · *(pending)* `weekly-pipeline-review`
-**Cron:** → `daily-briefing` (08:00 daily) · → *(pending)* `weekly-pipeline-review` (Friday 17:00)
+**Skills** *(building blocks):* `daily-briefing` · `weekly-pipeline-review` · `reviewing-sales-pipeline` · `reviewing-partnership-pipeline`
+**Cron:** → `daily-briefing` (08:00 daily) · → `weekly-pipeline-review` (Friday 17:00)
 
 ---
 
@@ -318,9 +336,9 @@ Partner Success — enablement, joint go-to-market, revenue tracking, health mon
 | C3 Lead Nurturing | ✅ / ⚠️ | ⚠️ | ⚠️ |
 | C4 Pipeline Progressing | ⚠️ / ✅ | ✅ | ⚠️ |
 | C5 Partnership Progressing | ✅ / ⚠️ | ✅ | ⚠️ |
-| C6 Pipeline Health Monitoring | ✅ / ⚠️ | ⚠️ | ⚠️ |
+| C6 Pipeline Health Monitoring | ✅ | ✅ | ⚠️ |
 
-**Pending:** `weekly-pipeline-review` (C6)
+**All core capabilities are built.** Remaining quality gaps: revenue forecast vs target, conversion trend analysis — future enhancements.
 
 ---
 
