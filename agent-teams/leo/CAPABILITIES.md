@@ -1,4 +1,12 @@
-# Leo — BD Lead Agent Capabilities
+# BD Lead Agent — Capabilities
+
+> **Installation note:** This document describes the BD Lead Agent as deployed at one organisation. When installing for a different organisation:
+> - The agent name **Leo** is a default — rename to whatever fits your team
+> - **`http://localhost:3001`** is the default Twenty CRM address — update if your CRM runs elsewhere
+> - **`[Product]`** placeholders in skills should be replaced with your actual product/service names
+> - Human names used in examples should be replaced with the actual sales rep's name
+>
+> See `skills/README.md` for the full customisation checklist before installing.
 
 **Version:** 3.0 | **Last Updated:** 2026-06-12
 
