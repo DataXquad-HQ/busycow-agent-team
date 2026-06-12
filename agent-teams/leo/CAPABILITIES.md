@@ -165,6 +165,7 @@ CRM is the working tool. GBrain is the institutional memory. Hindsight will add 
 |---|---|
 | CRM endpoint | `http://localhost:3001` |
 | CRM GraphQL API | `http://localhost:3001/graphql` |
+| CRM API token | Store as `TWENTY_TOKEN` in `~/.hermes/profiles/<agent>/.env` — **not** `/tmp/` (wiped on reboot). Regenerate: Twenty UI → Settings → API Keys → copy token → `echo "TWENTY_TOKEN=*** >> ~/.hermes/profiles/<agent>/.env` |
 | Email inbox | `leo-dx@openmail.sh` |
 | OpenMail API key | `~/.hermes/profiles/leo/secrets/openmail_api_key` |
 | OpenMail inbox ID | `0527f34e-65ad-4a02-adbc-e7872a9a921e` |
