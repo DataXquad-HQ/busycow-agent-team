@@ -1,12 +1,12 @@
 # CRM Schema — Twenty
 
-Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (self-hosted, `localhost:3001`).
+Object definitions for the DataXquad / GeoKernel CRM layer, powered by [Twenty](https://twenty.com) (self-hosted, `localhost:3001`).
 
 > **圖例：** `sys` = 系統內建，無法修改 · `app` = Twenty 預設內建 · `cus` = 自定義欄位
 
 ---
 
-## 📦 ACCOUNT（Twenty object: `company`）
+## 📦 COMPANY（Twenty object: `company`）
 
 ### 🔧 System
 
@@ -43,9 +43,9 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 | Field Name | Label | Type | Options / Direction |
 |---|---|---|---|
 | `accountStatus` | Status | SELECT | `HOT` `WARM` `COLD` |
-| `accountType` | Type | MULTI_SELECT | `CLIENT` `PARTNER` `PROSPECT` `VENDOR` `DIRECT` |
+| `accountType` | Type | MULTI_SELECT | `CLIENT` `PARTNER` `LEAD` `VENDOR` `DIRECT` `INVESTOR` |
 | `country` | Country | SELECT | `TAIWAN` `MALAYSIA` `INDONESIA` `THAILAND` `SINGAPORE` `VIETNAM` `OTHER` |
-| `industry` | Industry | MULTI_SELECT | `GOVERNMENT` `WATER_UTILITIES` `MANUFACTURING` `LOGISTICS` `RETAIL` `FINANCE` `HEALTHCARE` `EDUCATION` `TECHNOLOGY` `OTHER` |
+| `industry` | Industry | MULTI_SELECT | `GOVERNMENT` `WATER_UTILITIES` |
 | `companyOverview` | Company Overview | TEXT | |
 | `enrichmentOverview` | Enrichment Overview | TEXT | |
 | `registeredNameEn` | Registered Name (EN) | TEXT | |
@@ -59,7 +59,7 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 
 ---
 
-## 👤 CONTACT（Twenty object: `person`）
+## 👤 PERSON（Twenty object: `person`）
 
 ### 🔧 System
 
@@ -102,7 +102,7 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 | `country` | Country | SELECT | `TAIWAN` `HONG_KONG` `CHINA` `MALAYSIA` `THAILAND` `INDONESIA` `JAPAN` |
 | `preferredChannel` | Preferred Channel | SELECT | `EMAIL` `WHATSAPP` `LINE` `PHONE` |
 | `decisionRole` | Decision Role | SELECT | `BUYER` `USER` `INFLUENCER` `BLOCKER` `CHAMPION` |
-| `source` | Source | SELECT | `REFERRAL` `EVENT` `PARTNER` `INBOUND_WEB` `OUTBOUND_MAYA` |
+| `source` | Source | SELECT | `REFERRAL` `EVENT` `PARTNER` `NETWORK` `INBOUND_WEB` `OUTBOUND_MAYA` |
 | `department` | Department | TEXT | |
 | `remarks` | Remarks | TEXT | |
 | `lastContactDate` | Last Contact Date | DATE_TIME | |
@@ -113,7 +113,7 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 
 ---
 
-## 🎯 DEAL（Twenty object: `opportunity`）
+## 🎯 OPPORTUNITY（Twenty object: `opportunity`）
 
 ### 🔧 System
 
@@ -126,7 +126,7 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 | `name` | Name | TEXT | |
 | `amount` | Expected Amount | CURRENCY | |
 | `closeDate` | Expected Close date | DATE_TIME | |
-| `stage` | Stage | SELECT | `NEW` `SCREENING` `MEETING` `PROPOSAL` `CUSTOMER` |
+| `stage` | Stage | SELECT | `D1` `D2` `D3` `D4` `S1` `S2` `CLOSED_WON` `CLOSED_LOST` |
 | `company` | Company | RELATION | M:1 |
 | `owner` | Owner | RELATION | M:1 |
 | `pointOfContact` | Primary Contact | RELATION | M:1 |
@@ -139,6 +139,7 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 
 | Field Name | Label | Type | Options / Direction |
 |---|---|---|---|
+| `primaryContact` | Primary Contact | TEXT | 主要聯絡人（文字備注用） |
 | `priority` | Priority | SELECT | `VERY_HIGH` `HIGH` `MEDIUM` `LOW` |
 | `dealType` | Deal Type | SELECT | `DIRECT` `PARTNERSHIP` `INVESTMENT` |
 | `healthCheck` | Health Check | SELECT | `ON_TRACK` `NEEDS_FOLLOWUP` `AWAITING` `AT_RISK` |
@@ -146,7 +147,7 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 | `overview` | Overview | TEXT | |
 | `currentStatusSummary` | Current Status Summary | TEXT | |
 | `nextActionSummary` | Next Action Summary | TEXT | |
-| `lastUpdateDate` | Last Contact Date | DATE | |
+| `lastUpdateDate` | Last Contact Date | DATE_TIME | |
 | `nextFollowUpDate` | Next Follow-up Date | DATE_TIME | |
 | `engagements` | Engagements | RELATION | 1:M |
 | `otherContacts` | Other Contacts | RELATION | 1:M → Person |
@@ -257,48 +258,38 @@ Object definitions for the CRM layer, powered by [Twenty](https://twenty.com) (s
 
 ---
 
-## 📝 NOTE（Twenty object: `note`）
-
-### 🔧 System
-
-`id` · `createdAt` · `updatedAt` · `deletedAt` · `createdBy` · `updatedBy` · `position` · `searchVector`
-
-### 📦 App
-
-| Field Name | Label | Type | Direction |
-|---|---|---|---|
-| `title` | Title | TEXT | |
-| `bodyV2` | Body | RICH_TEXT | |
-| `noteTargets` | Relations | RELATION | 1:M |
-| `attachments` | Attachments | RELATION | 1:M |
-| `timelineActivities` | Timeline Activities | RELATION | 1:M |
-
----
-
 ## 關係總覽
 
 ```
-Account ──┬── Contacts        (1:M)
-          ├── Deals           (1:M)
+Company ──┬── People          (1:M)
+          ├── Opportunities   (1:M)
           ├── Partnerships    (1:M)
           └── Engagements     (1:M)
 
-Deal ──┬── Engagements     (1:M)
-       └── Other Contacts  (1:M → Contact)
+Opportunity ──┬── Engagements     (1:M)
+              └── Other Contacts  (1:M → Person)
 
 Partnership ──┬── Engagements     (1:M)
               ├── Tasks           (1:M)
-              ├── Primary Contact (M:1 → Contact)
-              └── Related People  (1:M → Contact)
+              ├── Primary Contact (M:1 → Person)
+              └── Related People  (1:M → Person)
 
-Engagement ──┬── Account          (M:1)
-             ├── Deal             (M:1, optional)
+Engagement ──┬── Company          (M:1)
+             ├── Opportunity      (M:1, optional)
              ├── Partnership      (M:1, optional)
-             ├── Client Attendees (1:M → Contact)
+             ├── Client Attendees (1:M → Person)
              └── Our Team         (1:M → WorkspaceMember)
 
-Task ──┬── Deal         (M:1, optional)
+Task ──┬── Opportunity  (M:1, optional)
        └── Partnership  (M:1, optional)
-
-Note ── linked via noteTargets to: Account / Contact / Deal / Partnership / Engagement
 ```
+
+---
+
+## Changelog
+
+| Date | Change |
+|------|--------|
+| 2026-06-11 | Initial full schema — Company, Contact, Deal, Partnership, Engagement, Task |
+| 2026-06-11 | Rename standard objects to business terms: Company→Account, Person→Contact, Opportunity→Deal |
+| 2026-06-11 | Full rewrite to canonical format with System / App / Custom sections per object |
