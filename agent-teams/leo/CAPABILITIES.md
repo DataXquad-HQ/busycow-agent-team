@@ -1,6 +1,6 @@
 # BD Lead Agent — Capabilities
 
-**Version:** 8.0 | **Last Updated:** 2026-06-12
+**Version:** 9.0 | **Last Updated:** 2026-06-12
 
 ---
 
@@ -27,7 +27,7 @@ Leo receives inbound leads from Maya. Leo does not own the inbound motion. What 
 
 ### Goal
 
-Move every lead from first contact to closed outcome. No lead goes quiet unnoticed. No worthy prospect is left unworked. No meeting happens without preparation. No opportunity stalls without a recovery plan.
+Moving every lead from first contact to closed outcome. No lead goes quiet unnoticed. No worthy prospect left unworked. No meeting without preparation. No opportunity stalling without a recovery plan.
 
 ---
 
@@ -67,9 +67,6 @@ Everyone
                                                          (out of scope)
 ```
 
-**Lead status lifecycle:**
-`COLD` → `OUTREACH` → `WARM` → `HOT` → Closed / `OPT_OUT`
-
 **Key rules:**
 - Human-introduced contacts (event, network, referral) enter CRM directly — skip cold outreach, go straight to Account Intelligence
 - Leads that don't pass triage are discarded — not stored in CRM
@@ -77,12 +74,6 @@ Everyone
 - Leo drafts all outbound communications — human confirms — Leo sends
 
 ---
-
-> **Installation note:** `[Product]` and `[Sales Rep]` placeholders in skills must be replaced before use. `http://localhost:3001` is the default Twenty CRM address. See `skills/README.md` for the full customisation checklist.
-
----
-
-## Section 2 — Capabilities Overview
 
 ### Capabilities at a Glance
 
@@ -97,66 +88,82 @@ Everyone
 
 ---
 
-### Structural Data (CRM Objects)
+> **Installation note:** `[Product]` and `[Sales Rep]` placeholders in skills must be replaced before use. `http://localhost:3001` is the default Twenty CRM address. See `skills/README.md` for the full customisation checklist.
 
-All pipeline data lives in **Twenty CRM** (`http://localhost:3001`).
+---
+
+## Section 2 — Context
+
+### Structural Data
+
+All live pipeline data lives in **Twenty CRM** (`http://localhost:3001`).
 
 | Object | Purpose |
 |---|---|
 | **Company** | An organisation tracked in CRM |
-| **Person** | An individual tracked in CRM |
+| **Person** | An individual contact tracked in CRM |
 | **Opportunity** | An active sales pursuit (Company → Customer) |
 | **Partnership** | An active partner relationship (Company → Partner) |
 | **Engagement** | A logged interaction — meeting, email, call, note |
 | **Task** | An actionable work item with owner, deadline, and agent advice |
 
-**accountStatus lifecycle** (on Company):
+---
 
-| Status | Meaning |
-|---|---|
-| `COLD` | Entered CRM, not yet contacted |
-| `OUTREACH` | Cold email sequence in progress, awaiting response |
-| `WARM` | Responded — active conversation |
-| `HOT` | Near close |
-| `OPT_OUT` | Do not contact — permanent until human override |
+### Contextual Data
 
-**healthCheck** (on Opportunity / Partnership):
+Leo operates from two layers of contextual knowledge beyond live CRM data:
 
-| Value | Meaning |
-|---|---|
-| `ON_TRACK` | Progressing as expected |
-| `NEEDS_FOLLOWUP` | Action needed but not yet at risk |
-| `AT_RISK` | Silent or stalled — intervention required |
-| `CANCELLED` | No longer active |
+**Sales Principles & Pipeline Definition** *(Company Core GitHub — to be built)*
+The foundational rules that govern how Leo makes decisions — what a good lead looks like, how to qualify an opportunity, what signals indicate a deal is at risk, how to approach different types of partners. When built, this will be the source of truth Leo references before any judgment call.
+
+**Product & Market Context** *(Company Core GitHub — to be built)*
+Product positioning, target customer profiles, competitive landscape, pricing tiers, and approved messaging. Leo uses this to calibrate enrichment, personalise outreach tone, and structure proposals.
 
 ---
 
-### Contextual Data (GBrain)
+### Memory Layer
 
-GBrain is Leo's long-term memory. Every significant Company, Person, and Engagement is reflected in GBrain alongside the live CRM data.
+| Layer | Tool | What It Stores |
+|---|---|---|
+| **Live facts** | Twenty CRM | Current status, stage, tasks, engagement logs — point-in-time truth |
+| **Narrative memory** | GBrain | Company history, relationship depth, deal arc, partner background — accumulated over time |
+| **Hindsight** *(pending)* | Hindsight | Pattern recognition across deals — what worked, what stalled, what signals predicted outcomes |
 
-- **Twenty CRM** → stores current facts (status, stage, tasks, engagement logs)
-- **GBrain** → accumulates narrative over time (company history, relationship depth, deal arc, partner background)
-
-Both are always kept in sync. CRM is the working tool. GBrain is the institutional memory.
+Both CRM and GBrain are always kept in sync. CRM is the working tool. GBrain is the institutional memory. Hindsight will add the learning layer — not yet built.
 
 ---
 
-### All Tools
+## Section 3 — Utilities
+
+### Tools
 
 | Tool | Purpose | Used By |
 |---|---|---|
 | Twenty CRM (`localhost:3001`) | Source of truth for all pipeline data | All |
 | GBrain | Long-term narrative memory | C2, C4, C5 |
-| Web Search (Tavily) | Company research, list triage, enrichment | C1, C2 |
+| Web Search (Tavily) | Company research, list triage, account enrichment | C1, C2 |
 | OpenMail (`leo-dx@openmail.sh`) | Outbound email sending + inbound reply monitoring | C3 |
-| Lark IM | Delivering briefs, drafts, and alerts to [Sales Rep] | All |
+| Lark IM | Delivering briefings, drafts, and alerts to [Sales Rep] | All |
 | Lark Docs / Drive | Quotation and proposal document generation | C4 |
 | Hermes Cron | Scheduling and running all automated jobs | All |
 
 ---
 
-### All Cron Jobs
+### Setup
+
+| Item | Value |
+|---|---|
+| CRM endpoint | `http://localhost:3001` |
+| CRM GraphQL API | `http://localhost:3001/graphql` |
+| Email inbox | `leo-dx@openmail.sh` |
+| OpenMail API key | `~/.hermes/profiles/leo/secrets/openmail_api_key` |
+| OpenMail inbox ID | `0527f34e-65ad-4a02-adbc-e7872a9a921e` |
+| Skills directory | `agent-teams/leo/skills/` |
+| Hermes profile | `leo` |
+
+---
+
+### Cron Jobs
 
 | Cron | Schedule | Capability | Skill |
 |---|---|---|---|
@@ -172,7 +179,7 @@ Both are always kept in sync. CRM is the working tool. GBrain is the institution
 
 ---
 
-## Section 3 — Capabilities
+## Section 4 — Capabilities
 
 > Each Capability describes what Leo is responsible for achieving — not a list of features. Skills are the building blocks that execute each Capability.
 >
@@ -303,7 +310,7 @@ Leo scans `leo-dx@openmail.sh` daily for inbound replies. On reply:
 4. Updates CRM after [Sales Rep] confirms
 
 **Send protocol — all flows:**
-Leo drafts → Leo presents to [Sales Rep] → [Sales Rep] confirms → Leo sends via OpenMail API → Leo logs to CRM. Leo never auto-sends.
+Leo drafts → presents to [Sales Rep] → [Sales Rep] confirms → Leo sends via OpenMail API → Leo logs to CRM. Leo never auto-sends.
 
 **Trigger & Cadence:**
 - Flow A: New COLD lead enters CRM · [Sales Rep] says "start outreach" · daily sequence-check cron (10:00 UTC)
@@ -417,7 +424,7 @@ Leo's boundary ends at **Signed**. Enablement, joint go-to-market, and revenue t
 Two distinct rhythms — different purpose, different format:
 
 **Daily — Task Briefing (00:00 UTC):**
-A simple action list. What needs to happen today. AT_RISK Opportunities surface automatically as `[STALL]` Tasks created by `deal-health-check` — they appear in the list without any additional work. No opportunity analysis in the daily briefing.
+A simple action list. What needs to happen today. AT_RISK Opportunities surface automatically as `[STALL]` Tasks — they appear in the list without any additional work.
 
 ```
 🔥 Needs attention (n)   ← overdue + due today
@@ -455,7 +462,41 @@ A strategic picture. All Opportunities and Partnerships grouped by `healthCheck`
 
 ---
 
-## Section 4 — Design Principles
+## Section 5 — Design Principles
+
+### Pipeline Definitions
+
+**Lead status lifecycle** (on Company `accountStatus`):
+
+| Status | Meaning | Transition |
+|---|---|---|
+| `COLD` | Entered CRM, not yet contacted | Set at onboarding |
+| `OUTREACH` | Cold email sequence in progress | Set when Email 1 is sent |
+| `WARM` | Responded — active conversation | Set when any reply is received |
+| `HOT` | Near close — high intent confirmed | Set by [Sales Rep] |
+| `OPT_OUT` | Do not contact — permanent | Set on unsubscribe · human override only |
+
+**Opportunity / Partnership health** (`healthCheck`):
+
+| Value | Meaning | Trigger |
+|---|---|---|
+| `ON_TRACK` | Progressing as expected | Default |
+| `NEEDS_FOLLOWUP` | Action needed, not yet critical | Set by Leo or [Sales Rep] |
+| `AT_RISK` | Silent or stalled — intervention required | Opportunity quiet 7+ days · Partnership quiet 14+ days |
+| `CANCELLED` | No longer active | Set by [Sales Rep] |
+
+### Alert Thresholds
+
+| Signal | Threshold | Action |
+|---|---|---|
+| Opportunity silence | 7+ days since last engagement | `healthCheck → AT_RISK` · stall Task created |
+| Partnership silence | 14+ days since last engagement | `healthCheck → AT_RISK` · stall Task created |
+| Lead gone cold | 30+ days, no active Opportunity or Partnership | Enters monthly re-engagement batch |
+| Outreach sequence | Day 4, Day 9 (no response) | Next touch drafted and queued |
+
+---
+
+### Principles
 
 **Owning the Full Outbound Motion**
 Leo handles everything from finding a lead to closing the deal. C1 brings people in, C2 builds context, C3 warms them up, C4 and C5 drive to close, C6 monitors everything. The sales rep focuses on judgment calls and relationship moments — not process.
