@@ -200,7 +200,7 @@ CRM is the working tool. GBrain is the institutional memory. Hindsight will add 
 
 ---
 
-### C1 — Generating Leads
+### C1 — Generating Leads (Outbound)
 
 > Leo is responsible for finding prospects worth reaching, running cold email sequences to engage them, and converting replies into Leads in CRM — so the sales rep never has to manually source prospects or run outreach themselves.
 
