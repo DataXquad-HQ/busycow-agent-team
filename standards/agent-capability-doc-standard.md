@@ -69,24 +69,36 @@ Structural, Contextual, and Memory are always separated. Never mix them.
 
 **Contents:**
 
-#### Structural Data
-The data structures the agent operates on. Not what the agent knows — what the agent reads and writes.
+#### Structural & Contextual Data
+Structural (what the agent reads/writes) and contextual (what the agent uses to judge) live together in the `context/` folder of the playbook repo.
 
-| Object | Fields Used | Read / Write | Source |
-|---|---|---|---|
-| [CRM object] | [field list] | R / W / RW | [system] |
+```
+busycow-playbooks/
+  agent-teams/
+    [agent]/
+      CAPABILITIES.md
+      context/
+        crm-objects.md       # Structural: CRM schema, field definitions
+        pipeline-definitions.md  # Contextual: status lifecycle, stage rules
+        icp.md               # Contextual: ICP definitions
+        sales-principles.md  # Contextual: judgment rules
+        product-context.md   # Contextual: what the product does, pricing logic
+```
 
-Include field definitions if non-obvious. This section should be enough for a developer to understand the agent's data footprint.
+**Structural** = data schema the agent operates on (CRM objects, field definitions, what to read/write).
+**Contextual** = knowledge the agent uses to make judgments (principles, definitions, product context).
 
-#### Contextual Data
-The knowledge sources the agent uses to make judgments. Not live data — principles, definitions, product context.
+Both live in `context/`. The distinction matters for understanding, not for folder structure.
 
-| Knowledge Source | What It Contains | Location |
+In CAPABILITIES.md, S2 references these files — it does not duplicate them:
+
+| File | Type | What It Contains |
 |---|---|---|
-| [name] | [what judgment it enables] | GitHub / GBrain / Lark |
+| `context/crm-objects.md` | Structural | CRM objects and fields this agent reads/writes |
+| `context/pipeline-definitions.md` | Contextual | Status lifecycle, stage definitions, health checks |
+| `context/[other].md` | Contextual | Judgment knowledge: ICP, principles, product context |
 
-Pipeline definitions, ICP definitions, sales principles, pricing logic — all go here.
-Canonical location: `busycow-playbooks/` or `dataxquad-core/` on GitHub.
+Canonical location for all context files: `busycow-playbooks/agent-teams/[agent]/context/`
 
 #### Memory Layer
 
