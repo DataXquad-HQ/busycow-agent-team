@@ -1,93 +1,66 @@
-# BusyCow Agent Team
+# BusyCow Agent Package
 
-Production-grade AI agent skills, schemas, and setup guides — built for the
-[Hermes Agent](https://hermes-agent.nousresearch.com) stack.
+A framework for deploying a production-grade AI agent team inside a company — built on [Hermes Agent](https://hermes-agent.nousresearch.com).
 
-This repo is the **canonical reference for duplicating the BusyCow Agent Team**
-on any fresh VM. Every directory has its own `README.md` that explains what
-lives there and in what order to install things.
+BusyCow is DataXquad's methodology for running AI agents as a real operating team: each agent owns a function, operates independently, and shares only data — not infrastructure.
 
 ---
 
-## Repository Structure
+## What's in this package
 
 ```
-busycow-agent-team/
-├── structural-data/      ← Shared schemas (CRM objects, DB definitions) — read by all agents
-├── contextual-knowledge/ ← Shared background knowledge docs
-├── core/                 ← Hermes install, identity templates, core skills
-├── third-party-tools/    ← Self-hosted tools (Twenty CRM, Ghost, etc.)
-├── shared-skills/        ← Hermes skills available to every agent profile
-└── agent-teams/          ← Per-agent configs, capabilities, agent-specific skills
+busycow-agent-package/
+├── architecture/           ← How the system is designed and why
+├── agent-teams/            ← Per-agent SOUL.md, skills, and capabilities
+├── context/                ← Data schemas (CRM, structural data definitions)
+├── third-party-tools/      ← Every tool in the stack: what it does, how we use it, setup
+├── standards/              ← Doc standards and conventions
+└── SETUP.md                ← Installation guide
 ```
 
 ---
 
-## Layer Responsibilities
+## Core principles
 
-| Layer | Who reads it | What it contains |
-|-------|-------------|-----------------|
-| `structural-data/` | All agents | CRM schemas, DB table/field definitions |
-| `contextual-knowledge/` | All agents | Background docs — company, products, team |
-| `core/` | Installer / all agents | Hermes setup, identity templates, core skills |
-| `third-party-tools/` | Installer / maintainer | Docker-based tool installs with SETUP.md |
-| `shared-skills/` | All agents | Hermes `.md` skills — one copy, used by everyone |
-| `agent-teams/` | Per-agent | SOUL.md, CAPABILITY.md, agent-specific skills |
+**1. Each agent is independent**
+No shared skills, no shared credentials, no shared infrastructure. If two agents need the same capability, duplicate it. Simplicity over elegance.
 
----
+**2. Context is layered**
 
-## Installation Order
+| Layer | What | Where |
+|---|---|---|
+| Human-readable docs | Policies, decisions, how we operate | GitHub wiki (`dx-internal-wiki`) |
+| Contextual memory | Entity knowledge, episodic memory | GBrain + Hindsight |
+| Structural data | Deals, contacts, pipeline, records | CRM and other operational systems |
 
-```
-Phase 0  (human, manual)
-  └── VM + Hermes install
-  └── Lark / Feishu bot app created
+**3. Agent design lives in `prompt.md`**
+Each agent's identity, role, and capabilities are defined in their `SOUL.md`. That file is the agent's operating system.
 
-Phase 1  (agent-automated)
-  └── core/SETUP.md             ← Hermes config, GBrain init, Lark MCP
-  └── third-party-tools/*/SETUP.md  ← install each self-hosted service
-
-Phase 2  (shared layer)
-  └── shared-skills/            ← copy skills into ~/.hermes/skills/
-
-Phase 3  (per agent)
-  └── agent-teams/<agent>/SETUP.md
-```
+**4. Credentials are not shared**
+Every agent has its own API tokens and environment credentials. If a credential must be shared, duplicate it into each agent's environment separately.
 
 ---
 
-## Agent Roster
+## Agent roster
 
-| Agent | Role |
-|-------|------|
-| Iris | Chief of Staff — coordination, dispatch, knowledge distillation |
-| Leo | Revenue — sales pipeline, partnerships, lead enrichment |
-| Maya | Content & Growth — blog, social, GTM |
-| Rex | Customer Success — support, renewals, response |
-| Steve | Development Lead — software, infrastructure |
+| Agent | Function |
+|---|---|
+| Iris | Chief of Staff — coordination, knowledge, task dispatch |
+| Leo | BD Lead — outbound, pipeline, lead nurturing |
+| Maya | GTM — inbound, content, market intel |
+| Rex | Customer Success — support, renewals |
+| Steve | Software Development — code, infrastructure |
 
 ---
 
 ## Stack
 
-| Layer | Tool |
-|-------|------|
-| Agent runtime | Hermes Agent |
-| Workspace | Lark / Feishu |
-| Knowledge graph | GBrain |
-| CRM | Twenty (self-hosted) |
-| External comms | Google Workspace |
+| Tool | Purpose |
+|---|---|
+| Hermes Agent | Agent runtime |
+| Lark / Feishu | Workspace — IM, task board, docs |
+| GBrain | Knowledge graph — entity facts, decisions, intel |
+| Hindsight | Episodic memory — what happened, what was said |
+| Twenty CRM | Pipeline — deals, contacts, stages |
 
----
-
-## Access Convention (important)
-
-All agent code must address internal services by **localhost** or the
-VM's internal address — never Tailscale IPs or Cloudflare tunnel URLs.
-Those external addresses are for human browser access only.
-
-```
-✅  http://localhost:3001    (Twenty CRM — agent code)
-❌  http://100.x.x.x:3001   (Tailscale — browser only)
-❌  https://crm.example.com  (Cloudflare tunnel — browser only)
-```
+See `third-party-tools/` for setup and usage details on each.

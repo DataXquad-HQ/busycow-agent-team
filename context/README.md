@@ -1,18 +1,18 @@
-# Structural Data
+# Context Schemas
 
-Shared schema definitions that **multiple agents read and write**.
-These are not owned by any single agent — they describe the data layer
-the whole team operates on.
+Data schema definitions for the structural data layer — the operational systems agents read and write.
 
-## Contents
+Each file in this directory defines the schema for one system: object types, field names, field IDs, and usage conventions.
 
-| Path | What |
-|------|------|
-| `crm/SCHEMA.md` | Twenty CRM object definitions — standard + custom objects and fields |
+## Files
 
-## Conventions
+| File | System | Purpose |
+|---|---|---|
+| `crm.md` | Twenty CRM | Deal, contact, company object schemas |
+| `task-board.md` | Lark Base | Task tracker field definitions and IDs |
 
-- Schema files use `{{PLACEHOLDER}}` for any instance-specific IDs
-- One `SCHEMA.md` per system/tool
-- Do not embed credentials or app tokens here
-- When an object or field is added to a live instance, update the SCHEMA.md here too
+## Convention
+
+- Use `{{PLACEHOLDER}}` for any instance-specific IDs (Lark Base IDs, app tokens, etc.)
+- Each schema file documents both the object structure and how agents are expected to use it
+- When a field is added or changed in a live instance, update the schema here too

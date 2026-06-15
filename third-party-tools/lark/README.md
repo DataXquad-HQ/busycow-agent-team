@@ -1,62 +1,45 @@
 # Lark / Feishu
 
-[Lark](https://www.larksuite.com) (international) / [Feishu](https://www.feishu.cn) (mainland China)
-is the team workspace that powers human ↔ agent communication and structured data storage.
+## What it is
 
-## Roles in the stack
+Lark (international) / Feishu (China) is the team workspace. It is the primary communication and coordination layer for the entire agent team.
+
+## Role in the stack
 
 | Feature | How we use it |
-|---------|--------------|
-| **IM / Chat** | Primary interface between humans and agents — agents receive and send messages here |
-| **Bitable (Base)** | Relational database for operational data — task tracker, CRM (pre-Twenty), financials |
-| **Docs (Docx)** | Internal document creation — meeting notes, SOPs, reports |
-| **Calendar** | Meeting tracking and scheduling |
-| **Bot App** | How Hermes connects to Lark — a registered app with API credentials |
+|---|---|
+| IM (Instant Messaging) | Founders communicate with agents; agents receive tasks and return results |
+| Bitable (Base) | Task tracker — the team's task board where all agent work is logged |
+| Docs | Internal documents, meeting notes, client-facing materials |
+| Calendar | Scheduling, meeting management |
+| Drive | File storage for shared documents |
+| Wiki | Not used — internal docs live in GitHub (`dx-internal-wiki`) |
 
-## Two integration modes
+## How agents use it
 
-### lark-cli (command-line, default)
+Every agent communicates through Lark IM. The task board (Lark Bitable) is the canonical record of what each agent is doing and what has been completed.
 
-The `lark-cli` tool wraps the Lark OpenAPI. Used by agents for all Bitable,
-Docs, IM, and Calendar operations.
+**Agents read from Lark:**
+- Tasks assigned to them via the task board
+- Messages and requests from founders or Iris
 
-```bash
-hermes setup lark        # configure lark-cli in Hermes
-lark-cli auth login      # authenticate (user or bot token)
-```
-
-**Strict mode (user token):** Since June 2026, we use `--as user` for Bitable
-and document operations so files are owned by the user, not the bot.
-
-### Lark MCP server (for direct tool access)
-
-Some Lark operations are exposed as MCP tools directly in the Hermes tool loop
-via the `lark-mcp` integration.
-
-```bash
-# Installed via: hermes setup lark
-# Configured in: ~/.hermes/config.yaml under mcp_servers
-```
-
-## Required App permissions
-
-When creating a Lark bot app in the Dev Console, enable:
-
-- `im:message` — send and receive messages
-- `bitable:app` — read/write Bitable
-- `docx:document` — read/write Docs
-- `contact:user.id:readonly` — resolve user IDs
-- `calendar:calendar` — calendar access (optional)
+**Agents write to Lark:**
+- Task status updates (in progress, done, blocked)
+- Agent Notes — what was done, what was found, what needs human review
+- Result for Human — the final human-readable output after completing a task
 
 ## Setup
 
-```bash
-hermes setup lark
-# Prompts for App ID, App Secret, and bot webhook URL
-```
+Each agent requires its own Lark bot app with its own App ID and App Secret. Credentials are not shared between agents.
 
-Verify: send a message to the Lark bot and confirm it replies.
+Steps:
+1. Create a bot app in the Lark Developer Console: https://open.larksuite.com/
+2. Enable required permissions: `im:message`, `bitable:app`, `docx:document`, `contact:user.base:readonly`
+3. Add the App ID and App Secret to the agent's Hermes config under `mcp_servers.lark`
+4. Add the bot to any groups or Bitables it needs to access
 
-## Docs
+## Access convention
 
-https://open.larksuite.com/document/home/index
+Agents use `lark-cli` in `--as user` mode for actions that require user-level access (e.g. writing to Bitable as the operator, not the bot).
+
+Bot credentials go in the agent's `config.yaml`. User credentials go in the agent's `.env`.
