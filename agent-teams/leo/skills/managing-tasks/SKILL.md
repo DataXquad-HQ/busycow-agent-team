@@ -4,12 +4,12 @@ description: >
   Create and update tasks in the {{COMPANY_NAME}} Task Tracker (Lark Base). Triages
   multi-task dumps automatically — extracts every action item from a message,
   auto-assigns Initiative and Goal, and saves in one batch. Use when user says
-  "記下來", "追蹤一下", "寫進去", "add a task", "update task", "mark done",
+  "note it down", "track this", "write it in", "add a task", "update task", "mark done",
   or mentions anything that needs to be tracked as an action item.
 triggers:
-  - "記下來"
-  - "追蹤一下"
-  - "寫進去"
+  - "note it down"
+  - "track this"
+  - "write it in"
   - "add a task"
   - "update task"
   - "mark done"
@@ -31,7 +31,7 @@ When called from `managing-sales-pipeline` or `managing-partnership-pipeline`, a
 | managing-sales-pipeline | `opportunity_record_id` | Opportunity | `fldxTM0Op2` |
 | managing-partnership-pipeline | `partnership_record_id` | Partnership | `flderan4Kb` |
 
-**Rule:** If context contains a record_id, fill the corresponding DuplexLink silently — do NOT ask the user. Mention it inline: `「→ 已連結 Opportunity OP-2026-XXX」`
+**Rule:** If context contains a record_id, fill the corresponding DuplexLink silently — do NOT ask the user. Mention it inline: `"→ Linked to Opportunity OP-2026-XXX"`
 
 ### Standalone Mode (no CRM context)
 When invoked standalone (no CRM handoff context), both Opportunity and Partnership fields are optional. This is the common case for:
@@ -90,8 +90,8 @@ Every task **must** be linked to an Initiative and Goal. Never leave blank.
 ### Match Logic (references/initiative-logic.md)
 | Confidence | Action |
 |------------|--------|
-| >80% | Link silently, mention inline: "→ 歸入 [Initiative]" |
-| Ambiguous | Ask once: "歸入 [X] 還是 [Y]？" |
+| >80% | Link silently, mention inline: "→ Assigned to [Initiative]" |
+| Ambiguous | Ask once: "Should this go under [X] or [Y]?" |
 | No match | Propose new Initiative, wait for confirmation, then create |
 
 ### Goal Record IDs
@@ -143,9 +143,9 @@ Use when a task must wait for another: fill `Depends On` with the predecessor ta
 |---|---|---|---|
 | `Agent Status` | fldRjvAxAV | SingleSelect | ⏳ Queued / 🤖 In Progress / 👀 Review / ✅ Accepted / 🔄 Retry |
 | `Output Link` | fldjiF87Cu | Url | URL of output artifact (Google Doc, Sheet, file) |
-| `執行日誌` | fldpmHTf10 | Text | Agent execution log — milestones, decisions, errors |
+| `Execution Log` | fldpmHTf10 | Text | Agent execution log — milestones, decisions, errors |
 | `Depends On` | fldXS8Mheq | DuplexLink (self) | Linked tasks that must be Done before this task can run |
-| `Handoff Context` | fldNuQ2YVY | Text | Auto-injected by upstream agent: Output Link + 執行日誌 summary from all Depends On tasks. Agent must read this before executing. |
+| `Handoff Context` | fldNuQ2YVY | Text | Auto-injected by upstream agent: Output Link + execution log summary from all Depends On tasks. Agent must read this before executing. |
 
 ## Data Transit Pattern (decided 2026-06-01)
 - **In-task (short-lived):** `/tmp/` local files, discarded after task ends
@@ -193,7 +193,7 @@ Without Goal + Initiative, workers produce generic outputs. With them, workers p
 After saving all tasks, output one summary table:
 
 ```
-✅ 已記錄 N 個任務：
+✅ N task(s) recorded:
 
 | Task | Initiative | Responsible | Deadline | Priority |
 |------|-----------|-------------|----------|----------|

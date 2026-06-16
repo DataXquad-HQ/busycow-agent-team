@@ -45,12 +45,3 @@ Tools and systems Leo uses across all capabilities.
 | `managing-tasks` | Create and update tasks in the internal Task Tracker (Lark Base) |
 | `reviewing-tasks` | Query and summarise tasks from the internal Task Tracker |
 | `managing-skills` | Create, update, rename, and delete Hermes skills |
-| `reading-lark-files` | Download and read files shared via Lark (xlsx, pdf, docx, etc.) |
-| `lark-im` | Send/receive Lark messages, manage group chats, search chat history |
-| `lark-base` | Operate Lark multi-dimensional tables — read, write, create fields and records |
-| `lark-task` | Manage Lark tasks and task lists |
-| `lark-doc` | Read and edit Lark documents and Wiki pages |
-| `lark-drive` | Manage files in Lark cloud storage — upload, download, move, permissions |
-| `lark-calendar` | View and manage Lark calendar events and meeting rooms |
-| `lark-contact` | Resolve Lark user names to open_id and vice versa |
-| `lark-shared` | Shared Lark auth/setup — required before any other lark-* skill |

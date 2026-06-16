@@ -8,14 +8,14 @@ description: >
   needs to triage a list of potential contacts.
 triggers:
   - "prospect scouting"
-  - "誰值得拜訪"
-  - "幫我篩選"
-  - "活動名單"
-  - "參展名單"
+  - "who is worth visiting"
+  - "help me filter"
+  - "event list"
+  - "exhibitor list"
   - "attendee list"
   - "cold list"
-  - "誰最值得"
-  - "哪些公司值得"
+  - "who is most worth it"
+  - "which companies are worth it"
   - "scouting"
   - "prioritise list"
   - "prioritize list"
@@ -101,33 +101,33 @@ Score each company/person on:
 [Date] | [Focus area if specified]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔴 **優先接觸（必見）**
+🔴 **Priority contacts (must-see)**
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 1. **[Company Name]** — [Key Person / Role if known]
-   產品契合：[business line] — [why they fit]
-   關係現況：[existing contact / warm intro / cold]
-   建議切入：[specific angle or opening]
-   觸發點：[any timing signal — news, expansion, known pain]
+   Product fit: [business line] — [why they fit]
+   Relationship status: [existing contact / warm intro / cold]
+   Suggested angle: [specific angle or opening]
+   Trigger: [any timing signal — news, expansion, known pain]
 
 2. **[Company Name]** ...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🟡 **值得聊聊（時間允許）**
+🟡 **Worth a chat (time permitting)**
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 3. **[Company Name]** — [brief reason]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚪ **可略過**
+⚪ **Can skip**
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - [Company] — [one-line reason: wrong industry / too small / no fit]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📊 **Summary**
-Total assessed: [N] | 必見: [N] | 值得聊: [N] | 略過: [N]
+Total assessed: [N] | Must-see: [N] | Worth a chat: [N] | Skip: [N]
 
-[If ICP missing]: ⚠️ 無 ICP 文件，以現有 opportunity 歷史推斷。建議建立 `wiki/{{ORG_PREFIX}}-icp` 以提升準確度。
+[If ICP missing]: ⚠️ No ICP document found — inferred from existing opportunity history. Recommend creating `wiki/{{ORG_PREFIX}}-icp` to improve accuracy.
 ```
 
 ---
@@ -179,6 +179,6 @@ It is a read-only analysis tool. Writing happens in the downstream skill.
 - **Don't skip knowledge context loading** — even if ICP is missing, check anyway and note it in the output. The ⚠️ flag reminds the Sales Rep to build that wiki page.
 - **Company name matching is fuzzy** — CRM `like` search may miss variations. Try multiple spellings. Use GBrain fuzzy=True.
 - **Warm relationships always beat cold fit** — a tepid-fit company with an existing warm contact is usually worth more than a perfect-fit cold company.
-- **Don't over-rank** — 必見 list should be 3–5 companies max. If everything is high priority, nothing is.
+- **Don't over-rank** — the must-see list should be 3–5 companies max. If everything is high priority, nothing is.
 - **Ask for focus area upfront if list is large (20+)** — without a focus, assessment takes longer and output is less actionable.
 - **This skill is read-only** — never write to CRM or Hindsight during scouting. Writing happens after the Sales Rep decides to engage.

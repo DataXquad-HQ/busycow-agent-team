@@ -8,12 +8,12 @@ description: >
 triggers:
   - "enrich"
   - "account intelligence"
-  - "公司資料"
-  - "補資料"
-  - "研究一下"
+  - "company information"
+  - "fill in data"
+  - "research this"
   - "background on"
   - "tell me about this company"
-  - "幫我查"
+  - "look it up for me"
   - "company intel"
   - "enrichment"
   - "account update"
@@ -55,7 +55,7 @@ Never use `localhost:3001` in any human-facing output.
 | Trigger | Level | Scope |
 |---|---|---|
 | New Lead just created (manual trigger by the Sales Rep) | Level 1 | Single company |
-| Sales Rep asks「幫我查一下 [company]」| Level 1 | Single company |
+| Sales Rep asks "look up [company] for me" | Level 1 | Single company |
 | Monthly cron (auto) | Level 2 | All active companies with NURTURE/OPPORTUNITY people |
 | the Sales Rep asks for latest news on a company | Level 2 | Single company |
 

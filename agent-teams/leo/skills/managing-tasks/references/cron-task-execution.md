@@ -51,7 +51,7 @@ Parse `Task Name` and `Description` fields. Execute according to task type:
 
 ### 3. Record Execution Result
 
-Append execution log to `執行日誌` field (append mode, do NOT overwrite):
+Append execution log to `Execution Log` field (append mode, do NOT overwrite):
 
 ```bash
 lark-cli base +record-upsert \
@@ -127,7 +127,7 @@ For transient failures (network, rate limit):
 From 2026-06-01 execution:
 
 ```
-Task: [LEO] 安裝 Role-Specific Skills
+Task: [LEO] Install Role-Specific Skills
 Record ID: recvldbLa0E5Yl
 Worker Type: Leo
 Status: Pending → In Progress → Done

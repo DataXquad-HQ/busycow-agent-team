@@ -14,12 +14,12 @@ triggers:
   - "just got off a call"
   - "update opportunity"
   - "update partnership"
-  - "開完會了"
-  - "剛跟他們通過電話"
-  - "跟進"
+  - "finished the meeting"
+  - "just got off the phone with them"
+  - "follow up"
   - "log engagement"
   - "sent an email to"
-  - "發了信給"
+  - "sent an email to them"
 version: "2.0"
 author: {{COMPANY_NAME}}/Leo
 ---
@@ -99,14 +99,14 @@ From the raw input, extract:
 
 Present extracted summary to Sales Rep:
 
-> 「這樣記對嗎？
-> **互動類型：** [Meeting / Call / Email / Demo / …]
-> **日期：** [date]
-> **結果：** [outcome]
-> **下一步：** [next action — owner + deadline]
-> **補充說明：** [narrative context]
+> "Does this look right?
+> **Interaction Type:** [Meeting / Call / Email / Demo / …]
+> **Date:** [date]
+> **Outcome:** [outcome]
+> **Next Step:** [next action — owner + deadline]
+> **Additional Notes:** [narrative context]
 >
-> 有什麼要補充或修正的？」
+> Anything to add or correct?"
 
 **Do NOT write to CRM until confirmed (or Sales Rep explicitly skips).**
 
@@ -195,7 +195,7 @@ mutation CreateTask($data: TaskCreateInput!) {
 # variables:
 {
   "data": {
-    "title": "[跟進] Company — specific action",
+    "title": "[Follow-Up] Company — specific action",
     "status": "TODO",
     "dueAt": "2026-06-17T12:00:00Z",
     "bodyV2": {

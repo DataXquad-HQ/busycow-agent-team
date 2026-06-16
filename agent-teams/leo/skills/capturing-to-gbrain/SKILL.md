@@ -7,8 +7,8 @@ description: >
   Do NOT use for ephemeral task state or one-session fixes — those go in Memory
   or GBrain notes at most.
 triggers:
-  - "存進 GBrain"
-  - "記進長期記憶"
+  - "save to GBrain"
+  - "record in long-term memory"
   - "save to brain"
   - "put in gbrain"
   - user explicitly says to remember something permanently
@@ -109,7 +109,7 @@ Common types: `works_at`, `invested_in`, `advises`, `founded`, `partner_of`
 5. **Extract facts** if content has structured claims
 6. **Add timeline entry** if something happened on a specific date
 7. **Add links** if relationships to other pages are established
-8. Confirm to user: "已存入 GBrain：`slug`"
+8. Confirm to user: "Saved to GBrain: `slug`"
 
 ---
 

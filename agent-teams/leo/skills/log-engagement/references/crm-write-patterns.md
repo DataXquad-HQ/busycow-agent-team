@@ -49,7 +49,7 @@ mutation CreateNote($data: NoteCreateInput!) {
 ```graphql
 mutation {
   createTask(data: {
-    title: "[報回] Company — date 後補紀錄"
+    title: "[Report-back] Company — date follow-up notes"
     status: TODO
     dueAt: "2026-06-16T15:00:00Z"
     bodyV2: { markdown: "Context + agent advice here" }   # ← NOT body
@@ -106,7 +106,7 @@ gql(f"""mutation {{
 task_result = gql("""mutation CreateTask($data: TaskCreateInput!) {
   createTask(data: $data) { id }
 }""", variables={"data": {
-    "title": "[跟進] Company — follow up on proposal",
+    "title": "[Follow-up] Company — follow up on proposal",
     "status": "TODO",
     "dueAt": "2026-06-17T12:00:00Z",
     "bodyV2": {"markdown": "**Context:** ...\n**Goal:** ...\n**Approach:** ..."}

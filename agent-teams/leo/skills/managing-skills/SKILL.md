@@ -13,9 +13,9 @@ triggers:
   - "delete skill"
   - "update skill"
   - "make this a shared skill"
-  - "新增 skill"
-  - "建立 skill"
-  - "刪除 skill"
+  - "add a new skill"
+  - "create a skill"
+  - "remove a skill"
   - "shared skill"
 version: "2.0"
 ---

@@ -15,8 +15,8 @@ triggers:
   - "check in with"
   - "reach out to"
   - "draft a message for"
-  - "幫我寫封信給"
-  - "跟進一下"
+  - "write an email for me to"
+  - "follow up with"
   - "lead nurturing"
   - "C4"
   - "who needs nurturing"
@@ -253,24 +253,24 @@ Post to `[Sales] Nurturing Outreach Review` (`{{OUTREACH_REVIEW_CHANNEL_ID}}`).
 
 Single draft:
 ```
-✉️ 1 封草稿待審查 — [Date]
+✉️ 1 draft pending review — [Date]
 
 **[Person Name]** — [Company]
-主旨：[subject line]
-CRM：{{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
+Subject: [subject line]
+CRM: {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
 
-回覆 **OK** 發送，或直接在 CRM 將 status 改為 SCHEDULED。
+Reply **OK** to send, or update status to SCHEDULED directly in CRM.
 ```
 
 Multiple drafts:
 ```
-✉️ [N] 封草稿待審查 — [Date]
+✉️ [N] draft(s) pending review — [Date]
 
 1. **[Person Name]** — [Company] | {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
 2. **[Person Name]** — [Company] | {{CRM_EXTERNAL_URL}}/objects/outreachMessages/[UUID]
 
-回覆 OK 全部發送，或指定哪幾封（e.g. "1 and 3 OK"）。
-也可直接在 CRM 將 status 改為 SCHEDULED。
+Reply OK to send all, or specify which ones (e.g. "1 and 3 OK").
+You can also update status to SCHEDULED directly in CRM.
 ```
 
 **Rules:**

@@ -9,8 +9,8 @@ triggers:
   - "check inbox"
   - "any replies?"
   - "inbox monitor"
-  - "有沒有人回信"
-  - "收到回信了嗎"
+  - "has anyone replied"
+  - "did we get a reply"
   - "monitor email replies"
   - "C4 inbox"
 ---
@@ -19,7 +19,7 @@ triggers:
 
 ## When to Use
 
-Use when checking Leo's OpenMail inbox for inbound replies to outreach emails. Runs automatically via daily cron, or trigger manually with 'check inbox' / '有沒有人回信'. Do not use for sending emails — that is handled by nurturing-leads.
+Use when checking Leo's OpenMail inbox for inbound replies to outreach emails. Runs automatically via daily cron, or trigger manually with 'check inbox' / 'has anyone replied'. Do not use for sending emails — that is handled by nurturing-leads.
 
 ## Purpose
 
@@ -33,7 +33,7 @@ A reply is a signal — it means the Lead is engaging. Human decides how to repl
 ## When to Use
 
 - **Cron (Cron C):** runs automatically once daily at 02:00 UTC
-- **Human trigger:** "check inbox", "有沒有人回信", "any replies?" — manual on-demand check
+- **Human trigger:** "check inbox", "has anyone replied", "any replies?" — manual on-demand check
 - **Do not use** for sending emails — that is `nurturing-leads` Flow B
 
 ---
@@ -208,12 +208,12 @@ Read the clean reply and classify the intent:
 
 | Intent | Examples | Task to create |
 |---|---|---|
-| **Wants human contact** | 「可以認識真人嗎」「能跟你們的人聊聊嗎」 | "Respond to [Person] — wants to speak with a human" |
-| **Has a question** | 「你們有做X嗎」「價格怎麼算」 | "Reply to [Person]'s question: [question summary]" |
-| **Wants a meeting** | 「可以安排個call嗎」「有空聊聊嗎」 | "Schedule a call with [Person] — [Company]" |
-| **Positive / interested** | 「很有興趣」「請多介紹」 | "Follow up with [Person] — expressed interest" |
-| **Neutral / acknowledge** | 「收到了」「謝謝」 | "Follow up with [Person] — acknowledged outreach" |
-| **Negative / not interested** | 「不需要」「暫時不考慮」 | No task — flag for human to consider OPT_OUT |
+| **Wants human contact** | "Can I meet a real person?" "Can we chat with one of your team?" | "Respond to [Person] — wants to speak with a human" |
+| **Has a question** | "Do you do X?" "How does pricing work?" | "Reply to [Person]'s question: [question summary]" |
+| **Wants a meeting** | "Can we schedule a call?" "Do you have time to chat?" | "Schedule a call with [Person] — [Company]" |
+| **Positive / interested** | "Very interested" "Please tell me more" | "Follow up with [Person] — expressed interest" |
+| **Neutral / acknowledge** | "Got it" "Thanks" | "Follow up with [Person] — acknowledged outreach" |
+| **Negative / not interested** | "Not needed" "Not considering it for now" | No task — flag for human to consider OPT_OUT |
 
 Create a CRM Task for all intents **except negative**:
 
@@ -246,43 +246,43 @@ Pick the human Sales Rep (not Leo/bot accounts).
 Post to `[Sales] Nurturing Outreach Review` (`{{OUTREACH_REVIEW_CHANNEL_ID}}`):
 Single reply:
 ```
-📩 收到回信！— [Date]
+📩 Reply received! — [Date]
 
 **[Person Name]** — [Company]
-主旨：Re: [subject]
+Subject: Re: [subject]
 
 > [reply_clean — first 300 chars, truncate with "…" if longer]
 
-📋 已建立 Task：[task title]
-CRM 聯絡人：{{CRM_EXTERNAL_URL}}/objects/people/[PERSON_UUID]
-CRM 互動記錄：{{CRM_EXTERNAL_URL}}/objects/engagements/[ENGAGEMENT_UUID]
+📋 Task created: [task title]
+CRM contact: {{CRM_EXTERNAL_URL}}/objects/people/[PERSON_UUID]
+CRM engagement: {{CRM_EXTERNAL_URL}}/objects/engagements/[ENGAGEMENT_UUID]
 ```
 
 Negative intent (no task created):
 ```
-📩 收到回信 — [Date]
+📩 Reply received — [Date]
 
 **[Person Name]** — [Company]
-主旨：Re: [subject]
+Subject: Re: [subject]
 
 > [reply_clean]
 
-⚠️ 對方表示不感興趣。是否要標記為 OPT_OUT？請人工確認。
+⚠️ Recipient indicated no interest. Mark as OPT_OUT? Please confirm manually.
 ```
 
 Multiple replies in one run:
 ```
-📩 [N] 封新回信 — [Date]
+📩 [N] new reply(ies) — [Date]
 
 1. **[Person]** — [Company]
    > [reply preview 80 chars…]
-   📋 Task：[task title]
-   CRM：{{CRM_EXTERNAL_URL}}/objects/people/[UUID]
+   📋 Task: [task title]
+   CRM: {{CRM_EXTERNAL_URL}}/objects/people/[UUID]
 
 2. **[Person]** — [Company]
    > [reply preview 80 chars…]
-   📋 Task：[task title]
-   CRM：{{CRM_EXTERNAL_URL}}/objects/people/[UUID]
+   📋 Task: [task title]
+   CRM: {{CRM_EXTERNAL_URL}}/objects/people/[UUID]
 ```
 
 ### Step 9 — Mark thread as read
@@ -360,4 +360,4 @@ Stay silent when there's nothing to say.
 - **TWENTY_API_KEY auth** — load from env: `[k for k in open('/path/.env').read().splitlines() if k.startswith('TWENTY_API_KEY')][0].split('=',1)[1]`
 - **API calls can inadvertently mark threads read** — calling `GET /v1/threads/{id}/messages` may cause the thread's `isRead` to flip on the server side. If a reply was processed manually (e.g. during debugging), check CRM for an existing Engagement before creating a duplicate. The cron should de-duplicate by checking: does an Engagement already exist with this thread_id in its note?
 - **`is_read=false` may return zero even when replies exist** — if threads were read by a prior API call or manual processing, poll all threads and filter by `direction: inbound` + absence of existing Engagement instead of relying solely on `is_read=false`.
-- **Escalation signal** — if reply content contains phrases like "speak with a real person", "真人", "human", flag in the Lark notification with `⚡ 對方要求與真人聯繫` so the sales rep prioritises it.
+- **Escalation signal** — if reply content contains phrases like "speak with a real person", "human", flag in the Lark notification with `⚡ Recipient is requesting to speak with a real person` so the sales rep prioritises it.

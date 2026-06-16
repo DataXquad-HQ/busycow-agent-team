@@ -3,17 +3,17 @@ name: reviewing-tasks
 description: >
   Query and summarise tasks from the {{COMPANY_NAME}} Task Tracker with Goal-first
   prioritisation. Use when user asks "what tasks do I have", "what's due today",
-  "standup", "任務清單", "本週重點", or wants a workload overview grouped by Goal.
+  "standup", "task list", "this week's priorities", or wants a workload overview grouped by Goal.
 triggers:
   - "what tasks"
   - "what's due"
   - "standup"
-  - "任務清單"
+  - "task list"
   - "today's tasks"
   - "this week"
   - "task overview"
-  - "本週重點"
-  - "有什麼事要做"
+  - "this week's priorities"
+  - "what do I need to do"
 version: "2.0"
 author: {{COMPANY_NAME}}
 ---
@@ -42,13 +42,13 @@ author: {{COMPANY_NAME}}
 Present tasks in this order — not a flat list:
 
 ```
-🔴 今天到期 / 已逾期
+🔴 Due today / Overdue
   • [Task] — [Owner] — [Goal > Initiative]
 
-⚡ 高優先、未排時間
+⚡ High priority, no scheduled time
   • [Task] — [Owner] — [Goal > Initiative]
 
-📋 按 Goal 分組
+📋 Grouped by Goal
   [Goal Name]
     [Initiative Name]
       • [Task] — [Owner] — [Deadline / no deadline]

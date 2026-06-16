@@ -10,7 +10,7 @@ triggers:
   - "what do I need to do today"
   - "today's tasks"
   - "send daily reminder"
-  - "今天要做什麼"
+  - "what do I need to do today"
   - "daily briefing"
 version: "1.0"
 author: {{COMPANY_NAME}}/Leo

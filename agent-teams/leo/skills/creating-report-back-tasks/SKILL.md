@@ -12,10 +12,10 @@ triggers:
   - "meeting tomorrow"
   - "I'll be talking to them on"
   - "create report back task"
-  - "報回 task"
-  - "下週有個 meeting"
-  - "明天有通電話"
-  - "安排了一個 demo"
+  - "report back task"
+  - "next week's meeting"
+  - "call tomorrow"
+  - "arranged a demo"
 version: "1.0"
 author: {{COMPANY_NAME}}/Leo
 ---
@@ -154,9 +154,9 @@ mutation {
 
 After creating:
 
-> 「已幫你建好報回 Task：
+> "Report-Back Task created:
 > 📅 **[Log Interaction] CompanyName — Call on June 17**
-> 到時候通完話跟我說一下結果，我來幫你記進去。」
+> Message me after the call with what happened and I'll log it for you."
 
 ---
 

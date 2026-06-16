@@ -14,9 +14,9 @@ triggers:
   - "pipeline status"
   - "health check"
   - "C6"
-  - "pipeline 健不健康"
-  - "本週 pipeline review"
-  - "我們達標嗎"
+  - "is the pipeline healthy"
+  - "this week's pipeline review"
+  - "are we on target"
 ---
 
 # Pipeline Health Check Skill
@@ -219,7 +219,7 @@ For each opportunity missing `amount` or `closeDate`:
 ```graphql
 mutation {
   createTask(data: {
-    title: "[補資料] [Opportunity name] — 請填入預估金額與預計成交日"
+    title: "[Fill in data] [Opportunity name] — please add estimated amount and expected close date"
     body: { markdown: "**Opportunity:** [name]\n\n**Missing:** [amount / closeDate / both]\n\n**Why it matters:** Leo cannot calculate pipeline coverage without this data. Please update in CRM.\n\nCRM: {{CRM_EXTERNAL_URL}}/objects/opportunities/[UUID]" }
     status: TODO
     dueAt: "[tomorrow 09:00 CST]"

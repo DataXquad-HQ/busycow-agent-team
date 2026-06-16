@@ -86,7 +86,7 @@ metadata:
 # ✅ Good
 description: >
   Creates and updates tasks in the Lark task board.
-  Use when user says "add a task", "create a task", "新增任務",
+  Use when user says "add a task", "create a task", "add new task",
   or needs to track a follow-up action.
 
 # ✅ Good — multiple trigger patterns

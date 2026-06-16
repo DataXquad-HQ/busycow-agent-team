@@ -11,9 +11,9 @@ triggers:
   - "help me with this task"
   - "advice on"
   - "how do I handle"
-  - "這個 task 怎麼做"
-  - "幫我想一下這個"
-  - "這個怎麼跟進"
+  - "how do I do this task"
+  - "help me think through this"
+  - "how do I follow up on this"
 version: "1.0"
 author: {{COMPANY_NAME}}/Leo
 ---
@@ -61,7 +61,7 @@ Extract from the request:
 - **Company / opportunity** — which Opportunity or Partnership
 - **Deadline** — how urgent is this
 
-If unclear, ask: 「是哪個 opportunity 的哪個 task？」
+If unclear, ask: "Which task for which opportunity?"
 
 ### Step 2 — Pull All Available Context
 

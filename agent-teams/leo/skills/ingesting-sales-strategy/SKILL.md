@@ -11,8 +11,8 @@ triggers:
   - "update sales strategy"
   - "load strategy document"
   - "strategy document updated"
-  - "讀取 sales strategy"
-  - "更新策略文件"
+  - "read sales strategy"
+  - "update strategy document"
 ---
 
 # Ingest Sales Strategy Skill

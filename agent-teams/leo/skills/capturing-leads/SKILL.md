@@ -6,18 +6,18 @@ description: >
   card photos (native vision). Always asks about Opportunity/Partnership potential.
   Writes to CRM + Hindsight contextual memory.
 triggers:
-  - "剛認識了"
-  - "名片"
+  - "just met someone"
   - "business card"
-  - "幫我記錄"
-  - "新聯絡人"
-  - "活動認識"
-  - "朋友介紹"
+  - "business card"
+  - "help me log this"
+  - "new contact"
+  - "met at an event"
+  - "introduced by a friend"
   - "referral"
   - "lead capture"
   - "put into CRM"
-  - "存進來"
-  - "展覽"
+  - "save it"
+  - "expo"
   - "event"
   - "networking"
 ---
@@ -32,7 +32,7 @@ These people have already been met — they enter CRM directly as `LEAD`.
 
 The most important job: **pull everything the Sales Rep knows out of their head and into the right memory layers.**
 
-Leo's mandatory question for every contact: **「有沒有 Opportunity 或 Partnership 要建？」**
+Leo's mandatory question for every contact: **"Is there an Opportunity or Partnership to create?"**
 No contact should leave Lead Capture without Leo asking this.
 
 ---
@@ -91,10 +91,10 @@ Show your work immediately: present what you extracted so the Sales Rep only cor
 
 ### Step 2 — Ask ONE targeted question
 Identify the single most critical missing piece. Priority order:
-1. **Lead Tier** — if not clear: 「這個人你怎麼看？過客、先存著、還是有案子要談？」
-2. **Meet context** — if not stated: 「你們是在哪認識的？什麼活動或誰介紹的？」
+1. **Lead Tier** — if not clear: "How do you see this person? Passing acquaintance, keep in touch, or is there a deal to discuss?"
+2. **Meet context** — if not stated: "Where did you meet? What event or who introduced you?"
 3. **Opportunity/Partnership** — ALWAYS ask this if leadTier = NURTURE or OPPORTUNITY:
-   「有沒有 Opportunity 或 Partnership 的機會要建起來？」
+   "Is there an Opportunity or Partnership worth creating?"
 4. **Contact handle** — if preferredChannel is LINE/WhatsApp but no handle given
 
 Never send a questionnaire. One question at a time.
@@ -103,25 +103,25 @@ Never send a questionnaire. One question at a time.
 Present the full summary for the Sales Rep to approve:
 
 ```
-📋 確認以下資訊存入 CRM：
+📋 Please confirm the following to be saved to CRM:
 
-**聯絡人**
-- 姓名：[name]
-- 公司：[company] （[existing / 新建]）
-- 職稱：[title]
-- 認識來源：[meetContext] — [source enum]
-- 分類：[leadTier]
-- 聯絡方式：[email / phone / contactHandle]
+**Contact**
+- Name: [name]
+- Company: [company] ([existing / new])
+- Title: [title]
+- How we met: [meetContext] — [source enum]
+- Category: [leadTier]
+- Contact: [email / phone / contactHandle]
 
-**備注（存入 Hindsight）**
+**Notes (saved to Hindsight)**
 [contextual summary — what was discussed, Sales Rep's read, follow-up angle]
 
-**要建立：**
-- [ ] Opportunity: [name] — [stage] （或：無）
-- [ ] Partnership: [name] （或：無）
+**To create:**
+- [ ] Opportunity: [name] — [stage] (or: none)
+- [ ] Partnership: [name] (or: none)
 - [ ] Task: [follow-up action if any]
 
-確認後我就存進去，有需要修改嗎？
+Confirm and I'll save it — any changes needed?
 ```
 
 ### Step 4 — Write (after confirmation)
@@ -201,7 +201,7 @@ mutation {
 ```graphql
 mutation {
   createTask(data: {
-    title: "[跟進] Company — first follow-up after Computex"
+    title: "[Follow-up] Company — first follow-up after Computex"
     status: TODO
     dueAt: "2026-06-20T12:00:00Z"
     bodyV2: { markdown: "Met at Computex 2026. Context: [summary]. Suggested approach: [angle]." }
