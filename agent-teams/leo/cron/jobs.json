@@ -1,0 +1,348 @@
+{
+  "jobs": [
+    {
+      "id": "a505d2f50b17",
+      "name": "Daily Pipeline Reminder",
+      "prompt": "Run the daily-reminder skill. Pull all TODO tasks from Twenty CRM for all active Sales Reps. Apply the priority logic: today's tasks first, then tomorrow's, then this week's \u2014 cap at 10 per rep. Always flag overdue [Log Interaction] tasks. Add a suggested approach for each task based on deal context recalled from dx-pipeline. Deliver the reminder to the Sales Daily Update Lark channel (chat_id: oc_a5e03bcb6026a81a5a330b53c4e90575).",
+      "skills": [
+        "sending-daily-pipeline-reminder"
+      ],
+      "skill": "sending-daily-pipeline-reminder",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 * * 1-5",
+        "display": "0 1 * * 1-5"
+      },
+      "schedule_display": "0 1 * * 1-5",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-15T07:44:26.759324+00:00",
+      "next_run_at": "2026-06-17T01:00:00+00:00",
+      "last_run_at": "2026-06-16T01:03:52.259176+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "feishu:oc_8c3706de744958173c700d995ccfd4ef",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "b438faf25a96",
+      "name": "Monthly Account Intelligence Update",
+      "prompt": "Run Level 2 Account Intelligence update for all active accounts.\n\nSteps:\n1. Query CRM for all companies that have at least one person with leadTier = NURTURE or OPPORTUNITY\n2. For each company, skip if lastEnrichedDate is within the last 25 days\n3. Run Level 2 enrichment per the account-intelligence skill: check company blog/news, Google News (last 30 days), LinkedIn\n4. Write significant findings to Hindsight dx-pipeline, GBrain timeline entries, and update CRM lastEnrichedDate\n5. Deliver a monthly summary report to Lark [DX] Sales Daily Update (chat_id: oc_a5e03bcb6026a81a5a330b53c4e90575)\n\nFollow the account-intelligence skill exactly \u2014 significance filter, write patterns, and report format all defined there.",
+      "skills": [
+        "enriching-accounts"
+      ],
+      "skill": "enriching-accounts",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 2 1 * *",
+        "display": "0 2 1 * *"
+      },
+      "schedule_display": "0 2 1 * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-15T10:07:29.877434+00:00",
+      "next_run_at": "2026-07-01T02:00:00+00:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "feishu:oc_8c3706de744958173c700d995ccfd4ef",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "4033af9ef0e2",
+      "name": "Lead Nurturing Scanner",
+      "prompt": "Run the Lead Nurturing Scanner (Flow A from the lead-nurturing skill).\n\nSteps:\n1. Query CRM for all people with leadTier = NURTURE or OPPORTUNITY\n2. Filter: lastContactDate is null OR more than 30 days ago\n3. Exclude anyone who already has a DRAFT or SCHEDULED OutreachMessage\n4. For each overdue lead: recall context from Hindsight and GBrain, check DX blog (http://blog.dataxquad.com) for recent relevant posts, search for lead's latest company news\n5. Draft a personalised message following the lead-nurturing skill guidelines\n6. Store each draft as an OutreachMessage in CRM (status=DRAFT, messageType=NURTURING)\n7. For drafts scheduled today or tomorrow: post a SHORT review notification to Lark chat oc_28f34b34f4da3a13ddc618b19d1c458f \u2014 show only subject + CRM link (https://sales.dataxquad.com/objects/outreachMessages/[UUID]), no stats, no flags. Format: \"\u2709\ufe0f N \u5c01\u8349\u7a3f\u5f85\u5be9\u67e5 \u2014 [Date] / [Person] \u2014 [Company] | [link] / \u56de\u8986 OK \u767c\u9001\u6216\u5728 CRM \u6539 status \u70ba SCHEDULED\"\n8. Post the FULL ops log (run stats, flags, warnings, memory updates) to THIS channel (oc_8c3706de744958173c700d995ccfd4ef) \u2014 this is the backend report channel.\n\nCRM API calls: always use http://localhost:3001/graphql\nCRM links shown to humans: always use https://sales.dataxquad.com (not localhost)\nNever reference specific team members by name. Use \"the team\" or \"our BD team\".",
+      "skills": [
+        "nurturing-leads"
+      ],
+      "skill": "nurturing-leads",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 * * *",
+        "display": "0 1 * * *"
+      },
+      "schedule_display": "0 1 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-15T14:43:31.551315+00:00",
+      "next_run_at": "2026-06-17T01:00:00+00:00",
+      "last_run_at": "2026-06-16T01:01:36.520059+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "feishu:oc_8c3706de744958173c700d995ccfd4ef",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "dbcee4d2c67b",
+      "name": "Outreach Message Sender",
+      "prompt": "Run the Outreach Message Sender (Flow B from the lead-nurturing skill).\n\nSteps:\n1. Query CRM OutreachMessages where status=DRAFT and scheduledAt is in the past (overdue)\n   \u2192 Re-notify Lark review channel oc_28f34b34f4da3a13ddc618b19d1c458f with SHORT overdue alert: \"\u26a0\ufe0f Overdue draft \u2014 [Person], [Company] | https://sales.dataxquad.com/objects/outreachMessages/[UUID] \u2014 still awaiting approval. Reply OK to send or CANCEL to discard.\"\n\n2. Query CRM OutreachMessages where status=SCHEDULED and scheduledAt <= now\n   \u2192 For each: send via OpenMail (leo-dx@openmail.sh), always include Idempotency-Key header (UUID)\n   \u2192 Update OutreachMessage status to SENT, set sentAt\n   \u2192 Update Person.lastContactDate\n   \u2192 Create Engagement record (type=EMAIL, status=COMPLETED) linked to Person + Company\n   \u2192 Write to Hindsight dx-pipeline memory\n\n3. Post full ops log to THIS channel (oc_8c3706de744958173c700d995ccfd4ef) \u2014 sent count, errors, any issues.\n\nCRM API calls: always use http://localhost:3001/graphql\nCRM links shown to humans: always use https://sales.dataxquad.com (not localhost)\nNever reference specific team members by name.",
+      "skills": [
+        "nurturing-leads"
+      ],
+      "skill": "nurturing-leads",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 4 * * *",
+        "display": "0 4 * * *"
+      },
+      "schedule_display": "0 4 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 1
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-15T14:43:39.342234+00:00",
+      "next_run_at": "2026-06-17T04:00:00+00:00",
+      "last_run_at": "2026-06-16T04:02:08.475962+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "feishu:oc_8c3706de744958173c700d995ccfd4ef",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "6d55bd6278b9",
+      "name": "Inbox Monitor \u2014 Inbound Reply Tracker",
+      "prompt": "You are Leo, DataXquad's BD Lead Agent. Run the Inbox Monitor flow as defined in the inbox-monitor skill.\n\nSteps:\n1. Fetch all unread threads from Leo's OpenMail inbox\n2. For each thread, check if the latest message is inbound (direction: \"inbound\")\n3. If yes: match sender email to a CRM Person, log an Engagement, update lastContactDate, write Hindsight memory, notify [Sales] Nurturing Outreach Review channel\n4. Mark thread as read only after all steps succeed\n5. Post full ops log to [System] Backend Report\n\nIf zero unread inbound replies: stay completely silent (post nothing to either channel).",
+      "skills": [
+        "monitoring-inbox-replies"
+      ],
+      "skill": "monitoring-inbox-replies",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 2 * * *",
+        "display": "0 2 * * *"
+      },
+      "schedule_display": "0 2 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 2
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-15T17:25:13.512362+00:00",
+      "next_run_at": "2026-06-17T02:00:00+00:00",
+      "last_run_at": "2026-06-16T02:19:46.005874+00:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "ab9f3ff90c20",
+      "name": "Weekly Pipeline Health Check",
+      "prompt": "Run the pipeline-health-check skill. Pull all active opportunities and partnerships from CRM, recall strategy context from GBrain and Hindsight dx-global, calculate pipeline coverage against revenue target, flag stalled and AT_RISK items, create Tasks for missing data, and deliver the Health Report to the sales team channel. Post the ops log as the final response.",
+      "skills": [
+        "checking-pipeline-health"
+      ],
+      "skill": "checking-pipeline-health",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 * * 1",
+        "display": "0 1 * * 1"
+      },
+      "schedule_display": "0 1 * * 1",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-16T03:18:41.194794+00:00",
+      "next_run_at": "2026-06-22T01:00:00+00:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "feishu:oc_8c3706de744958173c700d995ccfd4ef",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    },
+    {
+      "id": "550741dd2092",
+      "name": "Monthly Pipeline Strategy Check",
+      "prompt": "Run the pipeline-strategy-check skill. Check GBrain strategy pages and Hindsight dx-global for missing or stale data, retrieve the last 4 weekly health check snapshots from Hindsight, analyse patterns, surface strategic signals, and deliver the Strategy Check report to the sales team channel. Create a CRM Task if discussion items are flagged. Post the ops log as the final response.",
+      "skills": [
+        "checking-pipeline-strategy"
+      ],
+      "skill": "checking-pipeline-strategy",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 1 1 * *",
+        "display": "0 1 1 * *"
+      },
+      "schedule_display": "0 1 1 * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-06-16T03:18:45.911763+00:00",
+      "next_run_at": "2026-07-01T01:00:00+00:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "feishu:oc_8c3706de744958173c700d995ccfd4ef",
+      "origin": {
+        "platform": "feishu",
+        "chat_id": "oc_c3edd80436880132e12f7a720b25be48",
+        "chat_name": "oc_c3edd80436880132e12f7a720b25be48",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "web",
+        "terminal",
+        "file"
+      ],
+      "workdir": null,
+      "profile": null
+    }
+  ],
+  "updated_at": "2026-06-16T05:41:30.003716+00:00"
+}
