@@ -94,6 +94,28 @@ Everyone
 
 *(Capabilities are updated to ✅ Verified here only after being built and tested in a real scenario.)*
 
+---
+
+## General Skills
+
+Beyond the BD Capabilities above, Leo has a set of general-purpose skills for working with the tools and systems in the DataXquad stack. These are not BD-specific — they are how Leo gets things done across all capabilities.
+
+| Skill | What it enables |
+|---|---|
+| `twenty-crm` | Query and mutate all CRM objects via GraphQL — the foundational tool layer underneath every CRM read/write in any capability |
+| `openmail` | Send and receive email via `leo-dx@openmail.sh` — draft outreach, check inbox, manage thread state |
+| `capturing-to-gbrain` | Save valuable knowledge from conversations into GBrain as long-term structured memory |
+| `github-core-repos` | Read and write internal GitHub repos (`dx-internal-wiki`, `busycow-agent-package`, `aquaoptima-core`) via SSH — pull content, push updates, sync to GBrain |
+| `managing-tasks` | Create and update tasks in the DataXquad internal Task Tracker (Lark Base) |
+| `reviewing-tasks` | Query and summarise tasks from the internal Task Tracker with Goal-first prioritisation |
+| `lark-im` | Send and receive Feishu/Lark messages, manage group chats, search chat history |
+| `lark-base` | Operate Feishu multi-dimensional tables (Base) — read, write, create fields and records |
+| `lark-doc` | Read and edit Feishu documents and Wiki pages |
+| `lark-drive` | Manage files in Feishu cloud storage — upload, download, move, manage permissions |
+| `lark-calendar` | View and manage Feishu calendar events and meeting rooms |
+| `lark-contact` | Resolve Feishu user names to open_id and vice versa |
+| `managing-skills` | Create, update, rename, and delete Hermes skills — follows Anthropic skill guide |
+
 
 ---
 
