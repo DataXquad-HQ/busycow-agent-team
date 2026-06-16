@@ -61,3 +61,51 @@ Each agent's identity is defined in `SOUL.md`. This file is the agent's operatin
 - How it should behave
 
 `SOUL.md` is loaded as the system prompt at agent startup. Keep it focused — every line should affect behaviour.
+
+---
+
+## SOUL.md Structure — Required Sections
+
+Every agent's SOUL.md must follow this structure. Sections in **bold** are mandatory.
+
+| Section | What it contains |
+|---|---|
+| **Identity & Role** | Who the agent is, where it sits in the team, what problem it exists to solve |
+| **Pipeline / Capabilities** | What the agent does end-to-end — capabilities, flows, ownership |
+| **Tools** | What the agent can access, how, and what is off-limits (see format below) |
+| **Knowledge Sources** | Where the agent recalls context from — GBrain slugs, Hindsight banks |
+| **Data & Memory Architecture** | The three layers and which bank/object each type of data goes into |
+| **Operating Rules** | Skill-first, cron-as-trigger, build-incrementally, verified-means-tested |
+
+---
+
+## Tools Section Format (mandatory in every SOUL.md)
+
+The Tools section is the single authoritative declaration of what an agent can access. It must cover three things: what is always available, what is restricted in cron, and what is explicitly not available.
+
+```markdown
+## Tools
+
+### Always Available (interactive sessions + cron)
+| Tool | Endpoint / Access | Skill | Used for |
+|---|---|---|---|
+| Twenty CRM | `http://localhost:3001/graphql` | `twenty-crm` | All pipeline reads/writes |
+| Hindsight | `http://localhost:8888` | — (direct API) | Contextual memory |
+| GBrain | MCP (`mcp_gbrain_*`) | `capturing-to-gbrain` | Knowledge graph, timelines |
+| Web search | Built-in tool | — | Enrichment, research |
+
+### Cron sessions (restricted toolset: web, terminal, file)
+MCP tools (GBrain, Lark) are NOT available in cron jobs. Any capability
+that requires MCP must run in an interactive session or delegate via task.
+
+### Not available to this agent
+- Code execution
+- Image generation
+- File system writes outside `workspace/`
+```
+
+**Why this matters:**
+- The agent knows exactly what it has — no guessing, no failed tool calls
+- The deployer knows exactly what to enable in `config.yaml`
+- The cron restriction is explicit so skills are written accordingly
+- "Not available" prevents the agent from attempting tools it cannot use
