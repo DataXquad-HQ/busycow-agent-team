@@ -1,21 +1,35 @@
 # Maya — Agent Specification
 
-**Role:** Inbound Lead Generation Agent  
-**Profile:** `~/.hermes/profiles/maya/`  
-**Version:** 2.0  
-**Status:** Partial — C2 (Blog) operational; C1/C3/C4/C5 pending skill build
+**Role:** Inbound Lead Generation Agent
+**Profile:** `~/.hermes/profiles/maya/`
+**Version:** 2.0
 
 ---
 
-## Identity
+## Part 1 — Core Need & Positioning
 
-Maya owns inbound. Market intelligence, content production, social presence, and lead capture across all business lines. The success criterion for every Capability: **does the founder still need to watch this themselves?**
+### 1a — Why Maya Exists
+
+Maya owns inbound. The team needed a dedicated agent to sustain market intelligence, content production, social presence, and lead capture across all business lines without founder attention.
+
+**The success criterion for every Capability:** does the founder still need to watch this themselves?
 
 Maya generates inbound interest and captures it. Leo takes over the moment a named lead enters the CRM. Maya never touches outbound, never manages leads after capture, and never publishes without human approval.
 
 ---
 
-## Position in the Team
+### 1b — Role & Goal
+
+| Dimension | Detail |
+|---|---|
+| Role | Inbound Lead Generation Agent |
+| Goal | Sustain inbound pipeline — market intel, content, social, lead capture |
+| Number it owns | Capabilities C1–C5 (see Part 3) |
+| Hard boundary | Capture only — no outbound, no post-capture lead management, no autonomous publishing |
+
+---
+
+### 1c — Team Positioning
 
 | Agent | Owns |
 |---|---|
@@ -25,67 +39,11 @@ Maya generates inbound interest and captures it. Leo takes over the moment a nam
 
 ---
 
-## Capabilities
+## Part 2 — Context & Data Layer
 
-| # | Capability | What Maya Does | Skills | Status |
-|---|---|---|---|---|
-| C1 | Market Intelligence | Monitor competitor moves, industry news, and market signals across all business lines. Surface weekly digest. | `market-intelligence` | 🔧 Pending |
-| C2 | Content Publishing | Produce and publish long-form articles, case studies, and thought leadership pieces via blog pipeline | `blog-content-crew` | ✅ Operational |
-| C3 | Lead Capture | Detect and log inbound signals (form fills, DM requests, newsletter sign-ups) into CRM as new leads | `capturing-inbound-leads` | 🔧 Pending |
-| C4 | Social Presence | Draft and queue social posts tied to published content; monitor mentions and engagement signals | `managing-social-presence` | 🔧 Pending |
-| C5 | Analytics & Reporting | Pull content performance data, report on reach/engagement trends, flag what's working | `reporting-content-analytics` | 🔧 Pending (placeholder cron live) |
+### 2a — What Maya Needs to Know
 
----
-
-## Cron Jobs
-
-| Job | Capability | Schedule | Profile | Status |
-|---|---|---|---|---|
-| Maya Weekly Blog Run | C2 | Mon 09:00 UTC | iris | ✅ Active — runs blog pipeline script |
-| Maya Weekly Analytics | C5 | Fri 09:00 UTC | iris | ⚠️ Placeholder — not yet built |
-
-> **Note:** Both jobs currently run under the Iris profile. When C2 and C5 skills are fully built and migrated to Maya's own profile, these should be moved to `~/.hermes/profiles/maya/cron/jobs.json` and re-registered under Maya's profile.
-
----
-
-## Delivery Channels
-
-| Channel | Purpose |
-|---|---|
-| `feishu:oc_8c3706de744958173c700d995ccfd4ef` | Default ops output — blog run results, analytics reports |
-| Human review (Lark DM) | Content drafts awaiting publish approval |
-| `local` | Intermediate pipeline artifacts (draft files, scraped data) |
-
----
-
-## Tools
-
-| Tool / Skill | Purpose |
-|---|---|
-| `blog-content-crew` | Runs the full blog pipeline (research → draft → publish-ready output) |
-| `capturing-to-gbrain` | Writes market intel, competitor profiles, content archive to GBrain |
-| `lark-im` | Sends draft notifications and flagged signals to humans |
-| `web` toolset | Market research, competitor monitoring, news scanning |
-| `terminal` toolset | Blog pipeline script execution |
-
----
-
-## Credentials & Configuration
-
-All credentials live in `~/.hermes/profiles/maya/.env`. **Duplicate, never inherit.**
-
-| Variable | Value |
-|---|---|
-| `ANTHROPIC_API_KEY` | Same key as Iris — copy directly |
-| `LARK_APP_ID` / `LARK_APP_SECRET` | Same as Iris — copy directly |
-| `GBRAIN_*` | Same GBrain config as Iris — copy directly |
-| `HINDSIGHT_BASE_URL` | `http://localhost:8888` |
-
----
-
-## Memory & Context Architecture
-
-### Context Injection Order (load before every task)
+**Context injection order (load before every task):**
 
 1. **GBrain vault** — business line strategy, ICP, market intel
    ```
@@ -96,10 +54,10 @@ All credentials live in `~/.hermes/profiles/maya/.env`. **Duplicate, never inher
 
 2. **Hindsight** — episodic: prior research, content decisions, standing preferences
    ```
-   POST /v1/default/banks/dx-agent-maya/memories/recall
+   POST /v1/default/banks/[org]-agent-maya/memories/recall
    {"query": "[topic] — prior research, standing decisions", "top_k": 5}
 
-   POST /v1/default/banks/dx-human-hunter/memories/recall
+   POST /v1/default/banks/[org]-human-1/memories/recall
    {"query": "content preferences, approval patterns", "top_k": 3}
    ```
 
@@ -108,23 +66,23 @@ All credentials live in `~/.hermes/profiles/maya/.env`. **Duplicate, never inher
    mcp_gbrain_query("companies/[slug]")
    ```
 
-### Hindsight Banks
+**Required Hindsight Banks:**
 
 | Bank | Access | What it stores |
 |---|---|---|
-| `dx-agent-maya` | read + write | Working memory — content in progress, research outputs, market signals, campaign state |
-| `dx-human-hunter` | read only | Hunter's content preferences, approval patterns, communication style |
-| `dx-human-kevin` | read only | Kevin's priorities and communication style |
-| `dx-global` | read only | Company-wide facts, positioning decisions (Iris writes) |
+| `[org]-agent-maya` | read + write | Working memory — content in progress, research outputs, market signals, campaign state |
+| `[org]-human-1` | read only | Human 1's content preferences, approval patterns, communication style |
+| `[org]-human-2` | read only | Human 2's priorities and communication style |
+| `[org]-global` | read only | Org-wide facts, positioning decisions (written by ops agent) |
 
 **Write rules:**
 - `auto_retain` is OFF. Never write to Hindsight mid-session.
 - Bulk write at session end — after a research cycle, content decision, or market signal logged.
 - New market intel or competitor intel → also write to GBrain `external/intel/market/`.
 
-### GBrain Write Patterns
+**GBrain Write Patterns:**
 
-**After a content piece is published:**
+After a content piece is published:
 ```
 mcp_gbrain_add_timeline_entry(
   slug="internal/business-lines/[bl]/content-archive",
@@ -133,20 +91,115 @@ mcp_gbrain_add_timeline_entry(
 )
 ```
 
-**After a significant market signal:**
+After a significant market signal:
 ```
 mcp_gbrain_extract_facts(
   turn_text="[what was observed about the market, competitor, or ICP segment]"
 )
 ```
 
-**After a new competitor profile is built:**
+After a new competitor profile is built:
 ```
 mcp_gbrain_put_page(
   slug="external/entities/companies/[slug]",
   content="..."  // standard company page format
 )
 ```
+
+---
+
+## Part 3 — Capabilities
+
+### 3a — Capability Table
+
+| # | Capability | What Maya Does | Status |
+|---|---|---|---|
+| C1 | Market Intelligence | Monitor competitor moves, industry news, and market signals across all business lines. Surface weekly digest. | 🔧 Pending |
+| C2 | Content Publishing | Produce and publish long-form articles, case studies, and thought leadership pieces via blog pipeline | ✅ Operational |
+| C3 | Lead Capture | Detect and log inbound signals (form fills, DM requests, newsletter sign-ups) into CRM as new leads | 🔧 Pending |
+| C4 | Social Presence | Draft and queue social posts tied to published content; monitor mentions and engagement signals | 🔧 Pending |
+| C5 | Analytics & Reporting | Pull content performance data, report on reach/engagement trends, flag what's working | 🔧 Pending (placeholder cron live) |
+
+---
+
+### 3b — Skills
+
+**Capability Skills** (directly power a Capability):
+
+| Skill | Capability | Status |
+|---|---|---|
+| `blog-content-crew` | C2 — Content Publishing | ✅ Operational |
+| `market-intelligence` | C1 — Market Intelligence | 🔧 Not yet built |
+| `capturing-inbound-leads` | C3 — Lead Capture | 🔧 Not yet built |
+| `managing-social-presence` | C4 — Social Presence | 🔧 Not yet built |
+| `reporting-content-analytics` | C5 — Analytics & Reporting | 🔧 Not yet built |
+
+**General Skills** (cross-capability support):
+
+| Skill | Purpose |
+|---|---|
+| `capturing-to-gbrain` | Writes market intel, competitor profiles, content archive to GBrain |
+
+---
+
+### 3c — Cron Jobs
+
+| Job | Capability | Schedule | Profile | Status |
+|---|---|---|---|---|
+| Maya Weekly Blog Run | C2 | Mon 09:00 UTC | iris | ✅ Active — runs blog pipeline script |
+| Maya Weekly Analytics | C5 | Fri 09:00 UTC | iris | ⚠️ Placeholder — not yet built |
+
+> **Note:** Both jobs currently run under the Iris profile. When C2 and C5 skills are fully built and migrated to Maya's own profile, these should be moved to `~/.hermes/profiles/maya/cron/jobs.json` and re-registered under Maya's profile.
+
+---
+
+### 3d — Delivery Channels
+
+| Channel | Purpose |
+|---|---|
+| `feishu:[your-default-channel-id]` | Default ops output — blog run results, analytics reports |
+| Human review (Lark DM) | Content drafts awaiting publish approval |
+| `local` | Intermediate pipeline artifacts (draft files, scraped data) |
+
+---
+
+## Part 4 — Tools & Permissions
+
+### 4a — Tools
+
+| Tool / Toolset | Purpose |
+|---|---|
+| `blog-content-crew` | Runs the full blog pipeline (research → draft → publish-ready output) |
+| `capturing-to-gbrain` | Writes market intel, competitor profiles, content archive to GBrain |
+| `lark-im` | Sends draft notifications and flagged signals to humans |
+| `web` toolset | Market research, competitor monitoring, news scanning |
+| `terminal` toolset | Blog pipeline script execution |
+
+---
+
+### 4b — Credentials
+
+All credentials live in `~/.hermes/profiles/maya/.env`. **Duplicate, never inherit.**
+
+| Variable | Value |
+|---|---|
+| `ANTHROPIC_API_KEY` | Copy from primary ops profile |
+| `LARK_APP_ID` / `LARK_APP_SECRET` | Copy from primary ops profile |
+| `GBRAIN_*` | Copy GBrain config from primary ops profile |
+| `HINDSIGHT_BASE_URL` | `http://[hindsight-url]` |
+
+---
+
+### 4c — Build Mapping (Pending Work)
+
+| Gap | Capability Impact | Resolution |
+|---|---|---|
+| `market-intelligence` skill not built | No automated competitor/market monitoring | Build `market-intelligence` skill |
+| `capturing-inbound-leads` skill not built | Inbound signals not logged to CRM | Build `capturing-inbound-leads` skill |
+| `managing-social-presence` skill not built | Content has no social amplification | Build `managing-social-presence` skill |
+| `reporting-content-analytics` skill not built | No real reporting | Build `reporting-content-analytics` skill + update cron |
+| Blog + Analytics crons live on Iris profile | Maya can't self-manage schedule | Migrate to Maya profile once skills are stable |
+| SOUL.md uses old Hindsight bank names | Wrong bank names in recall/write calls | Update SOUL.md to `[org]-` convention (see §Part 2 above) |
 
 ---
 
@@ -160,13 +213,20 @@ mcp_gbrain_put_page(
 
 ---
 
-## Known Gaps (as of v2.0)
+## Spec Status
 
-| Gap | Impact | Resolution |
-|---|---|---|
-| C1 (Market Intelligence) skill not built | No automated competitor/market monitoring | Build `market-intelligence` skill |
-| C3 (Lead Capture) skill not built | Inbound signals not logged to CRM | Build `capturing-inbound-leads` skill |
-| C4 (Social Presence) skill not built | Content has no social amplification | Build `managing-social-presence` skill |
-| C5 (Analytics) is a placeholder cron | No real reporting | Build `reporting-content-analytics` skill + update cron |
-| Blog + Analytics crons live on Iris profile | Maya can't self-manage schedule | Migrate to Maya profile once skills are stable |
-| SOUL.md uses old Hindsight bank names | Wrong bank names in recall/write calls | Update SOUL.md to dx- convention (see §Memory above) |
+| Section | Status |
+|---|---|
+| Part 1 — Core Need & Positioning | ✅ Complete |
+| Part 2 — Context & Data Layer | ✅ Complete |
+| Part 3a — Capability Table | ✅ Complete |
+| Part 3b — Skills | ✅ Complete |
+| Part 3c — Cron Jobs | ✅ Complete |
+| Part 3d — Delivery Channels | ✅ Complete |
+| Part 4a — Tools | ✅ Complete |
+| Part 4b — Credentials | ✅ Complete |
+| Part 4c — Build Mapping | ✅ Complete |
+| C1 Market Intelligence | 🔧 Skill not yet built |
+| C3 Lead Capture | 🔧 Skill not yet built |
+| C4 Social Presence | 🔧 Skill not yet built |
+| C5 Analytics & Reporting | 🔧 Placeholder cron only |
