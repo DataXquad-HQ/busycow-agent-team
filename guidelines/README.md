@@ -11,6 +11,15 @@ This folder contains the human-readable design specifications for the BusyCow ag
 | `02-knowledge-and-memory-spec.md` | How information flows through the system — Knowledge Base, GBrain, Hindsight, CRM |
 | `03-gbrain-and-hindsight-spec.md` | GBrain entity types, relationship types, Hindsight bank design, and how the two work together |
 
+## Deployed Agents
+
+The [`deployed-agents/`](deployed-agents/) folder contains the design specs for every agent that has been built and deployed. These are the human-readable "hiring briefs" — why each agent exists, what it does, and how it maps to build artifacts.
+
+| Agent | Spec | Status |
+|---|---|---|
+| Iris — Chief of Staff | [iris-spec.md](deployed-agents/iris-spec.md) | ✅ Deployed |
+| Leo — BD Lead Agent | [leo-spec.md](deployed-agents/leo-spec.md) | ✅ Deployed (C2 pending) |
+
 ## Who This Is For
 
 **Clients** — read before deployment to understand what you're setting up and why.
