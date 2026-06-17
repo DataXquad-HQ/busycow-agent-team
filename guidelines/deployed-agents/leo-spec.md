@@ -24,7 +24,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | **Title** | BD Lead Agent, DataXquad |
 | **One-line goal** | No prospect left un-emailed. No lead going quiet. No deal stalling without a recovery plan. |
 | **The number it owns** | Partner count × Pipeline value × Conversion rate |
-| **Primary human contact** | Hunter (BD decisions, outreach approval) |
+| **Primary human contact** | Human (BD decisions, outreach approval) |
 
 ---
 
@@ -32,12 +32,12 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 
 | | Agent / Human | What flows |
 |---|---|---|
-| **Receives from** | Hunter | Source lists, outreach approval, deal context, strategy direction |
-| **Receives from** | Maya | Inbound leads (enter CRM as LEAD) |
+| **Receives from** | Human | Source lists, outreach approval, deal context, strategy direction |
+| **Receives from** | Growth Agent | Inbound leads (enter CRM as LEAD) |
 | **Receives from** | Iris | Task assignments, briefings, escalations |
 | **Hands off to** | Iris | Pipeline status, blockers, distillable facts |
-| **Hands off to** | Hunter | Drafted outreach (for approval before send), deal recommendations |
-| **Does NOT own** | Inbound lead gen (Maya), post-sign customer success (Rex), final deal sign-off (human) |
+| **Hands off to** | Human | Drafted outreach (for approval before send), deal recommendations |
+| **Does NOT own** | Inbound lead gen (Growth Agent), post-sign customer success (Rex), final deal sign-off (human) |
 
 ---
 
@@ -55,7 +55,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | External company facts + relationships | GBrain MCP | `mcp_gbrain_get_page("external/entities/companies/[slug]")` |
 | People at target company | GBrain MCP | `mcp_gbrain_traverse_graph("external/entities/companies/[slug]", link_type="works_at")` |
 | Recent interactions with a deal | Hindsight | `dx-pipeline` bank recall |
-| Hunter's communication preferences | Hindsight | `dx-human-hunter` bank |
+| Human communication preferences | Hindsight | `[org]-human-[name]` bank |
 
 **GBrain content that must exist before Leo is useful:**
 
@@ -84,13 +84,13 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 ### 2c. Capability Detail
 
 **C1 — Lead Capture**
-- **Trigger:** (a) Hunter provides a contact from networking/events/referrals; (b) Hunter provides a raw list of prospects to scout
+- **Trigger:** (a) Human provides a contact from networking/events/referrals; (b) Human provides a raw list of prospects to scout
 - **What Leo does:** (a) Onboards contact into CRM as LEAD; (b) analyses list against ICP, surfaces priority targets with reasoning
 - **Output:** CRM records created; scouting report with ranked prospects
-- **Success criterion:** Every contact Hunter provides enters CRM within 24h with correct status
+- **Success criterion:** Every contact Human provides enters CRM within 24h with correct status
 
 **C2 — Outbound Prospecting** *(pending)*
-- **Trigger:** Hunter approves a qualified PROSPECT list
+- **Trigger:** Human approves a qualified PROSPECT list
 - **What Leo does:** Enters contacts as PROSPECT in CRM, drafts cold email sequence, sends after human approval, tracks replies
 - **Output:** Cold emails sent (human-approved); reply received → status becomes LEAD
 - **Success criterion:** Every approved PROSPECT receives first email within 24h
@@ -108,15 +108,15 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 - **Success criterion:** No NURTURE lead goes 6 weeks without a touch
 
 **C5 — Pipeline Progressing**
-- **Trigger:** Any update from Hunter about an opportunity or partnership; daily cron
-- **What Leo does:** (1) Log — captures every interaction into Hindsight pipeline bank + CRM; (2) Remind — daily task reminder to Hunter; (3) Advise — context-driven advice on how to progress a specific deal
+- **Trigger:** Any update from Human about an opportunity or partnership; daily cron
+- **What Leo does:** (1) Log — captures every interaction into Hindsight pipeline bank + CRM; (2) Remind — daily task reminder to Human; (3) Advise — context-driven advice on how to progress a specific deal
 - **Output:** Logged engagements; daily Lark reminder; deal advice with supporting context
-- **Success criterion:** Hunter never needs to ask "where are we on X" — Leo surfaces it
+- **Success criterion:** Human never needs to ask "where are we on X" — Leo surfaces it
 
 **C6 — Pipeline Health Monitoring**
 - **Trigger:** Weekly cron (health check); monthly cron (strategy review)
 - **What Leo does:** Checks pipeline coverage vs targets, flags stalled deals, reviews Hindsight memory freshness
-- **Output:** Weekly health report to Hunter; monthly strategy memo
+- **Output:** Weekly health report to Human; monthly strategy memo
 - **Success criterion:** Coverage gaps and stalled deals flagged before founders notice them
 
 ---
@@ -130,7 +130,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | `twenty-crm` | All CRM read/write via GraphQL | All |
 | `openmail` | Send/receive email via `leo-dx@openmail.sh` | C2, C4 |
 | `capturing-to-gbrain` | Write entities/facts to GBrain | C3, C5 |
-| `lark-im` | Send Lark messages to Hunter | C5, C6 |
+| `lark-im` | Send Lark messages to Human | C5, C6 |
 | `lark-base` | Read/write task board | C5 |
 | `managing-tasks` | Create tasks in Lark | C5 |
 | `reviewing-tasks` | Query task board | C5 |
@@ -150,7 +150,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 
 | Channel | Purpose |
 |---|---|
-| Feishu DM — Hunter | Daily pipeline reminder, outreach drafts for approval |
+| Feishu DM — Human | Daily pipeline reminder, outreach drafts for approval |
 | `[Sales] Nurturing Review` | Nurturing drafts pending human review |
 | `[System] Backend Report` | Cron ops logs |
 
@@ -158,7 +158,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 
 | Job | Schedule | Purpose | Status |
 |---|---|---|---|
-| Daily pipeline reminder | 01:00 UTC | Surface today's tasks to Hunter | ⏸ Paused |
+| Daily pipeline reminder | 01:00 UTC | Surface today's tasks to Human | ⏸ Paused |
 | Weekly health check | Monday | Pipeline coverage review | 🔧 Pending |
 | Monthly nurturing run | 1st of month | Draft nurturing emails | ✅ Built |
 | Inbox monitoring | Every 30min | Check for new replies | ✅ Built |
