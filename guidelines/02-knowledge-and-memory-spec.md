@@ -4,7 +4,7 @@
 > **Architecture** — how the knowledge and memory layers work (for humans to understand).
 > **Setup** — what needs to be configured before agents go live.
 >
-> Iris owns the wiki. Agents never write here directly.
+> Iris owns the knowledge base. Agents never write here directly.
 
 ---
 
@@ -28,7 +28,7 @@ Hindsight                      Twenty CRM
     │
     │ distilled into conclusions
     ▼
-Wiki / GitHub
+Knowledge Base / GitHub
 "what is true now"
 — ICP, strategy, product docs (per business line)
 — versioned, human-readable
@@ -64,9 +64,9 @@ Agent queries → executes task → outputs to Lark / CRM / Hindsight
 |---|---|---|---|
 | Interaction / conversation | End of every Leo session | Hindsight `[org]-pipeline` bank | Leo (`log-engagement` skill) |
 | New company or contact | Encountered for the first time | GBrain `companies/` or `people/` | Iris (`capturing-to-gbrain`) |
-| Key decision or conclusion | After a significant decision | Wiki `decisions/` → GBrain | Iris |
-| BL strategy / ICP update | After strategy changes | Wiki `business-lines/[bl-name]/` → GBrain | Iris |
-| Market research / intel | After research is complete | Wiki `business-lines/[bl-name]/market.md` → GBrain | Iris |
+| Key decision or conclusion | After a significant decision | Knowledge base `decisions/` → GBrain | Iris |
+| BL strategy / ICP update | After strategy changes | Knowledge base `business-lines/[bl-name]/` → GBrain | Iris |
+| Market research / intel | After research is complete | Knowledge base `business-lines/[bl-name]/market.md` → GBrain | Iris |
 | CRM update | Every pipeline stage change | Twenty CRM | Leo (`twenty-crm` skill) |
 | Human communication patterns | Observed over time | Hindsight `[org]-human-[name]` bank | Iris |
 
@@ -74,7 +74,7 @@ Agent queries → executes task → outputs to Lark / CRM / Hindsight
 
 | What gets extracted | Method | Result |
 |---|---|---|
-| Wiki markdown → semantic chunks | `gbrain sync` (daily cron) | GBrain vector index |
+| Knowledge base markdown → semantic chunks | `gbrain sync` (daily cron) | GBrain vector index |
 | Structured facts from conversation | `mcp_gbrain_extract_facts` | GBrain facts table |
 | Key milestones | `mcp_gbrain_add_timeline_entry` | GBrain entity timeline |
 
@@ -106,7 +106,7 @@ Agent queries → executes task → outputs to Lark / CRM / Hindsight
 
 Wiki documents change over time (ICP evolves, strategy shifts). Use git for version history — do not create archive folders. Git handles it.
 
-Every wiki document must include a Changelog section so agents understand *why* something changed, not just *what* changed:
+Every knowledge base document must include a Changelog section so agents understand *why* something changed, not just *what* changed:
 
 ```markdown
 **Last Updated:** YYYY-MM-DD
@@ -130,10 +130,10 @@ mcp_gbrain_add_timeline_entry(
 
 ---
 
-## Setup: Wiki Folder Structure
+## Setup: Knowledge Base Folder Structure
 
 ```
-[org]-internal-wiki/
+[org]-internal-kb/
 │
 ├── company/                         ← Cross-BL company layer
 │   ├── overview.md                  ← Who you are, what you do
@@ -227,11 +227,11 @@ POST /v1/default/banks
 {"id": "[org]-human-[founder-2]", "name": "[Founder 2] Profile"}
 ```
 
-### Registering Wiki as GBrain Source
+### Registering Knowledge Base as GBrain Source
 
 ```bash
-gbrain sources add --id [org]-internal-wiki --path /path/to/wiki-repo --federated true
-gbrain sync --repo /path/to/wiki-repo
+gbrain sources add --id [org]-internal-kb --path /path/to/kb-repo --federated true
+gbrain sync --repo /path/to/kb-repo
 ```
 
-Set up a daily sync cron after registration to keep GBrain in sync with wiki changes.
+Set up a daily sync cron after registration to keep GBrain in sync with knowledge base changes.

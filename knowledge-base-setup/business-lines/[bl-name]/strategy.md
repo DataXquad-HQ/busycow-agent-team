@@ -1,6 +1,6 @@
 # Sales & Partnership Strategy
 
-> **Template** — Copy this file into your `dx-internal-wiki/context/sales-strategy.md` and fill in every section.
+> **Template** — Copy this file into your `[org]-internal-kb/context/sales-strategy.md` and fill in every section.
 > See `README.md` in this directory for setup instructions.
 
 ---

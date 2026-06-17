@@ -1,6 +1,6 @@
 # Product Overview
 
-> **Template** — Copy this into your `dx-internal-wiki/context/product-overview.md` and fill it in.
+> **Template** — Copy this into your `[org]-internal-kb/context/product-overview.md` and fill it in.
 > Agents use this to understand what you sell before doing any outreach or qualification.
 
 ## Business Type
@@ -24,5 +24,5 @@ More detail available: [Yes → see /products/<name>/ | No]
 ```
 
 > ⚠️ If you have more than one product with significant depth, create a
-> `/products/<name>/` folder in your wiki and link back here.
+> `/products/<name>/` folder in your knowledge base and link back here.
 > Agents will follow the link when they need deeper product context.

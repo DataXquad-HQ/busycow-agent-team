@@ -29,7 +29,7 @@ No shared skills, no shared credentials, no shared infrastructure. If two agents
 
 | Layer | What | Where |
 |---|---|---|
-| Human-readable docs | Policies, decisions, how we operate | GitHub wiki (`dx-internal-wiki`) |
+| Human-readable docs | Policies, decisions, how we operate | GitHub knowledge base (`[org]-internal-kb`) |
 | Contextual memory | Entity knowledge, episodic memory | GBrain + Hindsight |
 | Structural data | Opportunities, contacts, pipeline, records | CRM and other operational systems |
 

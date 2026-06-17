@@ -43,7 +43,7 @@ This is the core design principle behind everything that follows.
 
 ---
 
-## Context Layer 1: Wiki (GitHub Repo)
+## Context Layer 1: Knowledge Base (GitHub Repo)
 
 **What it is:** A private GitHub repository containing all human-authored knowledge documents in Markdown.
 
@@ -53,17 +53,17 @@ This is the core design principle behind everything that follows.
 - Single source of truth for knowledge — agents never write here, only Iris
 
 **How we use it:**
-- Structured into folders: `wiki/company/`, `wiki/sales/`, `wiki/products/`, `wiki/market/`, `decisions/`, `systems/`
+- Structured into folders: `knowledge-base/company/`, `knowledge-base/sales/`, `knowledge-base/products/`, `knowledge-base/market/`, `decisions/`, `systems/`
 - Documents follow a standard format with a Changelog section
 - Content flows into GBrain via daily sync — agents never read GitHub directly
 
-**The wiki is Layer 1 of the knowledge stack.** Humans write conclusions here. Agents read via GBrain.
+**The knowledge base is Layer 1 of the knowledge stack.** Humans write conclusions here. Agents read via GBrain.
 
 ---
 
 ## Context Layer 2: GBrain (Facts & Knowledge)
 
-**What it is:** A semantic knowledge graph that indexes all wiki content and structures it for agent queries. Bundled with Hermes.
+**What it is:** A semantic knowledge graph that indexes all knowledge base content and structures it for agent queries. Bundled with Hermes.
 
 **Why we use it:**
 - Agents cannot efficiently read raw Markdown files at runtime — GBrain makes content queryable
@@ -71,7 +71,7 @@ This is the core design principle behind everything that follows.
 - Hybrid search (vector + keyword + graph traversal) returns more precise results than embeddings alone
 
 **How we use it:**
-- Wiki repo is registered as a GBrain source and synced daily
+- Knowledge base repo is registered as a GBrain source and synced daily
 - Agents query via `mcp_gbrain_query()` or `mcp_gbrain_get_page(slug=...)`
 - Iris writes new entities (`put_page`), extracts facts (`extract_facts`), and logs milestones (`add_timeline_entry`) after key conversations
 - GBrain is the agent's answer to "what is true about the world right now"
@@ -86,7 +86,7 @@ This is the core design principle behind everything that follows.
 
 **Why we use it:**
 - GBrain stores facts and knowledge — Hindsight stores what *happened*
-- Enables agents to recall "what did we discuss last time with this company" — something wiki documents never capture
+- Enables agents to recall "what did we discuss last time with this company" — something knowledge base documents never capture
 - Bank-based architecture allows clean separation between shared pipeline memory, per-agent working memory, and per-human profiles
 
 **How we use it:**
@@ -121,7 +121,7 @@ Every agent is defined by a spec document (see `00-agent-spec-template.md`) cove
 ```
 Capabilities    → what the agent does, grouped for human understanding
 Skills          → the actual executable logic (one skill = one trigger situation)
-Knowledge       → what wiki documents must exist before the agent is useful
+Knowledge       → what knowledge base documents must exist before the agent is useful
 Memory          → which Hindsight banks the agent reads and writes
 Credentials     → what third-party accounts must be set up
 Cron jobs       → what runs automatically and on what schedule
@@ -136,7 +136,7 @@ Cron jobs       → what runs automatically and on what schedule
 ## How It All Connects
 
 ```
-Human writes wiki
+Human writes to knowledge base
       ↓
 GitHub repo (versioned source of truth)
       ↓ daily sync

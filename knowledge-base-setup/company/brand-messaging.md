@@ -1,6 +1,6 @@
 # Brand & Messaging
 
-> **Template** — Copy this into your `dx-internal-wiki/context/brand-messaging.md` and fill it in.
+> **Template** — Copy this into your `[org]-internal-kb/context/brand-messaging.md` and fill it in.
 > Maya uses this before writing any content. Leo uses this before drafting outreach.
 
 ```

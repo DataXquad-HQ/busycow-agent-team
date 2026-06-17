@@ -1,6 +1,6 @@
 # Key Contacts & Stakeholders
 
-> **Template** — Copy this into your `dx-internal-wiki/context/key-contacts.md` and fill it in.
+> **Template** — Copy this into your `[org]-internal-kb/context/key-contacts.md` and fill it in.
 > This is NOT the internal team list (see team.md).
 > Agents use this to know how to treat high-sensitivity contacts before any outreach.
 

@@ -66,8 +66,8 @@
 
 | Document | GBrain slug | Purpose | Status |
 |---|---|---|---|
-| ICP Definition | `wiki/[org-prefix]-icp` | Who to target and why | 📝 To be created |
-| Sales / Product Strategy | `wiki/[org-prefix]-strategy` | Direction and priorities | 📝 To be created |
+| ICP Definition | `knowledge-base/[org-prefix]-icp` | Who to target and why | 📝 To be created |
+| Sales / Product Strategy | `knowledge-base/[org-prefix]-strategy` | Direction and priorities | 📝 To be created |
 
 ---
 

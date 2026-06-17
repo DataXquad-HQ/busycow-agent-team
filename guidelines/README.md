@@ -8,7 +8,7 @@ This folder contains the human-readable design specifications for the BusyCow ag
 |---|---|
 | `00-agent-spec-template.md` | Template for writing an agent spec — use this when designing a new agent |
 | `01-infrastructure-spec.md` | Infrastructure requirements — servers, tools, credentials needed before go-live |
-| `02-knowledge-and-memory-spec.md` | How information flows through the system — Wiki, GBrain, Hindsight, CRM |
+| `02-knowledge-and-memory-spec.md` | How information flows through the system — Knowledge Base, GBrain, Hindsight, CRM |
 
 ## Who This Is For
 
@@ -19,6 +19,6 @@ This folder contains the human-readable design specifications for the BusyCow ag
 ## Relationship to Setup Files
 
 Specs (`specs/`) explain the design.
-Setup files (`wiki-setup/`, `agent-teams/`, `SETUP.md`) are the hands-on configuration work.
+Setup files (`knowledge-base-setup/`, `agent-teams/`, `SETUP.md`) are the hands-on configuration work.
 
 Read specs first. Then do setup.

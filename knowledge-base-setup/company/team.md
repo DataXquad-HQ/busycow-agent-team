@@ -1,6 +1,6 @@
 # Team
 
-> **Template** — Copy this into your `dx-internal-wiki/context/team.md` and fill it in.
+> **Template** — Copy this into your `[org]-internal-kb/context/team.md` and fill it in.
 > Agents use this to know who to contact, how, and for what.
 > Update whenever someone joins or leaves.
 

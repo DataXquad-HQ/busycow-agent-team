@@ -1,6 +1,6 @@
 # Company Background
 
-> **Template** — Copy this into your `dx-internal-wiki/context/company-background.md` and fill it in.
+> **Template** — Copy this into your `[org]-internal-kb/context/company-background.md` and fill it in.
 > Agents read this to understand who you are before taking any action on your behalf.
 
 ## Company Background

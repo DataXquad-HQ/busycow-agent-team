@@ -1,11 +1,11 @@
-# Wiki Setup
+# Knowledge Base Setup
 
-This folder contains the templates for setting up your company's internal wiki. Copy these into your own wiki repo and fill them in.
+This folder contains the templates for setting up your company's internal knowledge base. Copy these into your own knowledge base repo and fill them in.
 
 ## Structure
 
 ```
-wiki-setup/
+knowledge-base-setup/
 ├── company/                  ← Fill in once — company-wide content
 │   ├── overview.md           ← Who you are, what you do, founding story
 │   ├── team.md               ← Core team, roles, org structure
@@ -25,7 +25,7 @@ wiki-setup/
 
 ## How to Use
 
-1. Create your wiki repo (GitHub, private)
+1. Create your knowledge base repo (GitHub, private)
 2. Copy `company/` and fill in all files
 3. For each business line: copy `business-lines/[bl-name]/`, rename the folder, fill in all files
 4. Register the repo as a GBrain source (see `specs/02-knowledge-and-memory-spec.md`)
