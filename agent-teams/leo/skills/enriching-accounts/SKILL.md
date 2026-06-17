@@ -86,7 +86,7 @@ prepare for meetings, and make scouting decisions.
 **Relevance to DX:**
 - Which DX business line(s) could this company use?
 - What's the most likely pain point or use case?
-- ICP fit assessment (check `wiki/{{ORG_PREFIX}}-icp` if exists)
+- ICP fit assessment (check `internal/business-lines/[bl]/icp.md` if exists)
 
 **Key contacts (from CRM):**
 - For each Person linked to this company with leadTier ≠ PASSERBY:
@@ -123,7 +123,7 @@ POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-pipeline/memories
 ```python
 # Update or create company page
 mcp_gbrain_put_page(
-  slug="companies/[company-slug]",
+  slug="external/entities/companies/[company-slug]",
   content="""---
 type: company
 name: [Company Name]
@@ -147,7 +147,7 @@ hq: [city, country]
 
 # Timeline entry
 mcp_gbrain_add_timeline_entry(
-  slug="companies/[company-slug]",
+  slug="external/entities/companies/[company-slug]",
   date="[YYYY-MM-DD]",
   summary="L1 enrich completed",
   detail="Foundational profile built. DX fit: [business line]."
@@ -209,7 +209,7 @@ POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-pipeline/memories
 **GBrain — timeline entry (significant findings only):**
 ```python
 mcp_gbrain_add_timeline_entry(
-  slug="companies/[company-slug]",
+  slug="external/entities/companies/[company-slug]",
   date="[YYYY-MM-DD]",
   summary="[One-line milestone — e.g. 'Raised Series B $20M']",
   detail="[Brief detail + DX implication]",
@@ -275,9 +275,9 @@ Total active accounts monitored: [N]
 
 Before assessing DX fit for any company, check:
 ```python
-mcp_gbrain_get_page(slug="wiki/{{ORG_PREFIX}}-icp")           # ICP definition
-mcp_gbrain_get_page(slug="wiki/{{ORG_PREFIX}}-sales-strategy") # Sales strategy
-mcp_gbrain_get_page(slug="wiki/products/[line]")   # Relevant product wiki
+# Read ICP directly from GBrain vault: internal/business-lines/[bl]/icp.md
+# Read strategy directly from GBrain vault: internal/business-lines/[bl]/strategy.md
+# Read product info directly from GBrain vault: internal/business-lines/[bl]/product.md
 ```
 If pages don't exist: continue, infer from known opportunity patterns, flag ⚠️ in output.
 
@@ -308,7 +308,7 @@ ICP fit: [strong / moderate / weak / unknown — no ICP doc]
 - ✅ Hindsight: {{ORG_PREFIX}}-pipeline memory stored
 - ✅ GBrain: [company-slug] page updated + timeline entry added
 
-[⚠️ No ICP document found — fit assessed from opportunity history. Consider building `wiki/{{ORG_PREFIX}}-icp`.]
+[⚠️ No ICP document found — fit assessed from opportunity history. Consider building `internal/business-lines/[bl]/icp.md`.]
 ```
 
 ---
@@ -319,7 +319,7 @@ ICP fit: [strong / moderate / weak / unknown — no ICP doc]
 - **Don't overwrite good existing data** — before updating `companyOverview`, read the current value. If it's already detailed, append/improve rather than replace.
 - **lastEnrichedDate is the freshness gate** — always set it after enrichment. Monthly cron uses it to avoid redundant re-runs.
 - **Web search quality varies** — if web_search returns thin results, try web_extract on the company homepage directly. LinkedIn pages often have the clearest company descriptions.
-- **GBrain slug naming** — use lowercase hyphenated company name: `companies/acme-corp`, not `companies/Acme Corp`. Fuzzy match on get_page helps if slug is unknown.
+- **GBrain slug naming** — use lowercase hyphenated company name: `external/entities/companies/acme-corp`, not `external/entities/companies/Acme Corp`. Fuzzy match on get_page helps if slug is unknown.
 - **Hindsight bank choice** — OPPORTUNITY companies → `{{ORG_PREFIX}}-pipeline`. General company intel with no active opportunity → `{{ORG_PREFIX}}-global`.
 - **Level 2 significance filter is important** — don't flood Hindsight with noise. If in doubt, ask: "would the Sales Rep want to know this before their next call with this company?" If no, skip.
 - **Monthly cron dedup** — check `lastEnrichedDate` to avoid running twice in one month. Threshold: 25 days (not 30, to handle calendar variation).

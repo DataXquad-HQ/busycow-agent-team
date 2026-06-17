@@ -64,8 +64,8 @@ icp = requests.post(
 
 Also read GBrain for structured numbers:
 ```python
-mcp_gbrain_get_page(slug="concepts/sales-goals")
-mcp_gbrain_get_page(slug="concepts/pipeline-benchmarks")
+# Read directly: internal/business-lines/[bl]/strategy.md
+# Read directly: internal/business-lines/[bl]/strategy.md (pipeline benchmarks section)
 ```
 
 **If strategy context is missing** (GBrain pages don't exist, Hindsight empty):
@@ -169,7 +169,7 @@ Sum all weighted values → **weighted pipeline value**.
 ### 4b — Gap to target
 
 ```python
-revenue_target = [from GBrain concepts/sales-goals]
+revenue_target = [from GBrain internal/business-lines/[bl]/strategy-summary]
 closed_won_revenue = sum of CUSTOMER opportunities this period
 remaining_target = revenue_target - closed_won_revenue
 pipeline_coverage = weighted_pipeline_value / remaining_target
@@ -184,7 +184,7 @@ For each opportunity and partnership:
 ```python
 from datetime import datetime, timezone
 
-stall_threshold_days = [from GBrain concepts/pipeline-benchmarks, default 30]
+stall_threshold_days = [from GBrain internal/business-lines/[bl]/pipeline-benchmarks-summary, default 30]
 days_in_stage = (datetime.now(timezone.utc) - datetime.fromisoformat(last_activity)).days
 is_stalled = days_in_stage > stall_threshold_days
 ```
@@ -231,7 +231,7 @@ mutation {
 
 ## Step 7 — Output the Health Report
 
-Deliver to `[Sales] Pipeline Review` channel. **If you don't have the chat_id yet, store it in GBrain (`concepts/sales-strategy-meta`) after the human provides it — do not write it into this skill file.** Format:
+Deliver to `[Sales] Pipeline Review` channel. **If you don't have the chat_id yet, store it in GBrain (`internal/business-lines/[bl]/sales-strategy-meta`) after the human provides it — do not write it into this skill file.** Format:
 
 ```
 📊 Weekly Pipeline Health Check — [Date]
@@ -310,7 +310,7 @@ requests.post(
 
 | Channel | What goes here |
 |---|---|
-| `[Sales] Pipeline Review` (chat_id stored in `concepts/sales-strategy-meta` in GBrain once confirmed) | Full Health Report — weekly |
+| `[Sales] Pipeline Review` (chat_id stored in `internal/business-lines/[bl]/sales-strategy-meta` in GBrain once confirmed) | Full Health Report — weekly |
 | `[System] Backend Report` `{{SYSTEM_BACKEND_CHANNEL_ID}}` | Ops log — run stats, tasks created, errors |
 
 **CRM links always use** `{{CRM_EXTERNAL_URL}}/objects/[type]/[UUID]`.

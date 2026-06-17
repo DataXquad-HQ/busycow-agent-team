@@ -14,15 +14,13 @@ Leo requires the following before the agent can run:
 | 2 | Twenty CRM | Self-hosted | 20 min |
 | 3 | Hindsight | Self-hosted | 15 min |
 | 4 | OpenMail inbox | Cloud (SaaS) | 5 min |
-| 5 | GitHub SSH access | Cloud (SaaS) | 10 min |
-| 6 | Tavily API key | Cloud (API) | 5 min |
-| 7 | Anthropic API key | Cloud (API) | 5 min |
-| 8 | Leo profile + credentials | Configuration | 15 min |
-| 9 | Skills installation | Configuration | 10 min |
-| 10 | Cron jobs | Configuration | 10 min |
-| 11 | Memory seeding | Content | 30 min |
-
-**Total: ~2.5 hours**
+| 5 | Tavily API key | Cloud (API) | 5 min |
+| 6 | Anthropic API key | Cloud (API) | 5 min |
+| 7 | Leo profile + credentials | Configuration | 15 min |
+| 8 | Skills installation | Configuration | 10 min |
+| 9 | Cron jobs | Configuration | 10 min |
+| 10 | GBrain content | Content | 30 min |
+**Total: ~2 hours**
 
 ---
 
@@ -113,41 +111,7 @@ AGENT_EMAIL=<leo's email address>
 
 ---
 
-## Step 5 — GitHub SSH Access
-
-Leo reads the internal wiki and agent package repos via SSH. The SSH key is configured once per VM and shared across all agents on that machine.
-
-```bash
-# Generate key (skip if one already exists at ~/.ssh/github_agents)
-ssh-keygen -t ed25519 -C "agents@{{YOUR_DOMAIN}}" -f ~/.ssh/github_agents
-
-# Add to SSH config
-cat >> ~/.ssh/config << 'EOF'
-Host github.com
-  HostName github.com
-  User git
-  IdentityFile ~/.ssh/github_agents
-  IdentitiesOnly yes
-EOF
-
-# Print public key — add this to GitHub Settings → SSH and GPG keys
-cat ~/.ssh/github_agents.pub
-
-# Verify
-ssh -T git@github.com
-# Expected: Hi <username>! You've successfully authenticated...
-```
-
-Clone the repos Leo needs:
-
-```bash
-git clone git@github.com:{{YOUR_ORG}}/{{INTERNAL_WIKI_REPO}}.git /your/path/{{INTERNAL_WIKI_REPO}}
-git clone git@github.com:{{YOUR_ORG}}/{{AGENT_PACKAGE_REPO}}.git /your/path/{{AGENT_PACKAGE_REPO}}
-```
-
----
-
-## Step 6 — Tavily API Key
+## Step 5 — Tavily API Key
 
 Leo uses Tavily for web search in enrichment and scouting skills.
 
@@ -163,7 +127,7 @@ This goes into Leo's `.env`. Hermes will route all `web_search` calls through Ta
 
 ---
 
-## Step 7 — Anthropic API Key
+## Step 6 — Anthropic API Key
 
 Leo uses Claude as its reasoning model via Hermes.
 
@@ -179,7 +143,7 @@ This goes into the Hermes global `.env`, not Leo's profile `.env`.
 
 ---
 
-## Step 8 — Create Leo's Profile
+## Step 7 — Create Leo's Profile
 
 ```bash
 # Create the Leo profile in Hermes
@@ -231,7 +195,7 @@ toolsets:
 
 ---
 
-## Step 9 — Install Skills
+## Step 8 — Install Skills
 
 ```bash
 # Copy all Leo skills into the profile
@@ -249,7 +213,7 @@ grep -r "{{" ~/.hermes/profiles/leo/skills/ --include="*.md" -l
 
 ---
 
-## Step 10 — Set Up Cron Jobs
+## Step 9 — Set Up Cron Jobs
 
 Leo's cron jobs are defined in `agent-teams/leo/cron/jobs.json` as a reference template. They must be created manually via the Hermes CLI — the JSON file is not directly importable.
 
@@ -284,34 +248,41 @@ hermes --profile leo cron list
 
 ---
 
-## Step 11 — Seed Memory
+## Step 10 — Fill GBrain Content
 
-Before Leo can operate intelligently, it needs baseline context loaded into GBrain and Hindsight.
+Before Leo can operate intelligently, the GBrain vault needs baseline content. This is your company's knowledge — fill in the files that already exist in the vault.
 
-**GBrain — load wiki pages:**
+**GBrain vault location:** `/path/to/{{ORG_PREFIX}}-gbrain/`
 
-Copy the templates from `wiki-setup/` and fill in your company's details, then load each into GBrain:
+**Files to fill (one per business line):**
 
-```bash
-# For each file in wiki-setup/
-gbrain capture --file wiki-setup/company-background.md --slug wiki/company-background
-gbrain capture --file wiki-setup/product-overview.md   --slug wiki/products/{{PRODUCT_SLUG}}
-gbrain capture --file wiki-setup/sales-strategy.md     --slug wiki/{{ORG_PREFIX}}-sales-strategy
-gbrain capture --file wiki-setup/brand-messaging.md    --slug wiki/brand-messaging
-gbrain capture --file wiki-setup/key-contacts.md       --slug wiki/key-contacts
+```
+internal/company/overview.md          ← Who you are, what you do
+internal/company/portfolio.md         ← All BLs at a glance
+
+internal/business-lines/[bl]/icp.md       ← Ideal Customer Profile
+internal/business-lines/[bl]/strategy.md  ← Sales direction, priority markets
+internal/business-lines/[bl]/product.md   ← Features, value props, objection handling
+internal/business-lines/[bl]/gtm.md       ← Channels, sequences, pricing
 ```
 
-**Hindsight — load Sales Rep context:**
+Use the templates in `knowledge-base-setup/` as a guide for what to write in each file.
 
-Tell Hindsight about the Sales Rep so Leo can adapt its style:
+After filling in content, run GBrain sync so Leo can query it:
 
 ```bash
-curl -s -X POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-human-sales-rep/memories \
+gbrain sync --repo /path/to/{{ORG_PREFIX}}-gbrain
+```
+
+**Hindsight — seed human profiles (optional but recommended):**
+
+```bash
+curl -s -X POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-human-[name]/memories \
   -H "Content-Type: application/json" \
   -d '{
     "items": [{
-      "content": "{{SALES_REP_NAME}} — {{SALES_REP_ROLE}}. Communication style: {{COMMUNICATION_STYLE}}. Key priorities: {{PRIORITIES}}.",
-      "tags": ["profile", "sales-rep"]
+      "content": "[Role] — communication style: [style]. Key priorities: [priorities].",
+      "tags": ["profile", "human"]
     }]
   }'
 ```
@@ -320,27 +291,20 @@ curl -s -X POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-human-sale
 
 ## Placeholder Reference
 
-All values that must be replaced before Leo is operational:
-
 | Placeholder | Where | What to put |
 |---|---|---|
-| `{{ORG_PREFIX}}` | SOUL.md, skills, .env | Short org identifier, e.g. `acme` |
+| `{{ORG_PREFIX}}` | SOUL.md, skills, .env, banks | Short org identifier, e.g. `acme` |
 | `{{COMPANY_NAME}}` | SOUL.md | Your company name |
-| `{{YOUR_DOMAIN}}` | SETUP.md (SSH key) | Your company domain |
-| `{{YOUR_ORG}}` | SETUP.md (git clone) | Your GitHub organisation name |
 | `{{COMPANY_BLOG_URL}}` | cron/jobs.json | Your blog or news URL |
 | `{{CRM_EXTERNAL_URL}}` | SOUL.md, skills | Public-facing CRM URL |
 | `{{AGENT_EMAIL}}` | SOUL.md, skills, .env | Leo's OpenMail address |
 | `{{OPENMAIL_TOKEN}}` | skills/openmail | Leo's OpenMail API token |
 | `{{OPENMAIL_INBOX_ID}}` | skills/openmail, .env | Leo's inbox ID |
-| `{{SALES_DAILY_UPDATE_CHANNEL_ID}}` | SOUL.md, cron | Sales team channel ID |
+| `{{SALES_DAILY_UPDATE_CHANNEL_ID}}` | SOUL.md, cron | Sales team daily channel ID |
 | `{{OUTREACH_REVIEW_CHANNEL_ID}}` | SOUL.md, cron | Draft review channel ID |
+| `{{PIPELINE_STRATEGY_CHANNEL_ID}}` | SOUL.md, cron | Pipeline & strategy channel ID |
 | `{{SYSTEM_BACKEND_CHANNEL_ID}}` | SOUL.md, cron | Ops log channel ID |
-| `{{YOUR_PRODUCT_LINES}}` | context/schemas/crm.md | Your CRM businessLine enum values |
-| `{{PRODUCT_SLUG}}` | SOUL.md, wiki-setup | GBrain slug for each product |
-| `{{INTERNAL_WIKI_REPO}}` | skills/github-core-repos | Your internal wiki repo name |
-| `{{AGENT_PACKAGE_REPO}}` | skills/github-core-repos | This repo's name |
-| `{{PRODUCT_CORE_REPO}}` | skills/github-core-repos | Your product knowledge repo name |
+| `{{BL_SLUG}}` | SOUL.md | Business line folder name e.g. `geokernel` |
 
 ---
 

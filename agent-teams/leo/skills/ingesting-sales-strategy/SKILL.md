@@ -1,11 +1,11 @@
 ---
 name: ingesting-sales-strategy
 description: >
-  One-time setup skill (re-run on document updates). Reads the company's
-  sales-strategy.md from GitHub Wiki, extracts structured knowledge, and
-  stores it into GBrain (concept pages) and Hindsight {{ORG_PREFIX}}-global (semantic
-  memories). Leo reads from GBrain + Hindsight during Health Check and
-  Strategy Check — never reads the source document at runtime.
+  One-time setup skill (re-run on document updates). Reads BL knowledge
+  directly from GBrain vault files and stores structured summaries into
+  Hindsight for fast runtime recall. Leo reads from GBrain + Hindsight
+  during Health Check and Strategy Check — never reads the source files
+  at runtime.
 triggers:
   - "ingest sales strategy"
   - "update sales strategy"
@@ -17,12 +17,14 @@ triggers:
 
 # Ingest Sales Strategy Skill
 
+> **Note:** GBrain vault is the source of truth. This skill distils vault content into Hindsight for fast runtime recall. Do not fetch from GitHub.
+
 ## Purpose
 
-Read the company's `sales-strategy.md` from GitHub Wiki once, extract all
-structured knowledge, and write it into the two memory layers Leo uses at
-runtime. After ingest, Leo never reads the source document again until the
-document is updated and ingest is re-run.
+Read BL knowledge directly from GBrain vault files, extract all structured
+knowledge, and write it into the two memory layers Leo uses at runtime.
+After ingest, Leo never reads the source files again until they are updated
+and ingest is re-run.
 
 ---
 
@@ -55,7 +57,7 @@ document is updated and ingest is re-run.
 
 Example trigger:
 ```
-"ingest sales strategy from https://raw.githubusercontent.com/[org]/[repo]/main/wiki/sales-strategy.md"
+"ingest sales strategy for [business-line]"
 ```
 
 ---
@@ -63,9 +65,11 @@ Example trigger:
 ## Step 1 — Fetch the document
 
 ```python
-from hermes_tools import web_extract
-result = web_extract(urls=["[URL provided by human]"])
-content = result["results"][0]["content"]
+from hermes_tools import read_file
+icp = read_file("/path/to/dx-gbrain/internal/business-lines/[bl]/icp.md")
+strategy = read_file("/path/to/dx-gbrain/internal/business-lines/[bl]/strategy.md")
+gtm = read_file("/path/to/dx-gbrain/internal/business-lines/[bl]/gtm.md")
+product = read_file("/path/to/dx-gbrain/internal/business-lines/[bl]/product.md")
 ```
 
 ---
@@ -109,7 +113,7 @@ For each section, extract the key fields as structured data.
 
 Create or overwrite one page per concept. Use `mcp_gbrain_put_page`.
 
-### Page: `concepts/sales-goals`
+### Page: `internal/business-lines/[bl]/strategy-summary`
 ```markdown
 ---
 type: concept
@@ -129,7 +133,7 @@ updated: [today's date]
 [table or list from document, if provided]
 ```
 
-### Page: `concepts/icp`
+### Page: `internal/business-lines/[bl]/icp-summary`
 ```markdown
 ---
 type: concept
@@ -152,7 +156,7 @@ updated: [today's date]
 [icp_red_flags as list]
 ```
 
-### Page: `concepts/sales-strategy`
+### Page: `internal/business-lines/[bl]/sales-strategy-summary`
 ```markdown
 ---
 type: concept
@@ -177,7 +181,7 @@ updated: [today's date]
 [list]
 ```
 
-### Page: `concepts/partnership-goals`
+### Page: `internal/business-lines/[bl]/partnership-goals-summary`
 ```markdown
 ---
 type: concept
@@ -194,7 +198,7 @@ updated: [today's date]
 **Revenue through partners (target):** [value]
 ```
 
-### Page: `concepts/partnership-strategy`
+### Page: `internal/business-lines/[bl]/partnership-strategy-summary`
 ```markdown
 ---
 type: concept
@@ -214,7 +218,7 @@ updated: [today's date]
 [list]
 ```
 
-### Page: `concepts/pipeline-benchmarks`
+### Page: `internal/business-lines/[bl]/pipeline-benchmarks-summary`
 ```markdown
 ---
 type: concept
@@ -290,12 +294,12 @@ Report back:
 ✅ Sales Strategy ingested — [date]
 
 **GBrain pages written:**
-- concepts/sales-goals
-- concepts/icp
-- concepts/sales-strategy
-- concepts/partnership-goals
-- concepts/partnership-strategy
-- concepts/pipeline-benchmarks
+- internal/business-lines/[bl]/strategy-summary
+- internal/business-lines/[bl]/icp-summary
+- internal/business-lines/[bl]/sales-strategy-summary
+- internal/business-lines/[bl]/partnership-goals-summary
+- internal/business-lines/[bl]/partnership-strategy-summary
+- internal/business-lines/[bl]/pipeline-benchmarks-summary
 
 **Hindsight {{ORG_PREFIX}}-global:** 6 memory items stored
 
