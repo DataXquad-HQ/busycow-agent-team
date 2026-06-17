@@ -99,11 +99,14 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 
 | Service | Purpose | `.env` key |
 |---|---|---|
+| Anthropic | LLM inference | `ANTHROPIC_API_KEY` |
+| OpenRouter | LLM fallback | `OPENROUTER_API_KEY` |
 | Twenty CRM | Pipeline read/write | `TWENTY_API_KEY` |
-| OpenMail | Email send/receive | `OPENMAIL_API_TOKEN` |
-| Feishu Bot | Lark messaging | `FEISHU_APP_ID`, `FEISHU_DOMAIN`, `FEISHU_HOME_CHANNEL` |
+| OpenMail | Email send/receive | Agent mailbox token |
+| Feishu Bot | Lark messaging | `FEISHU_APP_ID`, `FEISHU_APP_SECRET` |
 | Hindsight | Pipeline bank read/write | `HINDSIGHT_BASE_URL` |
-| Telegram | Notifications | `TELEGRAM_ALLOWED_USERS` |
+| Tavily | Web search for enrichment | `TAVILY_API_KEY` |
+| GitHub | Read internal repos | `GITHUB_TOKEN` |
 
 ### 3c. Delivery Channels
 
