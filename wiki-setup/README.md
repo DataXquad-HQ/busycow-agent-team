@@ -1,39 +1,37 @@
 # Wiki Setup
 
-This directory contains document templates that must be filled in before the agent team can operate effectively.
+This folder contains the templates for setting up your company's internal wiki. Copy these into your own wiki repo and fill them in.
 
-These are the **context layer** — they tell agents who you are, who you're selling to, and how you operate. Without them, agents fall back to generic behaviour with no company-specific anchors.
+## Structure
 
-## Required Documents
+```
+wiki-setup/
+├── company/                  ← Fill in once — company-wide content
+│   ├── overview.md           ← Who you are, what you do, founding story
+│   ├── team.md               ← Core team, roles, org structure
+│   ├── portfolio.md          ← All business lines at a glance
+│   ├── brand-messaging.md    ← Voice, tone, positioning
+│   └── key-contacts.md       ← Key external relationships
+│
+└── business-lines/
+    └── [bl-name]/            ← Copy this folder once per business line
+        ├── overview.md       ← What this BL does, why it exists
+        ├── strategy.md       ← Current direction, priority markets, targets
+        ├── icp.md            ← Ideal Customer Profile
+        ├── product.md        ← Features, value props, objection handling
+        ├── gtm.md            ← GTM motion: channels, sequences, pricing
+        └── market.md         ← Competitive landscape, industry trends
+```
 
-Copy each template into your `dx-internal-wiki/context/` repo and fill it in.
+## How to Use
 
-| Template | Copy to | Primary agent reader | Priority |
-|---|---|---|---|
-| `company-background.md` | `context/company-background.md` | All agents | First |
-| `team.md` | `context/team.md` | All agents | First |
-| `product-overview.md` | `context/product-overview.md` | Leo, Maya | First |
-| `sales-strategy.md` | `context/sales-strategy.md` | Leo | First |
-| `brand-messaging.md` | `context/brand-messaging.md` | Maya, Leo | Before content creation |
-| `key-contacts.md` | `context/key-contacts.md` | Leo, Iris | Before outreach |
+1. Create your wiki repo (GitHub, private)
+2. Copy `company/` and fill in all files
+3. For each business line: copy `business-lines/[bl-name]/`, rename the folder, fill in all files
+4. Register the repo as a GBrain source (see `specs/02-knowledge-and-memory-spec.md`)
 
-## Setup Steps
+## Design Principle
 
-1. Copy all templates into your `dx-internal-wiki/context/` directory
-2. Fill in each document — use `[brackets]` as placeholders where you don't have data yet
-3. Commit and push
-4. Tell Iris: "Extract context from wiki" — Iris will load everything into GBrain
-5. Agents are now context-aware
+**One folder per business line.** Every BL has its own complete knowledge package — strategy, ICP, product, GTM, market. Agents query by BL slug, so nothing bleeds across.
 
-## What happens if you skip a document
-
-| Missing | Impact |
-|---|---|
-| `company-background.md` | Agents have no company context — generic responses only |
-| `team.md` | Agents cannot route escalations or know who decides what |
-| `product-overview.md` | Leo cannot qualify leads against what you actually sell |
-| `sales-strategy.md` | Leo's Pipeline Health Check has no anchor — cannot flag stalls or mismatches |
-| `brand-messaging.md` | Maya's content may not match your brand voice |
-| `key-contacts.md` | Leo may treat high-sensitivity contacts incorrectly |
-
-Partial data is better than none. Fill in what you have and update over time.
+Company-level content (`company/`) is shared across all BLs and agents. Business line content is scoped.
