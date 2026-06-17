@@ -26,7 +26,6 @@
 | **Title** | e.g. Head of BD, Customer Success Lead, Content Strategist |
 | **One-line goal** | *What does success look like for this agent?* |
 | **The number it owns** | *One metric. This agent is responsible for moving this.* |
-| **Reporting to** | e.g. Iris (Chief of Staff) |
 | **Primary human contact** | e.g. Hunter (BD decisions), Kevin (strategy) |
 
 ---
