@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This folder contains the **Iris runtime skill layer** for DataXquad use.
+This folder contains the **Iris runtime skill layer** for [Org] use.
 
 The goal is simple:
 - Iris should not rely only on the shared Hermes skill registry
@@ -20,7 +20,7 @@ The goal is simple:
 | `openmail` | read Leo's inbox for outreach / pipeline monitoring when Iris needs visibility |
 
 ### Packaged capability skills copied into Iris
-These are included here so Iris is package-complete for DataXquad use, even when they also exist in the shared Hermes skill layer.
+These are included here so Iris is package-complete for [Org] use, even when they also exist in the shared Hermes skill layer.
 
 #### C1 — Operations, Team & Agent Management
 - `managing-tasks`
@@ -79,6 +79,6 @@ Iris now has an explicit package skill layer that covers the active non-financia
 
 ## Notes
 
-- These skills are packaged for **DataXquad use first**.
+- These skills are packaged for **[Org] use first**.
 - Some skills are shared/generic in origin, but are copied here so Iris is self-contained in the package.
 - `runtime-scenario-coverage.md` tracks which workflows are already proven in real runtime versus only specified.

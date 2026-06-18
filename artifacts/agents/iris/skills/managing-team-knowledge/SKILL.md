@@ -5,7 +5,7 @@ description: >
   and monitor Bus Factor risks. Use when user asks to log a team decision, check who owns
   a domain, identify single points of failure, or run a weekly team brain health check.
 version: 1.0.0
-author: Hermes Agent + BusyCow
+author: Hermes Agent + [Product A]
 license: MIT
 metadata:
   hermes:
@@ -431,7 +431,7 @@ Key prompt instructions for the cron job:
 - Parse JSON output from `gbrain dream --json` for each phase status
 - Report: lint fixes, pages synced, chunks embedded, orphans found
 - Git push: report success/failure + commit hash (first 7 chars)
-- Use `繁體中文純文字` (no Markdown) for Feishu delivery
+- Use `plain text` (no Markdown) for Feishu delivery
 
 ### Enabling synthesize phase
 

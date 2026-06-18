@@ -1,6 +1,6 @@
 # Legacy Base Goals/Initiatives → Lark Default Tasks OKR Migration
 
-Use this when DataXquad wants to retire or de-emphasize the old Base-backed planning structure but keep its strategic content.
+Use this when [Org] wants to retire or de-emphasize the old Base-backed planning structure but keep its strategic content.
 
 ## Target structure
 

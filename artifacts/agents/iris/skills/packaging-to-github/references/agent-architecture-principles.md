@@ -1,6 +1,6 @@
 # Agent Architecture Principles
 
-*Distilled from DataXquad strategy sessions, June 2026. Use when designing SOUL.md, SETUP.md, or agent operating models for any playbook.*
+*Distilled from [Org] strategy sessions, June 2026. Use when designing SOUL.md, SETUP.md, or agent operating models for any playbook.*
 
 ---
 

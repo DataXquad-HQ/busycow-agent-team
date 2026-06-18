@@ -1,7 +1,7 @@
 # SOUL.md Standards (as of 2026-06)
 
 These patterns were formalised after integrating OpenAI agent design patterns
-into the BusyCow framework. Every SOUL.md must include these two sections.
+into the [Product A] framework. Every SOUL.md must include these two sections.
 
 ---
 

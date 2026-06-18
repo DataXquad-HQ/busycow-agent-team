@@ -18,7 +18,7 @@ version: "1.0"
 
 ## Purpose
 Post a concise daily operations update to `[Ops] Internal Operations` channel
-(`oc_593217cd09595c75ea4dbc4dbe4ee96c`). Covers internal task health, agent status,
+(`{{LARK_CHAT_ID}}`). Covers internal task health, agent status,
 and any flags needing founder attention. NOT a task board summary — that goes to founders
 separately. This is the team-facing ops pulse.
 
@@ -65,8 +65,8 @@ Quick health pulse (not the full audit — that's the health check cron):
 ```bash
 # GBrain: any sync failures?
 TZ=Asia/Taipei date  # confirm time
-# Check dx-gbrain git log for last commit
-cd /mnt/disks/data/dx-gbrain && git log --oneline -1 2>/dev/null
+# Check {{GBRAIN_SOURCE_ID}} git log for last commit
+cd /mnt/disks/data/{{GBRAIN_SOURCE_ID}} && git log --oneline -1 2>/dev/null
 ```
 
 ```
@@ -101,7 +101,7 @@ Confirm all banks reachable. Flag if any bank returns error.
 
 **Post to Lark:**
 ```
-lark-cli im +messages-send --chat-id oc_593217cd09595c75ea4dbc4dbe4ee96c \
+lark-cli im +messages-send --chat-id {{LARK_CHAT_ID}} \
   --text "[briefing content]" --as bot
 ```
 

@@ -1,6 +1,6 @@
-# Lark Default Tasks Operating Rules — DataXquad
+# Lark Default Tasks Operating Rules — [Org]
 
-Use this when the user wants to run DataXquad on **Lark default Tasks**, not on a custom Base.
+Use this when the user wants to run [Org] on **Lark default Tasks**, not on a custom Base.
 
 ## Core split
 - **OKR list** stores Objectives and KRs.
@@ -43,7 +43,7 @@ Use sections for workstreams or directions, for example:
 - Iris
 - Maya
 - Websites
-- AquaOptima rollout
+- [Portfolio Company] rollout
 - Governance
 
 ### Subtasks

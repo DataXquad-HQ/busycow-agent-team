@@ -2,13 +2,13 @@
 name: maintaining-gbrain
 description: >
   Run GBrain's nightly dream maintenance cycle. Use when user says "gbrain maintain",
-  "run dream", "sync brain", "腦袋同步", or when called by the nightly cron job.
+  "run dream", "sync brain", "sync brain", or when called by the nightly cron job.
   Executes gbrain dream --json, captures output, and returns structured results.
 triggers:
   - "gbrain maintain"
   - "run dream"
   - "sync brain"
-  - "腦袋同步"
+  - "sync brain"
   - "dream cycle"
 ---
 
@@ -19,9 +19,9 @@ Run the GBrain dream maintenance cycle — lint, sync, embed, consolidate, orpha
 
 ## Brain Directory
 
-**Current vault:** `/mnt/disks/data/dx-gbrain` (GitHub: `DataXquad-HQ/dx-gbrain`, branch `master`)
+**Current vault:** `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}` (GitHub: `[Org]-HQ/{{GBRAIN_SOURCE_ID}}`, branch `master`)
 
-> Legacy path `/home/hunter_lin/brain` and repo `dataxquad-gbrain` are stale — do not use.
+> Legacy path `{{HOME_DIR}}/brain` and repo `dataxquad-gbrain` are stale — do not use.
 
 ## GBrain Config
 - Engine: **Postgres** (Docker container `gbrain-postgres`, port 5433)
@@ -34,8 +34,8 @@ Run the GBrain dream maintenance cycle — lint, sync, embed, consolidate, orpha
 ### 1. Run Dream
 ```bash
 source ~/.nvm/nvm.sh 2>/dev/null || true
-cd /mnt/disks/data/dx-gbrain
-HOME=/home/hunter_lin gbrain dream --json --dir /mnt/disks/data/dx-gbrain 2>&1
+cd /mnt/disks/data/{{GBRAIN_SOURCE_ID}}
+HOME={{HOME_DIR}} gbrain dream --json --dir /mnt/disks/data/{{GBRAIN_SOURCE_ID}} 2>&1
 ```
 
 ### 2. Capture Result
@@ -47,7 +47,7 @@ Parse the JSON output for:
 ### 3. Report
 Return structured summary:
 ```
-✅ GBrain Dream 完成
+✅ GBrain Dream complete
 - Sync: N pages updated
 - Embed: N chunks embedded
 - Consolidate: N facts → takes
@@ -72,7 +72,7 @@ Use a Python script to inject `created:` into existing frontmatter:
 from pathlib import Path
 import re, subprocess
 
-brain_dir = Path("/home/hunter_lin/brain")
+brain_dir = Path("{{HOME_DIR}}/brain")
 
 def get_date_from_filename(f):
     m = re.match(r'^(\d{4}-\d{2}-\d{2})', Path(f).stem)
@@ -106,7 +106,7 @@ for f in files_needing_created:
 **After fixing lint, force a full re-sync**
 Dream's incremental sync misses files modified outside git commits. Always run:
 ```bash
-HOME=/home/hunter_lin gbrain sync --full --dir /mnt/disks/data/dx-gbrain
+HOME={{HOME_DIR}} gbrain sync --full --dir /mnt/disks/data/{{GBRAIN_SOURCE_ID}}
 ```
 This forces all 30+ pages to be re-imported and chunks re-created.
 
@@ -136,10 +136,10 @@ Note: restarting from inside the gateway session will kill the session — trigg
 
 **Version note:** GBrain vault (knowledge data) lives in `~/brain/` as markdown + Postgres DB. `~/gbrain/` is the source code repo. Do not confuse them.
 
-**GitHub sync:** `~/brain/` has `origin → DataXquad-HQ/dataxquad-gbrain` (private repo). The nightly cron pushes markdown vault + MEMORY.md + USER.md. GitHub is a backup + human PR review layer — no visual knowledge-graph interface, just raw `.md` files. That is expected and correct.
+**GitHub sync:** `~/brain/` has `origin → [Org]-HQ/dataxquad-gbrain` (private repo). The nightly cron pushes markdown vault + MEMORY.md + USER.md. GitHub is a backup + human PR review layer — no visual knowledge-graph interface, just raw `.md` files. That is expected and correct.
 
 **GBrain vault = single source of truth (2026-06-17):**
-The `dx-gbrain` vault at `/mnt/disks/data/dx-gbrain` now holds ALL knowledge — BL knowledge (`business-lines/`), company layer (`company/`), external entities (`companies/`, `people/`), decisions, and agent specs. The separate `dx-internal-kb` repo was deprecated and merged in. Agents read BL/company files directly from the vault path; GBrain DB is used for entity lookup and semantic search only.
+The `{{GBRAIN_SOURCE_ID}}` vault at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}` now holds ALL knowledge — BL knowledge (`business-lines/`), company layer (`company/`), external entities (`companies/`, `people/`), decisions, and agent specs. The separate `dx-internal-kb` repo was deprecated and merged in. Agents read BL/company files directly from the vault path; GBrain DB is used for entity lookup and semantic search only.
 
 **Dual-track memory architecture:**
 - GBrain = cold tier (compiled truth — human-reviewed static facts)
@@ -150,35 +150,35 @@ The `dx-gbrain` vault at `/mnt/disks/data/dx-gbrain` now holds ALL knowledge —
 **Additional GBrain sources:**
 | Source ID | Local path | Content |
 |---|---|---|
-| `busycow-agent-package` | `/mnt/disks/data/busycow-agent-package` | Agent capabilities, guidelines (optional — agents read directly) |
+| `busycow-agent-package` | `{{PACKAGE_REPO_DIR}}` | Agent capabilities, guidelines (optional — agents read directly) |
 
 **Deprecated sources (removed 2026-06-17):**
-- `dx-internal-wiki` / `dx-internal-kb` — merged into `dx-gbrain` vault
-- `aquaoptima-core` — AquaOptima now independent
+- `dx-internal-wiki` / `dx-internal-kb` — merged into `{{GBRAIN_SOURCE_ID}}` vault
+- `aquaoptima-core` — [Portfolio Company] now independent
 - `dx-wiki-gbrain-sync` cron — paused; new design reads vault files directly
 
 **Registering a new repo as a GBrain source — MUST use CLI, not MCP:**
 ```bash
 # CORRECT — CLI sets local_path correctly
-HOME=/home/hunter_lin gbrain sources remove dx-gbrain --confirm-destructive 2>&1
-HOME=/home/hunter_lin gbrain sources add dx-gbrain --path /mnt/disks/data/dx-gbrain --federated 2>&1
+HOME={{HOME_DIR}} gbrain sources remove {{GBRAIN_SOURCE_ID}} --confirm-destructive 2>&1
+HOME={{HOME_DIR}} gbrain sources add {{GBRAIN_SOURCE_ID}} --path /mnt/disks/data/{{GBRAIN_SOURCE_ID}} --federated 2>&1
 
 # WRONG — MCP sources_add returns local_path: null and page_count: 0
-# mcp_gbrain_sources_add(id="dx-gbrain", path="...", federated=True)  ← DO NOT USE for new sources
+# mcp_gbrain_sources_add(id="{{GBRAIN_SOURCE_ID}}", path="...", federated=True)  ← DO NOT USE for new sources
 ```
 
 **Why:** `mcp_gbrain_sources_add` does not correctly set the local vault path — it returns `local_path: null` and `page_count: 0` even with a valid path argument. The CLI `gbrain sources add` is the only reliable registration method.
 
 After registering, sync immediately:
 ```bash
-mcp_gbrain_sync_brain(repo="/mnt/disks/data/dx-gbrain")
+mcp_gbrain_sync_brain(repo="/mnt/disks/data/{{GBRAIN_SOURCE_ID}}")
 ```
 
 **Query pattern for agents:**
 ```python
 mcp_gbrain_query(query="Maya Growth Lead Capabilities", source_id="busycow-playbooks")
 # or cross-source (all federated sources):
-mcp_gbrain_query(query="AquaOptima ICP")
+mcp_gbrain_query(query="[Portfolio Company] ICP")
 ```
 
 **DeepSeek provider error on cron jobs:** If cron jobs fail with `RuntimeError: Provider 'deepseek' is set in config.yaml but no API key was found`, the fix is to restart the Hermes gateway after verifying `~/.hermes/config.yaml` has `provider: anthropic`. The error was caused by a stale gateway process holding an old config reference — not an actual deepseek entry in config.yaml.

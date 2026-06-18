@@ -13,7 +13,7 @@ triggers:
   - "push soul to github"
   - "genericize and push"
 version: "3.0"
-author: BusyCow
+author: [Product A]
 ---
 
 # Packaging to GitHub
@@ -27,9 +27,9 @@ Use this when publishing **anything reusable** to `busycow-agent-package`:
 
 ## What busycow-agent-package Is
 
-`busycow-agent-package` is the **universal agent team framework** — a reusable blueprint for deploying the full BusyCow agent stack at any company. Formerly named `busycow-playbooks` / `busycow-agent-team` (both deleted Jun 2026).
+`busycow-agent-package` is the **universal agent team framework** — a reusable blueprint for deploying the full [Product A] agent stack at any company. Formerly named `busycow-playbooks` / `busycow-agent-team` (both deleted Jun 2026).
 
-Local clone: `/mnt/disks/data/busycow-agent-package/`
+Local clone: `{{PACKAGE_REPO_DIR}}/`
 
 It is built to be copied. When onboarding a new client or spinning up a new company instance, pull from this repo and fill in the company-specific layer. The package itself stays generic — no internal data, no hardcoded IDs, no product names.
 
@@ -38,7 +38,7 @@ It is built to be copied. When onboarding a new client or spinning up a new comp
 - `playbooks/` = agent-readable setup / migration / verification instructions
 - `artifacts/` = concrete installable assets
 
-When discussing package structure with Hunter, lead with the conclusion first, keep intermediate detail brief, and only expand on follow-up.
+When discussing package structure with [Founder 1], lead with the conclusion first, keep intermediate detail brief, and only expand on follow-up.
 
 **What it contains:**
 - `guidelines/` — human-readable specs and architecture
@@ -56,7 +56,7 @@ When discussing package structure with Hunter, lead with the conclusion first, k
 - `playbooks/` answers **how an agent should perform setup or migration**
 - `artifacts/` contains **the actual files that get installed or copied**
 
-- Company-specific data (client names, real pricing, internal decisions) → `dx-gbrain/internal/`
+- Company-specific data (client names, real pricing, internal decisions) → `{{GBRAIN_SOURCE_ID}}/internal/`
 - Live credentials or API keys → never committed anywhere
 - Task state or session output → nowhere (ephemeral)
 - Shared skills infrastructure (deleted Jun 2026) — each agent has its own real skill dirs
@@ -69,14 +69,14 @@ This skill is **only** for the external package repo:
 
 | Repo | Local path | Purpose |
 |---|---|---|
-| `DataXquad-HQ/busycow-agent-package` | `/mnt/disks/data/busycow-agent-package/` | Universal agent framework — `guidelines/`, `playbooks/`, and `artifacts/` for client-ready deployment packaging |
+| `[Org]-HQ/busycow-agent-package` | `{{PACKAGE_REPO_DIR}}/` | Universal agent framework — `guidelines/`, `playbooks/`, and `artifacts/` for client-ready deployment packaging |
 
-**Do not use this skill for internal knowledge writes to `dx-gbrain`.**
-That route belongs to `operating-dx-gbrain-vault`.
+**Do not use this skill for internal knowledge writes to `{{GBRAIN_SOURCE_ID}}`.**
+That route belongs to `operating-{{GBRAIN_SOURCE_ID}}-vault`.
 
 **Rule:**
 - reusable / client-installable / generalized → `packaging-to-github`
-- internal durable knowledge / vault update → `operating-dx-gbrain-vault`
+- internal durable knowledge / vault update → `operating-{{GBRAIN_SOURCE_ID}}-vault`
 
 ## References
 
@@ -123,13 +123,13 @@ def copy_skill_clean(src_dir, dest_dir, skill_name):
 
 # Example: copy lark-im to leo
 copy_skill_clean(
-    "/home/hunter_lin/.agents/skills/lark-im",
-    "/mnt/disks/data/hermes/profiles/leo/skills/lark-im",
+    "{{HOME_DIR}}/.agents/skills/lark-im",
+    "{{HERMES_HOME}}/profiles/leo/skills/lark-im",
     "lark-im"
 )
 ```
 
-**Why skip all symlinks:** Lark skills at `~/.agents/skills/` contain a same-name cyclic symlink inside their directory (e.g. `lark-im/lark-im → /mnt/disks/data/hermes/skills/lark-im`). `cp -rL` fails on these. Python `os.walk` with symlink filtering is the safe pattern.
+**Why skip all symlinks:** Lark skills at `~/.agents/skills/` contain a same-name cyclic symlink inside their directory (e.g. `lark-im/lark-im → {{HERMES_HOME}}/skills/lark-im`). `cp -rL` fails on these. Python `os.walk` with symlink filtering is the safe pattern.
 
 ---
 
@@ -149,8 +149,8 @@ copy_skill_clean(
 For company-specific private knowledge bases (not the public playbooks repo), use this pattern:
 
 **Repos created:**
-- `DataXquad-HQ/dataxquad-core` — DataXquad company core (~/dataxquad-core)
-- `DataXquad-HQ/aquaoptima-core` — AquaOptima company core (~/aquaoptima-core)
+- `[Org]-HQ/dataxquad-core` — [Org] company core (~/dataxquad-core)
+- `[Org]-HQ/aquaoptima-core` — [Portfolio Company] company core (~/aquaoptima-core)
 
 **Canonical directory structure:**
 ```
@@ -213,18 +213,18 @@ Apply these rules in ORDER (broader patterns first):
 | API tokens (Lark, Notion, Google) | `{{API_TOKEN}}` or remove |
 | Google Doc / Drive IDs | `{{GOOGLE_DOC_TEMPLATE_ID}}` |
 | IP addresses | `{{SERVER_IP}}` |
-| Internal product names (AquaOptima, GeoKernel, TRACI) | `[Product]` or `[your product lines]` |
+| Internal product names ([Portfolio Company], [Product B], [Product D]) | `[Product]` or `[your product lines]` |
 | Specific client/partner names (HKRFID, Onnet, etc.) | `[Client]` or `[Partner]` |
-| Personal names / usernames (Hunter, hunter_lin) | `the owner` or omit |
-| Personal file paths (/home/username, /mnt/disks/data/hermes) | `~/.hermes` |
+| Personal names / usernames ([Founder 1], hunter_lin) | `the owner` or omit |
+| Personal file paths (/home/username, {{HERMES_HOME}}) | `~/.hermes` |
 | Internal business logic (billing entity rules, commission %) | Generic equivalent or remove |
-| Company name DataXquad | BusyCow (as publisher) |
+| Company name [Org] | [Product A] (as publisher) |
 | Lark App ID (`cli_[a-z0-9]{16,}`) | `{{LARK_APP_ID}}` |
 | Lark App Secret | `{{LARK_APP_SECRET}}` |
 
 **Schema-specific rules:**
 - Replace every table name that's product-specific → `[Module Name]` (keep structural names like Tasks, Activities, Contacts)
-- Replace every option value that's business-specific (e.g. `AquaOptima`, `GeoKernel`) → `[Value]`
+- Replace every option value that's business-specific (e.g. `[Portfolio Company]`, `[Product B]`) → `[Value]`
 - Keep field types, link directions, and relationship patterns — these are the reusable structural knowledge
 
 **GBrain knowledge page rules:**
@@ -250,14 +250,14 @@ rsync -a \
   --include="*/" --include="SKILL.md" --include="*.md" --include="*.py" --include="*.json" \
   --exclude="*" \
   ~/.hermes/profiles/leo/skills/log-engagement/ \
-  /mnt/disks/data/busycow-agent-package/artifacts/agents/leo/skills/log-engagement/
+  {{PACKAGE_REPO_DIR}}/artifacts/agents/leo/skills/log-engagement/
 
 # Copy all skills in a profile (skip bundled manifest + usage files)
 rsync -a \
   --include="*/" --include="SKILL.md" --include="*.md" --include="*.py" --include="*.json" \
   --exclude=".bundled_manifest" --exclude=".curator_state" --exclude=".usage*" \
   ~/.hermes/profiles/leo/skills/ \
-  /mnt/disks/data/busycow-agent-package/artifacts/agents/leo/skills/
+  {{PACKAGE_REPO_DIR}}/artifacts/agents/leo/skills/
 ```
 
 **Why rsync over Python `shutil`:** rsync skips dotfiles and internal Hermes state files (`.bundled_manifest`, `.curator_state`, `.usage.json`) by default with the include/exclude filter. No need to enumerate exceptions manually. Also handles nested directories cleanly without the cyclic symlink risk of `cp -r`.
@@ -276,8 +276,8 @@ def genericize(content):
         (r'cli_[a-z0-9]{16,}', '{{LARK_APP_ID}}'),
         (r'om_[a-z0-9]{40,}', '{{OPENMAIL_API_TOKEN}}'),
         # Hindsight banks
-        (r'dx-pipeline', '{{HINDSIGHT_PIPELINE_BANK}}'),
-        (r'dx-global', '{{HINDSIGHT_GLOBAL_BANK}}'),
+        (r'{{HINDSIGHT_PIPELINE_BANK}}', '{{HINDSIGHT_PIPELINE_BANK}}'),
+        (r'{{HINDSIGHT_GLOBAL_BANK}}', '{{HINDSIGHT_GLOBAL_BANK}}'),
         (r'dx-agent-[a-z]+', '{{HINDSIGHT_AGENT_BANK}}'),
         (r'dx-internal', '{{HINDSIGHT_INTERNAL_BANK}}'),
         (r'dx-human-[a-z]+', '{{HINDSIGHT_HUMAN_BANK}}'),
@@ -285,9 +285,9 @@ def genericize(content):
         (r'\[DX\] [A-Za-z ]+', '{{CHANNEL_NAME}}'),
         (r'[a-z-]+@openmail\.sh', '{{AGENT_EMAIL}}'),
         # Company/people names
-        (r'DataXquad', '{{COMPANY_NAME}}'),
-        (r'\bHunter\b', '{{SALES_REP_NAME}}'),
-        (r'\bKevin\b', '{{FOUNDER_NAME}}'),
+        (r'\[Org\]', '{{COMPANY_NAME}}'),
+        (r'\bHumanName1\b', '{{SALES_REP_NAME}}'),
+        (r'\bHumanName2\b', '{{FOUNDER_NAME}}'),
     ]
     for pattern, replacement in replacements:
         content = re.sub(pattern, replacement, content)
@@ -320,11 +320,11 @@ CONFIDENTIAL_PATTERNS = [
     (r'SfMJbDOB[A-Za-z0-9]+', 'hardcoded Lark app token (Task Tracker)'),
     (r'529a4913-cc22-4e1b-b8ee-52a53c4c5d3c', 'Twenty API Key ID'),
     (r'a352ccf9-ed5f-40d3-910f-706074dc3877', 'Twenty Workspace ID'),
-    (r'Iris@DataXquad2026', 'Twenty admin password'),
+    (r'Iris@[Org]2026', 'Twenty admin password'),
     (r'hunter\.lin@distify\.ai', 'internal admin email'),
     (r'100\.118\.240\.101', 'Tailscale IP (use {{SERVER_TAILSCALE_IP}})'),
-    (r'\bDataXquad\b(?!-HQ)', 'company name DataXquad'),
-    (r'\b(AquaOptima|GeoKernel|TRACI)\b', 'internal product name'),
+    (r'\b[Org]\b(?!-HQ)', 'company name [Org]'),
+    (r'\b([Portfolio Company]|[Product B]|[Product D])\b', 'internal product name'),
     (r'/home/[a-z_]+', 'personal path'),
     (r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', 'IP address'),
     (r'[a-z]+@dataxquad\.com', 'internal email'),
@@ -352,7 +352,7 @@ def scan(directory):
                 issues[filepath] = file_issues
     return issues
 
-issues = scan("/mnt/disks/data/busycow-agent-package")
+issues = scan("{{PACKAGE_REPO_DIR}}")
 if not issues:
     print("✅ All clean — safe to push.")
 else:
@@ -370,7 +370,7 @@ else:
 
 ### Step 4 — Write files to repo
 
-Save each universalized file to the correct location under the current package repo root (`/mnt/disks/data/busycow-agent-package/` or `<repo-root>/`).
+Save each universalized file to the correct location under the current package repo root (`{{PACKAGE_REPO_DIR}}/` or `<repo-root>/`).
 
 ### Shared-skill sync rule
 When the **canonical shared skill set** changes locally, the package repo must be updated as a package-facing mirror of that model.
@@ -381,7 +381,7 @@ At minimum, sync these layers together:
 - `guidelines/05-mandatory-skills.md` if the mandatory baseline changed
 - any deployed-agent spec or artifact README that still names an old shared skill or old routing concept
 
-Do **not** publish internal-only operating skills just because they are canonical locally. Example: `operating-dx-gbrain-vault` stays internal and should not be exported into the client package.
+Do **not** publish internal-only operating skills just because they are canonical locally. Example: `operating-{{GBRAIN_SOURCE_ID}}-vault` stays internal and should not be exported into the client package.
 
 **Skills with support files:** Each internal skill is a folder. Copy the whole directory:
 ```bash
@@ -401,7 +401,7 @@ artifacts/shared-skills/twenty-crm.md             ❌  (old flat format, do not 
 
 ### Step 5 — Push
 ```bash
-cd /mnt/disks/data/busycow-agent-package
+cd {{PACKAGE_REPO_DIR}}
 git add -A
 git commit -m "feat/refactor: [description of what was added or changed]"
 git push origin main
@@ -409,7 +409,7 @@ git push origin main
 
 ### Step 6 — Confirm client URLs
 ```
-https://raw.githubusercontent.com/DataXquad-HQ/busycow-agent-package/main/[path]/SETUP.md
+https://raw.githubusercontent.com/[Org]-HQ/busycow-agent-package/main/[path]/SETUP.md
 ```
 After push: `curl -s [raw URL] | head -5` to verify accessible.
 
@@ -528,7 +528,7 @@ The `skills/README.md` must list every skill currently in the folder, with a one
 - **Infrastructure Skills** — tools and systems the agent uses across all capabilities
 
 ### SOUL.md Knowledge Sources — no product names
-The Knowledge Sources table must contain zero company-specific product names (BusyCow, GeoKernel, AquaOptima, Distify, TRACI, etc.). The correct pattern is one generic template row:
+The Knowledge Sources table must contain zero company-specific product names ([Product A], [Product B], [Portfolio Company], [Product C], [Product D], etc.). The correct pattern is one generic template row:
 
 ```markdown
 | Product Wiki — [Your Product] | `wiki/products/{{PRODUCT_SLUG}}` | Value prop, use cases, customer types. Add one row per product/service line. | 📝 Pending |
@@ -537,7 +537,7 @@ The Knowledge Sources table must contain zero company-specific product names (Bu
 Never six rows with our product names. If the previous genericization script left product names in the first column while replacing the slugs, that is **not** fully genericized — fix the first column too.
 
 ### Genericization is complete only when ALL three columns are clean
-In any table row: if the resource name column still says "BusyCow" or any internal product name, the row is not genericized even if the slug column has `{{PRODUCT_SLUG}}`. Check every column independently.
+In any table row: if the resource name column still says "[Product A]" or any internal product name, the row is not genericized even if the slug column has `{{PRODUCT_SLUG}}`. Check every column independently.
 
 ### Agent SETUP.md — canonical structure
 
@@ -649,7 +649,7 @@ Process files one at a time to avoid timeouts — do NOT pass 10+ files per dele
 - Any `lark-*` skill
 - `reading-lark-files`
 
-These belong in the DataXquad-internal agent profiles only, not in the distributable package. If an agent's live profile has these, strip them when copying to the package.
+These belong in the [Org]-internal agent profiles only, not in the distributable package. If an agent's live profile has these, strip them when copying to the package.
 
 ---
 
@@ -711,8 +711,8 @@ You are running a Leo agent update. Steps:
 
 - **Cron jobs.json packaging** — `jobs.json` is a reference template, not a Hermes-importable file. Strip ALL runtime state before pushing: remove `id`, `completed`, `last_run_at`, `next_run_at`, `origin.chat_id`, `state`, `paused_at`. Replace all instance-specific values with `{{PLACEHOLDER}}`. Keep: `name`, `skills`, `schedule`, `deliver` (with placeholder), `enabled_toolsets`, `prompt` (genericized). The README must include a placeholder reference table so installers know what to fill in.
 
-- ❌ **Old repo names** — `busycow-playbooks`, `busycow-agent-team`, `dataxquad-core`, `dx-internal-wiki`, `dx-internal-kb` are all deleted/renamed. Current repos: `busycow-agent-package` at `/mnt/disks/data/busycow-agent-package/`; `dx-gbrain` at `/mnt/disks/data/dx-gbrain/`. Neither lives under `hermes/`.
-- **`dx-internal-kb` is fully DEPRECATED (2026-06-17)** — merged into `dx-gbrain`. Any reference to `dx-internal-kb` is stale. The canonical knowledge path is `/mnt/disks/data/dx-gbrain/internal/`.
+- ❌ **Old repo names** — `busycow-playbooks`, `busycow-agent-team`, `dataxquad-core`, `dx-internal-wiki`, `dx-internal-kb` are all deleted/renamed. Current repos: `busycow-agent-package` at `{{PACKAGE_REPO_DIR}}/`; `{{GBRAIN_SOURCE_ID}}` at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/`. Neither lives under `hermes/`.
+- **`dx-internal-kb` is fully DEPRECATED (2026-06-17)** — merged into `{{GBRAIN_SOURCE_ID}}`. Any reference to `dx-internal-kb` is stale. The canonical knowledge path is `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/internal/`.
 - ❌ **shared-skills/ and _shared/ symlinks are gone** — entire shared skills architecture removed Jun 2026. Agent profiles have flat real dirs only. No `_shared/` symlinks, no `shared_skills/` registry. Duplicate skills per agent.
 - ❌ **Vera deleted Jun 2026** — not in agent rosters. Active agents: Iris, Leo, Maya, Rex, Steve.
 - ❌ **Quinn deleted Jun 2026** — remove from all rosters.
@@ -721,14 +721,14 @@ You are running a Leo agent update. Steps:
 - **Do not reintroduce `context/` as a package content layer** — explanatory prose belongs in `guidelines/`, operational instructions in `playbooks/`, and installable assets in `artifacts/`.
 - **SOUL.md is the runtime source of truth inside `artifacts/agents/`** — do not create standalone `CAPABILITY.md` files unless the deployment explicitly defines them.
 - **Use "knowledge base" in package prose** — avoid reintroducing older `wiki` wording in new package-facing docs.
-- **dx-internal-kb is DEPRECATED** — the entire knowledge base was merged into `dx-gbrain` on 2026-06-17. GBrain vault at `/mnt/disks/data/dx-gbrain/` is now the single source of truth. Structure: `internal/` (our knowledge) + `external/` (world knowledge). Do not reference `dx-internal-kb` or `dx-internal-wiki` anywhere.
+- **dx-internal-kb is DEPRECATED** — the entire knowledge base was merged into `{{GBRAIN_SOURCE_ID}}` on 2026-06-17. GBrain vault at `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/` is now the single source of truth. Structure: `internal/` (our knowledge) + `external/` (world knowledge). Do not reference `dx-internal-kb` or `dx-internal-wiki` anywhere.
 - **guidelines/ reading order is numbered 01–04** — when adding new guideline files, maintain the reading order prefix. Current order: `01-infrastructure-spec.md` → `02-knowledge-and-memory-spec.md` → `03-gbrain-and-hindsight-spec.md` → `04-agent-spec-template.md`. The template is last (04), not first (00).
 - **Agent specs use role-based names for agents too** — in client-facing specs, don't use internal agent names like "Maya". Use role descriptions: "Growth Agent", "Customer Success Agent", "BD Lead Agent". Only "Iris" as Chief of Staff is acceptable since it's a framework role.
 - **`deployed-agents/` folder naming** — the subfolder under `guidelines/` for built agent specs is called `deployed-agents/` (not `existing-agents`, `active-agents`, or `team/`). README.md in that folder has two tables: Active Agents + Pending Agents.
 - **deployed-agents/ subfolder under guidelines/** — agent specs for deployed agents live in `guidelines/deployed-agents/[agent]-spec.md`. Follow the 4-part template from `04-agent-spec-template.md`. Every spec needs a Build Mapping (Part 4) that links spec sections to actual Hermes artifacts. **ALWAYS use the template — do NOT write free-form specs.** The template exists for a reason: it enforces Part 1 (why the agent exists + the number it owns), Part 2 (context sources), Part 3 (capabilities + skills + crons + delivery channels), Part 4 (tools + credentials + build mapping), and a Status Tracker. A free-form spec that covers the same information is still wrong — it won't be scannable by clients or translatable to SOUL.md artifacts without the template structure. If you wrote a spec and it doesn't have four clearly labelled Parts, rewrite it before pushing.
 
 - **Agent spec rewrite checklist before pushing to guidelines/deployed-agents/:** (1) Part 1 has 1a/1b/1c subheadings, (2) 1b has "The number it owns" row, (3) Part 2 has a context sources table AND a GBrain content status table, (4) Part 3 has 3a/3b/3c/3d subheadings with skills split into Capability/General, (5) Part 4 has build mapping table, (6) Spec Status tracker at bottom with per-section checkboxes. Missing any of these = incomplete spec.
-- **guidelines/ content must be fully generic** — every file in `guidelines/` is client-facing. Any DataXquad-specific names (GeoKernel, AquaOptima, Distify, BusyCow as product names, Hunter, Kevin, DataXquad company name, `dx-` bank prefixes, real paths, real Lark channel IDs like `oc_8c3706...`, real Hindsight bank names like `dx-pipeline`, real GitHub org names like `DataXquad-HQ`) must be replaced with `[org]`, `[bl-name]`, `[Human 1]`, `[Human 2]`, `[org]-pipeline`, `[org]/[org]-gbrain`, `{{PLACEHOLDER}}` before committing. Partial genericization (slug column clean, name column still has real product name) is NOT acceptable — check every column of every table independently. Run the sanitization scan after every write — do not rely on memory of what you changed.
+- **guidelines/ content must be fully generic** — every file in `guidelines/` is client-facing. Any [Org]-specific names ([Product B], [Portfolio Company], [Product C], [Product A] as product names, [Founder 1], [Founder 2], [Org] company name, `dx-` bank prefixes, real paths, real Lark channel IDs like `oc_8c3706...`, real Hindsight bank names like `{{HINDSIGHT_PIPELINE_BANK}}`, real GitHub org names like `[Org]-HQ`) must be replaced with `[org]`, `[bl-name]`, `[Human 1]`, `[Human 2]`, `[org]-pipeline`, `[org]/[org]-gbrain`, `{{PLACEHOLDER}}` before committing. Partial genericization (slug column clean, name column still has real product name) is NOT acceptable — check every column of every table independently. Run the sanitization scan after every write — do not rely on memory of what you changed.
 - **Terminology: use Opportunity not Deal** — all sales pipeline references use "Opportunity" to match Twenty CRM object names. Exception: technical CRM field names like `dealType`, `dealId`, `OpportunityDealTypeEnum` stay as-is (schema identifiers). Directory names like `deal-progressing/` stay as-is (technical identifiers). Only prose content uses Opportunity.
 - **CRM schema in `artifacts/schemas/crm.md`** — structural CRM definitions belong under `artifacts/schemas/`. Always verify against the live system before trusting a copied schema doc.
 - **Genericizing agent files** — SOUL.md and skills must be genericized with Python regex before push. Apply broad ID patterns (oc_*, cli_*, om_*) first, then named strings. Skip all symlinks when walking skill dirs (Lark skills have cyclic same-name symlinks inside). See `copy_skill_clean()` above.
@@ -736,19 +736,19 @@ You are running a Leo agent update. Steps:
 - **CRM schema now lives under `artifacts/schemas/crm.md`** — structural schemas stay in `artifacts/schemas/`, not `context/schemas/`.
 - **Knowledge-base templates live under `artifacts/knowledge-base-templates/`** — do not reintroduce `knowledge-base-setup/` as the active package path.
 - **Use `guidelines/` and `playbooks/`, not `context/`, for package prose** — explanatory content belongs in `guidelines/`, operational instructions in `playbooks/`, and only installable assets in `artifacts/`.
-- **Remote URL**: repo is at `git@github.com:DataXquad-HQ/busycow-agent-package.git`. If a clone still points at the old repo name, update it with `git remote set-url origin git@github.com:DataXquad-HQ/busycow-agent-package.git`.
+- **Remote URL**: repo is at `git@github.com:[Org]-HQ/busycow-agent-package.git`. If a clone still points at the old repo name, update it with `git remote set-url origin git@github.com:[Org]-HQ/busycow-agent-package.git`.
   ```python
   # /tmp/create_repo.py
   import urllib.request, json
   env = {}
-  with open("/mnt/disks/data/hermes/.env") as f:
+  with open("{{HERMES_HOME}}/.env") as f:
       for line in f:
           if "=" in line and not line.startswith("#"):
               k, v = line.split("=", 1)
               env[k.strip()] = v.strip()
   token = env.get("GITHUB_TOKEN", "")
   req = urllib.request.Request(
-      "https://api.github.com/orgs/DataXquad-HQ/repos",
+      "https://api.github.com/orgs/[Org]-HQ/repos",
       data=json.dumps({"name": "repo-name", "private": True, "auto_init": True}).encode(),
       headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
                "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json"},
@@ -758,12 +758,12 @@ You are running a Leo agent update. Steps:
       d = json.loads(resp.read())
       print("URL:", d.get("html_url")); print("private:", d.get("private"))
   ```
-  Run: `python3 /tmp/create_repo.py`. Then: `git clone git@github.com:DataXquad-HQ/repo-name.git` (SSH, not HTTPS).
+  Run: `python3 /tmp/create_repo.py`. Then: `git clone git@github.com:[Org]-HQ/repo-name.git` (SSH, not HTTPS).
 - **Making an existing repo private** — same Python pattern but PATCH to `/repos/<org>/<repo>` with `{"private": True}`. Shell heredoc approach fails with EOF/quote errors when the .env source is inline.
 - **GitHub SSH remains shared at the VM level** — all profiles run under the same Linux user (`hunter_lin`), so `~/.ssh/config` and keys are automatically shared. No per-profile setup needed. Key in use: `~/.ssh/github_geokernel` pointing to `github.com`. Verify: `ssh -T git@github.com` → `Hi hunterlin1997!`.
-- **Leo does not need a repo-operation skill for runtime knowledge lookup** — internal knowledge reads route through GBrain / the dx-gbrain vault flow, while external package publication routes through `packaging-to-github`.
+- **Leo does not need a repo-operation skill for runtime knowledge lookup** — internal knowledge reads route through GBrain / the {{GBRAIN_SOURCE_ID}} vault flow, while external package publication routes through `packaging-to-github`.
 
-- **HTTPS clone + SSH push → fatal: could not read Username** — `git clone https://github.com/...` sets the remote URL to HTTPS. Pushing requires credentials (GitHub removed password auth). Fix once with: `git remote set-url origin git@github.com:DataXquad-HQ/busycow-agent-package.git` — subsequent pushes use the SSH key already configured on the VM (`hunterlin1997` key). Verify SSH works first: `ssh -T git@github.com`.
+- **HTTPS clone + SSH push → fatal: could not read Username** — `git clone https://github.com/...` sets the remote URL to HTTPS. Pushing requires credentials (GitHub removed password auth). Fix once with: `git remote set-url origin git@github.com:[Org]-HQ/busycow-agent-package.git` — subsequent pushes use the SSH key already configured on the VM (`hunterlin1997` key). Verify SSH works first: `ssh -T git@github.com`.
 - **Established knowledge repo structure** — `dataxquad-core` and `aquaoptima-core` use the same pattern: `README.md` + subdirs (`product/`, `market/`, `partners/`, `strategy/`, `team/`, `operations/`, `decisions/`). Each file is a standalone markdown knowledge doc tagged `v0.1 — team to update`. This is the canonical structure for any company-level knowledge repo.
 - Run sanitization scan **every time**, even for small edits
 - `{{PLACEHOLDER}}` format for all dynamic values — don't leave bare TODO comments
@@ -772,11 +772,11 @@ You are running a Leo agent update. Steps:
 - Don't add Notion-based variants or other stacks — one stack only (Hermes + Lark + GBrain)
 - After push, verify with: `curl -s [raw URL] | head -5`
 - Sanitization scan: use `os.path.expanduser()` — bare `~` doesn't expand in Python's `os.walk`
-- Internal server paths appear in two forms: `/home/the_owner/` AND `/mnt/disks/data/hermes/` — use greedy pattern: `r'/mnt/disks/data/hermes[^\s]*'` → `~/.hermes`
+- Internal server paths appear in two forms: `/home/the_owner/` AND `{{HERMES_HOME}}/` — use greedy pattern: `r'{{HERMES_HOME}}[^\s]*'` → `~/.hermes`
 - Scan false positives: `LARK_APP_SECRET=***` in README is safe (example text)
 - **SOUL.md templates must be universalized** — strip all specific deal/client/product names
 - **GBrain pages:** only export structural patterns and decisions, never entity-specific timelines or fact rows
 - **Capability Docs:** the trigger description is the most valuable part — make it concrete and specific
 - **shared-skills/ files must be fully universalized** — all credentials/IDs use `{{PLACEHOLDER}}` format; the twenty-crm.md skill is the reference example
 - **artifacts/schemas/ vs artifacts/agents/**: cross-agent schemas (CRM object definitions, DB schemas) go in `artifacts/schemas/`, NOT inside any agent's directory; artifacts/agents/ is for SOUL.md, capabilities, and agent-specific skills only
-- **Remote URL**: repo is at `git@github.com:DataXquad-HQ/busycow-agent-package.git` — if a clone still points at the old repo name, update it with `git remote set-url origin git@github.com:DataXquad-HQ/busycow-agent-package.git`
+- **Remote URL**: repo is at `git@github.com:[Org]-HQ/busycow-agent-package.git` — if a clone still points at the old repo name, update it with `git remote set-url origin git@github.com:[Org]-HQ/busycow-agent-package.git`

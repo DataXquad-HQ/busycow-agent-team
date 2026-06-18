@@ -10,18 +10,18 @@ triggers:
   - "change cron schedule"
   - "stop cron job"
   - "pause cron"
-  - "新增排程"
-  - "修改排程"
-  - "刪除排程"
+  - "create cron"
+  - "update cron"
+  - "delete cron"
 version: "1.0"
-author: DataXquad/BusyCow
+author: [Org]/[Product A]
 ---
 
 # Managing Cron Jobs
 
 ## Lark Base — Cron Registry (SSoT)
-- **App token**: `OircbPodaawVZlsQP2vjThkQp6b`
-- **Table**: `tblCqRXTw46L4BQt`
+- **App token**: `{{LARK_APP_TOKEN}}`
+- **Table**: `{{LARK_TABLE_ID}}`
 - Always update Base **after** any cron change — it is the source of truth
 
 ## Time Convention
@@ -78,7 +78,7 @@ TOKEN=$(curl -s -X POST "https://open.larksuite.com/open-apis/auth/v3/tenant_acc
   -d "{\"app_id\":\"$FEISHU_APP_ID\",\"app_secret\":\"$FEISHU_APP_SECRET\"}" \
   | python3 -c "import sys,json; print(json.load(sys.stdin)['tenant_access_token'])")
 for RID in recXXX recYYY recZZZ; do
-  curl -s -X DELETE "https://open.larksuite.com/open-apis/bitable/v1/apps/OircbPodaawVZlsQP2vjThkQp6b/tables/tblCqRXTw46L4BQt/records/$RID" \
+  curl -s -X DELETE "https://open.larksuite.com/open-apis/bitable/v1/apps/{{LARK_APP_TOKEN}}/tables/{{LARK_TABLE_ID}}/records/$RID" \
     -H "Authorization: Bearer $TOKEN"
 done
 ```
@@ -109,14 +109,14 @@ cronjob(
 ```
 You are {Name}, the {Role} agent. Load the managing-tasks skill.
 
-Query the Task Board (app_token: MtvNbgCHXaRAaUsWXsCjnekep2g, table: tblOqgxrhF6o1nUX) for tasks where:
+Query the Task Board (app_token: {{LARK_APP_TOKEN}}, table: {{LARK_TABLE_ID}}) for tasks where:
 - Worker Type = "{Name}"
 - Task Status = "Pending" or "Not Started"
 
 For each task found:
 1. Update Task Status → "In Progress"
 2. Execute the task per its description
-3. Update Task Status → "Done", write output to 執行日誌 field
+3. Update Task Status → "Done", write output to execution log field
 4. If blocked → set "Blocked" + note reason
 
 If no tasks: reply "{Name} online — no pending tasks today."

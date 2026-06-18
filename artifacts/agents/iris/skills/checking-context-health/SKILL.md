@@ -25,7 +25,7 @@ mcp_gbrain_sources_list()
 ```
 
 **Pass criteria:**
-- Source `dx-gbrain` exists and is not archived
+- Source `{{GBRAIN_SOURCE_ID}}` exists and is not archived
 - `last_synced_at` is within the last 26 hours
 
 **Check embed coverage:**
@@ -47,16 +47,16 @@ GET http://localhost:8888/v1/default/banks
 ```
 
 **Pass criteria — all of these banks must exist:**
-- `dx-pipeline`
-- `dx-agent-leo`
-- `dx-agent-maya`
-- `dx-agent-rex`
-- `dx-human-hunter`
-- `dx-human-kevin`
-- `dx-global`
+- `{{HINDSIGHT_PIPELINE_BANK}}`
+- `{{HINDSIGHT_AGENT_BANK_1}}`
+- `{{HINDSIGHT_AGENT_BANK_2}}`
+- `{{HINDSIGHT_AGENT_BANK_3}}`
+- `{{HINDSIGHT_FOUNDER_1_BANK}}`
+- `{{HINDSIGHT_FOUNDER_2_BANK}}`
+- `{{HINDSIGHT_GLOBAL_BANK}}`
 
-**Additional check on dx-pipeline:**
-- If Leo has been running for more than 2 weeks AND `dx-pipeline` fact_count = 0 → flag as broken write pipeline
+**Additional check on {{HINDSIGHT_PIPELINE_BANK}}:**
+- If Leo has been running for more than 2 weeks AND `{{HINDSIGHT_PIPELINE_BANK}}` fact_count = 0 → flag as broken write pipeline
 
 ---
 
@@ -74,7 +74,7 @@ cat ~/.hermes/profiles/leo/cron/jobs.json
 
 Also check Iris's own active crons via `cronjob(action='list')`:
 - `GBrain Nightly Dream + Memory Sync` → enabled, last_status ok
-- `dx-gbrain-nightly-sync` → enabled
+- `{{GBRAIN_SOURCE_ID}}-nightly-sync` → enabled
 
 ---
 
@@ -96,10 +96,10 @@ df -h /
 
 ---
 
-## Check 5 — dx-gbrain GitHub Sync
+## Check 5 — {{GBRAIN_SOURCE_ID}} GitHub Sync
 
 ```
-cd /mnt/disks/data/dx-gbrain && git log --oneline -1 && git status --short
+cd /mnt/disks/data/{{GBRAIN_SOURCE_ID}} && git log --oneline -1 && git status --short
 ```
 
 **Pass criteria:**
@@ -138,7 +138,7 @@ cd /mnt/disks/data/dx-gbrain && git log --oneline -1 && git status --short
 ## Pitfalls
 
 - GBrain `last_synced_at` may be null if the source was just registered — treat null as a warning, not a hard fail, if the source was registered within 24 hours
-- `dx-agent-steve` may not exist if that agent isn't deployed — skip it without flagging
+- `{{HINDSIGHT_AGENT_BANK_4}}` may not exist if that agent isn't deployed — skip it without flagging
 - Hindsight may return a 503 if the container is restarting — retry once after 10 seconds before flagging
 - `df` output may show `/mnt/disks/data` at high usage during a sync — cross-check with `git status` to confirm it's not a runaway write
 

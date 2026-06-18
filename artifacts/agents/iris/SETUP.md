@@ -2,7 +2,7 @@
 
 ## What this installs
 
-This setup installs the DataXquad-use Iris artifact layer:
+This setup installs the [Org]-use Iris artifact layer:
 - `SOUL.md`
 - the Iris skill layer under `artifacts/agents/iris/skills/`
 - the reference scenario coverage document
@@ -41,7 +41,7 @@ Use `guidelines/deployed-agents/iris-spec.md` as the source of truth for which j
 At minimum, confirm the runtime has these workflows:
 - Daily Lark → GBrain Extraction
 - GBrain Dream + Memory Sync
-- dx-gbrain Nightly Sync
+- {{GBRAIN_SOURCE_ID}} Nightly Sync
 - Daily Session → Hindsight Ingest
 - Daily Context Health Check
 - Daily Ops Briefing

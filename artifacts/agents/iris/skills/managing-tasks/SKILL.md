@@ -1,22 +1,22 @@
 ---
 name: managing-tasks
 description: >
-  Create and update tasks in the DataXquad Task Tracker (Lark Base). Triages
+  Create and update tasks in the [Org] Task Tracker (Lark Base). Triages
   multi-task dumps automatically — extracts every action item from a message,
   auto-assigns Initiative and Goal, and saves in one batch. Use when user says
-  "記下來", "追蹤一下", "寫進去", "add a task", "update task", "mark done",
+  "log this", "track this", "write this down", "add a task", "update task", "mark done",
   or mentions anything that needs to be tracked as an action item.
 triggers:
-  - "記下來"
-  - "追蹤一下"
-  - "寫進去"
+  - "log this"
+  - "track this"
+  - "write this down"
   - "add a task"
   - "update task"
   - "mark done"
   - "task status"
   - "new task"
 version: "2.0"
-author: DataXquad
+author: [Org]
 ---
 
 # Managing Tasks
@@ -25,13 +25,13 @@ author: DataXquad
 
 Before creating or updating a task, confirm which task system the user means.
 
-- Use this skill only for the **DataXquad Task Tracker in Lark Base**.
+- Use this skill only for the **[Org] Task Tracker in Lark Base**.
 - If the user wants to use **default Lark Tasks / Feishu Tasks**, route to `lark-task` instead of writing into the Base table.
 # Managing Tasks
 
-## Scope Guard — DataXquad task source of truth
+## Scope Guard — [Org] task source of truth
 
-This skill manages the **legacy DataXquad Lark Base task tracker**.
+This skill manages the **legacy [Org] Lark Base task tracker**.
 
 When the user wants to use **default Lark Tasks / tasklists**, do **not** use this skill — route to `lark-task` instead.
 
@@ -39,11 +39,11 @@ If the user says "create a task" or "update a task" ambiguously, first determine
 - default Lark Tasks / tasklists → use `lark-task`
 - legacy custom Base tracker → use this skill
 
-Current DataXquad operating preference: live task execution should use **default Lark task features** rather than the older custom Base.
+Current [Org] operating preference: live task execution should use **default Lark task features** rather than the older custom Base.
 
-## DataXquad Task System Rule (2026-06)
+## [Org] Task System Rule (2026-06)
 
-For DataXquad internal operations, **Lark default tasks are the primary structural task layer**.
+For [Org] internal operations, **Lark default tasks are the primary structural task layer**.
 
 Use default Lark tasks when the user wants to create, track, assign, review, or close actual work items.
 Use GBrain / Hindsight for memory, decisions, entity knowledge, and context — **not** for execution tracking.
@@ -51,9 +51,9 @@ Use the older Lark Base task table only when the user explicitly asks for that l
 
 When operating on default tasks, keep output short and highly scannable: brief recommendation, direct next action, minimal explanation.
 
-## DataXquad Default Rule — Prefer Lark Default Tasks for Internal Execution
+## [Org] Default Rule — Prefer Lark Default Tasks for Internal Execution
 
-For DataXquad's active internal operating system, **Lark default Tasks are the system of record for execution**. Use them for live task ownership, follow-up, status, and KR-linked execution work.
+For [Org]'s active internal operating system, **Lark default Tasks are the system of record for execution**. Use them for live task ownership, follow-up, status, and KR-linked execution work.
 
 Use this Base-backed skill only when one of these is true:
 - the user explicitly asks to use the legacy Task Tracker Base
@@ -75,7 +75,7 @@ When called from `managing-sales-pipeline` or `managing-partnership-pipeline`, a
 | managing-sales-pipeline | `opportunity_record_id` | Opportunity | `fldxTM0Op2` |
 | managing-partnership-pipeline | `partnership_record_id` | Partnership | `flderan4Kb` |
 
-**Rule:** If context contains a record_id, fill the corresponding DuplexLink silently — do NOT ask the user. Mention it inline: `「→ 已連結 Opportunity OP-2026-XXX」`
+**Rule:** If context contains a record_id, fill the corresponding DuplexLink silently — do NOT ask the user. Mention it inline: `「→ linked to Opportunity OP-2026-XXX」`
 
 ### Standalone Mode (no CRM context)
 When invoked standalone (no CRM handoff context), both Opportunity and Partnership fields are optional. This is the common case for:
@@ -88,10 +88,10 @@ When invoked standalone (no CRM handoff context), both Opportunity and Partnersh
 ---
 
 ## Base & Tables
-- **App Token:** `MtvNbgCHXaRAaUsWXsCjnekep2g` (Sales & Ops Base)
-- **Tasks:** `tblOqgxrhF6o1nUX`
-- **Initiatives:** `tbl4DGbsJFmx3Mfd`
-- **Goals:** `tblt9kHfcRVm3he9`
+- **App Token:** `{{LARK_APP_TOKEN}}` (Sales & Ops Base)
+- **Tasks:** `{{LARK_TABLE_ID}}`
+- **Initiatives:** `{{LARK_TABLE_ID}}`
+- **Goals:** `{{LARK_TABLE_ID}}`
 
 ## Architecture
 ```
@@ -113,7 +113,7 @@ All three (Initiative / Opportunity / Partnership) connect directly to a Goal. T
 
 ## Scope guard — Base tracker vs Lark default Tasks
 
-This skill manages the **DataXquad Lark Base task tracker**.
+This skill manages the **[Org] Lark Base task tracker**.
 
 If the user explicitly wants to create or manage work in **Lark default Tasks / Task Lists** instead of Base:
 - do **not** use this Base workflow
@@ -150,17 +150,17 @@ Every task **must** be linked to an Initiative and Goal. Never leave blank.
 ### Match Logic (references/initiative-logic.md)
 | Confidence | Action |
 |------------|--------|
-| >80% | Link silently, mention inline: "→ 歸入 [Initiative]" |
-| Ambiguous | Ask once: "歸入 [X] 還是 [Y]？" |
+| >80% | Link silently, mention inline: "→ Assigned to [Initiative]" |
+| Ambiguous | Ask once: "Should this be assigned to [X] or [Y]?" |
 | No match | Propose new Initiative, wait for confirmation, then create |
 
 ### Goal Record IDs
 | Business Line | Goal Record ID |
 |---------------|----------------|
-| BusyCow | `recvk50RBz2xk5` |
-| GeoKernel | `recvk50S1aUBia` |
-| AquaOptima | `recvk50SoAHGfD` |
-| DataXquad | `recvk50SSQ0qSD` |
+| [Product A] | `recvk50RBz2xk5` |
+| [Product B] | `recvk50S1aUBia` |
+| [Portfolio Company] | `recvk50SoAHGfD` |
+| [Org] | `recvk50SSQ0qSD` |
 
 ---
 
@@ -179,7 +179,7 @@ Every task **must** be linked to an Initiative and Goal. Never leave blank.
 | Title | fld2Z0Yi15 | Text (primary) | Format: `[TAG] action description` (field name is "Title" NOT "Task Name") |
 | Done | fldEBSzJLw | Checkbox | `true` = completed, `false` = pending |
 | Deadline | fldDIaKjCR | DateTime | ms timestamp UTC+8 |
-| Business Line | fldDvd3nth | SingleSelect | DataXquad / GeoKernel / AquaOptima / TRACI / Distify / BusyCow |
+| Business Line | fldDvd3nth | SingleSelect | [Org] / [Product B] / [Portfolio Company] / [Product D] / [Product C] / [Product A] |
 | Responsible Person | fldbU06WCv | User | `[{"id": "open_id"}]` + user_id_type: open_id |
 | Priority | fld0kpXg4L | SingleSelect | 🔴 High / 🟡 Medium / 🟢 Low |
 | Description | fldp3pHhSW | Text | |
@@ -193,16 +193,16 @@ Every task **must** be linked to an Initiative and Goal. Never leave blank.
 | Agent Advice | fldXvVWDRd | Text | Present in current live schema |
 | Output Link | fldjiF87Cu | Url | Present in current live schema |
 
-> 2026-06 schema note: the live Tasks table currently exposes 11 fields only. Legacy references in this skill to `Opportunity`, `Partnership`, `Agent Status`, `執行日誌`, `Depends On`, or `Handoff Context` are not present in the observed live schema and should be treated as future/alternate-schema notes, not assumptions for write operations.
+> 2026-06 schema note: the live Tasks table currently exposes 11 fields only. Legacy references in this skill to `Opportunity`, `Partnership`, `Agent Status`, `execution log`, `Depends On`, or `Handoff Context` are not present in the observed live schema and should be treated as future/alternate-schema notes, not assumptions for write operations.
 
 ### Team IDs
 | Person | Open ID |
 |--------|---------|
-| Hunter | `ou_f1117d10f3560d86cf7c99ce0a156be1` |
-| Kevin | `ou_9ba57313a31d3033aad77865df63cb3f` |
+| [Founder 1] | `{{LARK_USER_OPEN_ID}}` |
+| [Founder 2] | `{{LARK_USER_OPEN_ID}}` |
 
 ### Save order (if new Initiative needed)
-1. Create Initiative in `tblp4JYCAFs9TLlk` → get record_id
+1. Create Initiative in `{{LARK_TABLE_ID}}` → get record_id
 2. Create Task(s) linked to new Initiative
 
 ---
@@ -230,7 +230,7 @@ Without Goal + Initiative, workers produce generic outputs. With them, workers p
 After saving all tasks, output one summary table:
 
 ```
-✅ 已記錄 N 個任務：
+✅ Recorded N tasks:
 
 | Task | Initiative | Responsible | Deadline | Priority |
 |------|-----------|-------------|----------|----------|
@@ -246,7 +246,7 @@ After saving all tasks, output one summary table:
 - **Cron-mode execution:** See `references/cron-task-execution.md` for the full pattern including Filter → Update → Execute → Report loop
 
 ## Pitfalls
-- **CRITICAL: Always use field NAMES as keys, never field IDs.** Field IDs change when tables are rebuilt/migrated. Using field IDs returns error 1254045 FieldNameNotFound. Confirmed working pattern: `{"Task Name": "...", "Business Line": "BusyCow", ...}`
+- **CRITICAL: Always use field NAMES as keys, never field IDs.** Field IDs change when tables are rebuilt/migrated. Using field IDs returns error 1254045 FieldNameNotFound. Confirmed working pattern: `{"Task Name": "...", "Business Line": "[Product A]", ...}`
 - **CRITICAL: Record ID is metadata, NOT a table field.** When updating an existing task, pass the record ID via `--record-id <recXXX>` parameter, NOT as a JSON field `{"Record ID": "..."}`. Using "Record ID" as a field key returns error 1254045 FieldNameNotFound.
 - User field MUST be array: `[{"id": "..."}]` + param `user_id_type: open_id`
 - DuplexLink (e.g. `📋 Initiatives-Tasks`) = plain array of strings: `["recXXX"]` — NOT `{"link_record_ids": [...]}`

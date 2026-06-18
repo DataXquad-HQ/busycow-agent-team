@@ -16,10 +16,10 @@ triggers:
   - "org change"
   - "routing rule changed"
   - "task system changed"
-  - "記下這個決定"
-  - "更新 operating state"
+  - "log this decision"
+  - "update operating state"
 version: "1.0"
-author: DataXquad / Iris
+author: [Org] / Iris
 ---
 
 # Capturing Operating Changes
@@ -52,8 +52,8 @@ For each change, Iris should decide which layers must be updated:
 |---|---|
 | `internal/decisions/YYYY-MM-DD-[topic].md` in GBrain | a real decision was made |
 | current-state docs in GBrain (`internal/company/`, `internal/business-lines/`, `internal/agents/`, `internal/systems/`) | the decision changes the current operating truth |
-| Hindsight `dx-global` | the change should affect future interpretation across sessions |
-| Hindsight `dx-human-hunter` / `dx-human-kevin` | the change expresses founder preference / decision style |
+| Hindsight `{{HINDSIGHT_GLOBAL_BANK}}` | the change should affect future interpretation across sessions |
+| Hindsight `{{HINDSIGHT_FOUNDER_1_BANK}}` / `{{HINDSIGHT_FOUNDER_2_BANK}}` | the change expresses founder preference / decision style |
 | task / OKR layer | the decision changes active execution priorities |
 
 The default pattern is usually:
@@ -102,8 +102,8 @@ Recommended structure:
 ### 4. Update hot memory
 
 Write concise durable items into Hindsight:
-- `dx-global` for company-wide operating truth
-- `dx-human-hunter` / `dx-human-kevin` only when the change reflects founder preference, style, or decision pattern
+- `{{HINDSIGHT_GLOBAL_BANK}}` for company-wide operating truth
+- `{{HINDSIGHT_FOUNDER_1_BANK}}` / `{{HINDSIGHT_FOUNDER_2_BANK}}` only when the change reflects founder preference, style, or decision pattern
 
 Write one memory item per durable fact.
 

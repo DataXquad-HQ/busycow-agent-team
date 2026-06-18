@@ -19,7 +19,7 @@ Use `lark-cli base +record-list` to fetch all tasks:
 ```bash
 lark-cli base +record-list \
   --base-token <base_token> \
-  --table-id tblOqgxrhF6o1nUX \
+  --table-id {{LARK_TABLE_ID}} \
   --limit 100 \
   --as bot
 ```
@@ -36,7 +36,7 @@ Before executing, set task status to "In Progress":
 ```bash
 lark-cli base +record-upsert \
   --base-token <base_token> \
-  --table-id tblOqgxrhF6o1nUX \
+  --table-id {{LARK_TABLE_ID}} \
   --record-id <recXXX> \
   --json '{"Done": false, "Task Status": "In Progress"}'
 ```
@@ -51,17 +51,17 @@ Parse `Task Name` and `Description` fields. Execute according to task type:
 
 ### 3. Record Execution Result
 
-Append execution log to `執行日誌` field (append mode, do NOT overwrite):
+Append execution log to `execution log` field (append mode, do NOT overwrite):
 
 ```bash
 lark-cli base +record-upsert \
   --base-token <base_token> \
-  --table-id tblOqgxrhF6o1nUX \
+  --table-id {{LARK_TABLE_ID}} \
   --record-id <recXXX> \
   --json '{
     "Done": true,
     "Task Status": "Done",
-    "執行日誌": "✓ TASK_NAME completed on 2026-06-01\nDetails: ...\n"
+    "execution log": "✓ TASK_NAME completed on 2026-06-01\nDetails: ...\n"
   }'
 ```
 
@@ -72,12 +72,12 @@ If task cannot complete:
 ```bash
 lark-cli base +record-upsert \
   --base-token <base_token> \
-  --table-id tblOqgxrhF6o1nUX \
+  --table-id {{LARK_TABLE_ID}} \
   --record-id <recXXX> \
   --json '{
     "Done": false,
     "Task Status": "Blocked",
-    "執行日誌": "⚠️ Blocked: [reason]\nAction: [what needs to happen]\n"
+    "execution log": "⚠️ Blocked: [reason]\nAction: [what needs to happen]\n"
   }'
 ```
 
@@ -97,7 +97,7 @@ lark-cli base +record-upsert \
 | Task Status | Task Status | SingleSelect | "Pending", "In Progress", "Done", "Blocked" |
 | Responsible Person | Responsible Person | User | Array: `[{"id": "ou_xxx"}]` |
 | `Worker Type` | Worker Type | SingleSelect | "Leo", "Maya", "Rex", etc. |
-| Execution Log | 執行日誌 | Text | Append-only log of execution results |
+| Execution Log | execution log | Text | Append-only log of execution results |
 
 ## Error Handling
 
@@ -109,7 +109,7 @@ lark-cli base +record-upsert \
 
 2. **Record not found** — `record_id` is stale or typo
    - Verify record exists with `+record-get` before updating
-   - Log the error to `執行日誌` and mark status "Blocked"
+   - Log the error to `execution log` and mark status "Blocked"
 
 3. **Field name wrong** — error 1254045 FieldNameNotFound
    - ALWAYS use field NAMES, NOT field IDs (e.g., "Done", NOT "fldEBSzJLw")
@@ -127,7 +127,7 @@ For transient failures (network, rate limit):
 From 2026-06-01 execution:
 
 ```
-Task: [LEO] 安裝 Role-Specific Skills
+Task: Install role-specific skills
 Record ID: recvldbLa0E5Yl
 Worker Type: Leo
 Status: Pending → In Progress → Done

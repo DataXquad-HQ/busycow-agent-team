@@ -3,11 +3,11 @@ name: syncing-brain-memory
 description: >
   Sync local GBrain vault and Hermes memory files to GitHub. Copies MEMORY.md and USER.md
   into the brain repo, then commits and pushes everything to GitHub. Use after gbrain dream
-  completes, or when user says "push brain", "sync memory to github", "記憶備份".
+  completes, or when user says "push brain", "sync memory to github", "backup memory".
 triggers:
   - "push brain"
   - "sync memory to github"
-  - "記憶備份"
+  - "backup memory"
   - "push to github"
   - "brain sync"
 ---
@@ -18,23 +18,23 @@ triggers:
 Copy Hermes memory files into the brain repo, then push the full vault to GitHub.
 
 ## Paths
-- Brain vault: `/mnt/disks/data/dx-gbrain`
+- Brain vault: `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}`
 - Memory files: `~/.hermes/memories/MEMORY.md` and `~/.hermes/memories/USER.md`
-- Target dir in brain: `/mnt/disks/data/dx-gbrain/hermes-memory/`
+- Target dir in brain: `/mnt/disks/data/{{GBRAIN_SOURCE_ID}}/hermes-memory/`
 - GitHub remote: `origin master`
 
 ## Steps
 
 ### 1. Copy Memory Files
 ```bash
-mkdir -p /mnt/disks/data/dx-gbrain/hermes-memory
-cp ~/.hermes/memories/MEMORY.md /mnt/disks/data/dx-gbrain/hermes-memory/MEMORY.md
-cp ~/.hermes/memories/USER.md /mnt/disks/data/dx-gbrain/hermes-memory/USER.md
+mkdir -p /mnt/disks/data/{{GBRAIN_SOURCE_ID}}/hermes-memory
+cp ~/.hermes/memories/MEMORY.md /mnt/disks/data/{{GBRAIN_SOURCE_ID}}/hermes-memory/MEMORY.md
+cp ~/.hermes/memories/USER.md /mnt/disks/data/{{GBRAIN_SOURCE_ID}}/hermes-memory/USER.md
 ```
 
 ### 2. Git Add + Commit + Push
 ```bash
-cd /mnt/disks/data/dx-gbrain
+cd /mnt/disks/data/{{GBRAIN_SOURCE_ID}}
 git add -A
 git diff --cached --stat
 git commit -m "sync: nightly memory + brain $(date '+%Y-%m-%d')" --allow-empty
@@ -44,7 +44,7 @@ git push origin master 2>&1
 ### 3. Report Result
 Return structured summary:
 ```
-✅ Brain Sync 完成
+✅ Brain Sync complete
 - Files copied: MEMORY.md, USER.md
 - Commit: [hash] — [stat summary]
 - Push: origin/main ✓

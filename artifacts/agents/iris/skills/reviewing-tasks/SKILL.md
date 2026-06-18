@@ -1,28 +1,28 @@
 ---
 name: reviewing-tasks
 description: >
-  Query and summarise tasks from the DataXquad Task Tracker with Goal-first
+  Query and summarise tasks from the [Org] Task Tracker with Goal-first
   prioritisation. Use when user asks "what tasks do I have", "what's due today",
-  "standup", "任務清單", "本週重點", or wants a workload overview grouped by Goal.
+  "standup", "task list", "this week priorities", or wants a workload overview grouped by Goal.
 triggers:
   - "what tasks"
   - "what's due"
   - "standup"
-  - "任務清單"
+  - "task list"
   - "today's tasks"
   - "this week"
   - "task overview"
-  - "本週重點"
-  - "有什麼事要做"
+  - "this week priorities"
+  - "what needs doing"
 version: "2.0"
-author: DataXquad
+author: [Org]
 ---
 
 # Reviewing Tasks
 
 ## Scope guard — Base tracker vs Lark default Tasks
 
-This skill is for the **DataXquad Lark Base task tracker** only.
+This skill is for the **[Org] Lark Base task tracker** only.
 
 If the user explicitly wants to use **Lark default Tasks / Task Lists / OKR lists** instead of Base:
 - do **not** use this skill's Base workflow
@@ -41,13 +41,13 @@ For task reviews and ops summaries:
 
 Before using this skill, confirm the task source.
 
-- Use this skill only when the user wants the **DataXquad Task Tracker in Lark Base**.
+- Use this skill only when the user wants the **[Org] Task Tracker in Lark Base**.
 - If the user wants **default Lark Tasks / Feishu Tasks**, do **not** use this skill — route to `lark-task` instead.
 # Reviewing Tasks
 
-## Scope Guard — DataXquad task source of truth
+## Scope Guard — [Org] task source of truth
 
-This skill is for the **legacy DataXquad Lark Base task tracker** only.
+This skill is for the **legacy [Org] Lark Base task tracker** only.
 
 When the user means **Lark default Tasks / tasklists**, do **not** use this skill — route to `lark-task` instead.
 
@@ -55,11 +55,11 @@ If the user says "tasks" ambiguously, first resolve whether they mean:
 - default Lark Tasks / tasklists → use `lark-task`
 - legacy custom task tracker in Lark Base → use this skill
 
-Current DataXquad operating preference: for live task management and review, prefer **default Lark task features** over the older custom Base.
+Current [Org] operating preference: for live task management and review, prefer **default Lark task features** over the older custom Base.
 
-## DataXquad Task System Rule (2026-06)
+## [Org] Task System Rule (2026-06)
 
-For DataXquad internal operations, **Lark default tasks are the primary structural task layer**.
+For [Org] internal operations, **Lark default tasks are the primary structural task layer**.
 
 Use default Lark tasks for active work review, owner visibility, follow-up tracking, and operational execution.
 Use GBrain / Hindsight for memory, decisions, and knowledge context — **not** as the task system.
@@ -68,10 +68,10 @@ Treat the older Lark Base task table as legacy: only query it if the user explic
 When presenting task reviews, keep the output short and highly scannable — priorities first, compact bullets, no long explanatory prose.
 
 ## Base & Tables
-- **App Token:** `MtvNbgCHXaRAaUsWXsCjnekep2g`
-- **Tasks:** `tblOqgxrhF6o1nUX`
-- **Initiatives:** `tbl4DGbsJFmx3Mfd`
-- **Goals:** `tblt9kHfcRVm3he9`
+- **App Token:** `{{LARK_APP_TOKEN}}`
+- **Tasks:** `{{LARK_TABLE_ID}}`
+- **Initiatives:** `{{LARK_TABLE_ID}}`
+- **Goals:** `{{LARK_TABLE_ID}}`
 
 > 2026-06 schema note: verify live field names against the Tasks table before querying. Current observed field names include `Title`, `Done`, `Deadline`, `Business Line`, `Responsible Person`, `Priority`, `Description`, `Agent Advice`, `Related Deal`, `Related Partnership`, and `Output Link`. Older references to `Task Name`, `Opportunity`, or legacy linked-table IDs are stale.
 
@@ -91,13 +91,13 @@ When presenting task reviews, keep the output short and highly scannable — pri
 Present tasks in this order — not a flat list:
 
 ```
-🔴 今天到期 / 已逾期
+🔴 Due today / overdue
   • [Task] — [Owner] — [Goal > Initiative]
 
-⚡ 高優先、未排時間
+⚡ High priority, unscheduled
   • [Task] — [Owner] — [Goal > Initiative]
 
-📋 按 Goal 分組
+📋 Group by Goal
   [Goal Name]
     [Initiative Name]
       • [Task] — [Owner] — [Deadline / no deadline]
@@ -134,10 +134,10 @@ TODAY_END   = int(datetime(today.year, today.month, today.day, 23, 59, 59, tzinf
 
 ```python
 uid = responsible[0].get('id', '')
-if uid == 'ou_f1117d10f3560d86cf7c99ce0a156be1':
-    name = 'Hunter'
-elif uid == 'ou_9ba57313a31d3033aad77865df63cb3f':
-    name = 'Kevin'
+if uid == '{{LARK_USER_OPEN_ID}}':
+    name = '[Founder 1]'
+elif uid == '{{LARK_USER_OPEN_ID}}':
+    name = '[Founder 2]'
 ```
 
 ---

@@ -73,7 +73,7 @@ current_blockers:
 
 # Define what the AI agent is allowed to do and what requires human approval.
 
-- agent_name: "[Agent Name — e.g., Hermes, BusyCow AI]"
+- agent_name: "[Agent Name — e.g., Hermes, [Product A] AI]"
   role: "Orchestrator / Team Liaison"
   authorities:
     can_do:

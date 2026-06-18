@@ -1,20 +1,20 @@
 ---
 name: planning-next-actions
 description: >
-  Use when user asks "接下來我該做什麼", "幫我排一下今天", "what should I focus on",
-  "今天先做什麼", or wants a prioritised action recommendation (not just a task list).
+  Use when user asks "what should I do next", "help me prioritize today", "what should I focus on",
+  "what should I do first today", or wants a prioritised action recommendation (not just a task list).
   Pulls active tasks, scores by Goal importance × urgency × priority, and outputs
   the top 3–5 actions with reasoning — not a list, but a clear recommendation.
 triggers:
-  - "接下來該做什麼"
-  - "今天先做什麼"
-  - "幫我排一下"
+  - "what should I do next"
+  - "what should I do first today"
+  - "help me prioritize"
   - "what should I focus on"
-  - "最重要的事"
-  - "該從哪裡開始"
-  - "幫我安排今天"
+  - "most important thing"
+  - "where should I start"
+  - "help me plan today"
 version: "1.0"
-author: DataXquad
+author: [Org]
 ---
 
 # Planning Next Actions
@@ -23,13 +23,13 @@ author: DataXquad
 
 Before using this skill, confirm the task source.
 
-- Use this skill only when the prioritisation should be based on the **DataXquad Task Tracker in Lark Base**.
+- Use this skill only when the prioritisation should be based on the **[Org] Task Tracker in Lark Base**.
 - If the user wants prioritisation from **default Lark Tasks / Feishu Tasks**, route to `lark-task` first and build recommendations from that source instead.
 - If the user does not specify which task system they mean, do not assume the Base table by default.
 
-## DataXquad Task System Rule (2026-06)
+## [Org] Task System Rule (2026-06)
 
-For DataXquad internal operations, **Lark default tasks are the primary structural task layer**.
+For [Org] internal operations, **Lark default tasks are the primary structural task layer**.
 
 Use default Lark tasks when deciding what the user should do next.
 Use GBrain / Hindsight for memory, decisions, and supporting context — **not** as the execution tracker.
@@ -39,7 +39,7 @@ Output must stay short and highly scannable: 3–5 actions max, one-line reason 
 
 ## Scope guard — Base tracker vs Lark default Tasks
 
-This skill is for planning from the **DataXquad Lark Base task tracker**.
+This skill is for planning from the **[Org] Lark Base task tracker**.
 
 If the user explicitly wants planning based on **Lark default Tasks / Task Lists / OKR lists** instead of Base:
 - do **not** use this skill's Base workflow
@@ -65,10 +65,10 @@ Output should feel like a thinking partner, not a task manager.
 - Prefer one-screen answers unless the user explicitly asks for detail.
 
 ## Base & Tables
-- **App Token:** `MtvNbgCHXaRAaUsWXsCjnekep2g`
-- **Tasks:** `tblOqgxrhF6o1nUX`
-- **Initiatives:** `tbl2xxpxkLIQuRPM`
-- **Goals:** `tblkpN1cyt1CWwoY`
+- **App Token:** `{{LARK_APP_TOKEN}}`
+- **Tasks:** `{{LARK_TABLE_ID}}`
+- **Initiatives:** `{{LARK_TABLE_ID}}`
+- **Goals:** `{{LARK_TABLE_ID}}`
 
 ---
 
@@ -104,17 +104,17 @@ Sort descending by Score. Take top 5.
 ## Output Format
 
 ```
-🎯 接下來最重要的 [N] 件事：
+🎯 Top [N] next actions:
 
 1. [Task Name] — [Owner]
-   → 為什麼：[one-line reason: deadline / goal / blocking others]
-   → 目標：[Goal > Initiative]
+   → Why:[one-line reason: deadline / goal / blocking others]
+   → Goal:[Goal > Initiative]
 
 2. ...
 
 ---
-💡 [Optional: one insight — e.g. "GeoKernel 這邊有兩件事都卡在 James，
-    可以一起跟進省時間"]
+💡 [Optional: one insight — e.g. "[Product B] two tasks are both blocked on the same person,
+    so one follow-up can unblock both"]
 ```
 
 Rules:

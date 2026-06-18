@@ -16,7 +16,7 @@ Current scope:
 | Scenario | Expected Iris behavior | Current status | Notes |
 |---|---|---|---|
 | Founder changes operating rule | capture decision, update active state, update Hindsight, update task layer if needed | partial | `capturing-operating-changes` exists; needs repeated real use |
-| Rebuild OKR from current company state | read company docs, rewrite objectives/KRs, re-map tasks | proven | done with real DataXquad data |
+| Rebuild OKR from current company state | read company docs, rewrite objectives/KRs, re-map tasks | proven | done with real [Org] data |
 | Stale initiative cleanup | distinguish archive vs active, close/hide stale state | proven | done with real Lark task data |
 | Daily ops briefing | summarize task + cron + context health | partly proven | cron exists and runs; output quality still needs repeated review |
 | Weekly operating review | identify blockers, ownership gaps, objective drift | not fully proven | workflow is possible but not yet repeated enough |

@@ -11,9 +11,9 @@ triggers:
   - "delete skill"
   - "update skill"
   - "make this a shared skill"
-  - "新增 skill"
-  - "建立 skill"
-  - "刪除 skill"
+  - "add a skill"
+  - "create a skill"
+  - "delete a skill"
   - "shared skill"
 version: "2.0"
 ---
@@ -139,7 +139,7 @@ preference is actually user-specific and should follow that person across differ
 
 - After rename: patch `name:` in frontmatter too — directory name ≠ name field
 - `skill_manage(action='delete')` may return "not found" if dir name ≠ frontmatter name — use `terminal("rm -rf ...")` as fallback
-- Descriptions: no person names — `user says`, not `Hunter says`
+- Descriptions: no person names — `user says`, not `[Founder 1] says`
 - One-time fixes → GBrain, not a skill
 - Circular symlink: bash `ln -sf $PATH/$skill $PATH/$skill` self-references. Always use Python `os.symlink()` with absolute target paths if you intentionally use symlinks.
 - Agent profile skills are NOT backed up by nightly brain sync — lost on profile delete

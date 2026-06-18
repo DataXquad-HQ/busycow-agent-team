@@ -11,10 +11,10 @@ triggers:
   - "openmail"
   - "Leo's inbox"
   - "outreach status"
-  - "有沒有人回信"
+  - "any email replies"
   - "nurturing email replies"
 version: "1.0"
-author: DataXquad/Iris
+author: [Org]/Iris
 ---
 
 # OpenMail — Read Access Skill (Iris)
@@ -40,7 +40,7 @@ Iris uses this skill **read-only** — check reply counts, retrieve inbound mess
 import requests, json
 
 def load_openmail_token():
-    with open("/home/hunter_lin/.hermes/profiles/leo/.env") as f:
+    with open("{{HOME_DIR}}/.hermes/profiles/leo/.env") as f:
         for line in f:
             line = line.strip()
             if "OPENMAIL_API_KEY" in line and "=" in line:

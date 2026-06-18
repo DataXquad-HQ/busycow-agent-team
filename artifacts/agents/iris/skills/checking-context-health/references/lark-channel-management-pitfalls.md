@@ -35,5 +35,5 @@ Don't use email lookup — it often fails for internal users. Instead:
    ```
 2. Match by name in the returned list to get `member_id` (open_id format)
 
-Hunter's open_id: `ou_f1117d10f3560d86cf7c99ce0a156be1`
-Kevin's open_id: `ou_9ba57313a31d3033aad77865df63cb3f`
+[Founder 1]'s open_id: `{{LARK_USER_OPEN_ID}}`
+[Founder 2]'s open_id: `{{LARK_USER_OPEN_ID}}`
