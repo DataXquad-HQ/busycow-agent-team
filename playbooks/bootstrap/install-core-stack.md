@@ -40,12 +40,12 @@ hermes setup
 Use the Lark integration playbook as the source of truth.
 
 At minimum, the package expects `lark-cli` to be bound to the same app as the
-Hermes runtime and locked to bot-default operation:
+Hermes runtime and set to bot-default operation:
 
 ```bash
 lark-cli config init --new
 lark-cli config default-as bot
-lark-cli config strict-mode bot
+lark-cli config strict-mode off
 lark-cli auth status --verify
 ```
 

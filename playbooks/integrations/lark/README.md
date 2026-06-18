@@ -28,16 +28,16 @@ alone.
 ### Default mode
 
 For a standard BusyCow deployment, bind `lark-cli` to the **same Lark app used
-by the Hermes runtime**, then operate it in **bot-default, bot-restricted** mode.
+by the Hermes runtime**, then operate it in **bot-default, non-restricted** mode.
 
-This avoids repeated user OAuth prompts and makes the operational model easier
-to reason about.
+This keeps bot as the normal operating path while avoiding unnecessary policy
+friction.
 
 ### Why
 
 - The app identity is stable and centrally managed
 - Bot-mode behavior is easier to package and reproduce
-- User OAuth prompts are removed from normal operations
+- Bot remains the default posture without hard-disabling user-mode tools
 - Agents can still send messages, update operational records, and manage docs
   that the app already has permission to access
 
@@ -45,8 +45,8 @@ to reason about.
 
 - Normal package behavior assumes **bot identity first**
 - `--as user` is an **exception path**, not the default
-- If a deployment needs user-level actions later, the operator can explicitly
-  relax the policy and run user auth as a conscious decision
+- If a deployment needs user-level actions later, the operator can still use
+  them deliberately without first changing strict-mode
 
 ---
 
@@ -59,7 +59,7 @@ Record these settings in the target deployment:
 | Lark app binding | Same app as Hermes runtime | Keeps CLI and agent runtime on one permission surface |
 | Workspace | Shared deployment workspace name (for example `hermes`) | Makes all agents read the same `lark-cli` config / token store |
 | `default-as` | `bot` | Makes bot the default identity for direct CLI use |
-| `strict-mode` | `bot` | Prevents accidental user-mode auth and user-only command drift |
+| `strict-mode` | `off` | Keeps the CLI flexible while still preserving `bot` as the default identity |
 | App scopes | Must include the bot-level scopes the workflow needs | App permission is the real gate in bot mode |
 | Resource access | Bot must be added to required chats / docs / bases | Bot mode cannot access resources it was never granted |
 
@@ -84,7 +84,7 @@ Bind it into the shared workspace used by the deployment.
 
 ```bash
 lark-cli config default-as bot
-lark-cli config strict-mode bot
+lark-cli config strict-mode off
 ```
 
 ### 4. Verify the policy landed
@@ -98,7 +98,7 @@ lark-cli config show
 
 Expected outcomes:
 - `default-as: bot`
-- `strict-mode: bot`
+- `strict-mode: off`
 - bot identity is `ready`
 - the config is stored in the intended shared workspace
 
@@ -120,28 +120,25 @@ Do not assume Hermes messaging alone replaces `lark-cli`.
 
 ---
 
-## Break-glass exception: temporary user mode
+## Exception path: deliberate user-mode operations
 
-If a deployment truly needs user-level actions later:
-
-1. explicitly relax policy
-2. run user auth
-3. complete the task
-4. return the deployment to bot-restricted mode
+If a deployment truly needs user-level actions later, keep `default-as=bot` but
+run user auth and user-mode commands deliberately.
 
 Example:
 
 ```bash
-lark-cli config strict-mode off
-# perform explicit user auth only if the operator wants this
-# lark-cli auth login --scope "..."
-
-# after the exceptional task is complete
+# bot remains the default posture
 lark-cli config default-as bot
-lark-cli config strict-mode bot
+lark-cli config strict-mode off
+
+# only when the operator explicitly wants user-level access
+# lark-cli auth login --scope "..."
+# lark-cli ... --as user
 ```
 
-This should be treated as an exception workflow, not the default package model.
+This should still be treated as an exception workflow, not the default package
+model.
 
 ---
 
@@ -149,7 +146,7 @@ This should be treated as an exception workflow, not the default package model.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| CLI asks for user auth | strict mode not set to bot, or command is being run as a user workflow | re-check `default-as` and `strict-mode`; avoid user-only commands |
+| CLI asks for user auth | a user-mode command is being run, or the workflow genuinely needs user scopes | keep `default-as=bot`; only authorize user mode when explicitly intended |
 | Bot cannot access a doc / base / chat | Resource not shared with the app / bot | add the bot or grant the app access |
 | Permission denied despite bot mode | Missing app scope | add scope in developer console and publish the app update |
 | Different agents see different CLI state | They are not sharing the same workspace | standardize the deployment workspace name |
@@ -163,7 +160,7 @@ This package assumes:
 - Lark is part of the deployment's operating system
 - `lark-cli` is installed and used intentionally
 - the CLI is bound to the same app as Hermes
-- bot mode is the default and protected operating posture
+- bot mode is the default operating posture, while strict-mode stays off for flexibility
 
 If a client wants a different policy, document that as a deployment-specific
 override rather than silently drifting from the package default.

@@ -198,7 +198,7 @@ Recommended model tier for production: `claude-sonnet-4` or later. Use `claude-h
 
 **When to use:** This tool is most relevant for teams already using Lark/Feishu (common in China, Southeast Asia, and Taiwan). Teams using Slack, Teams, or other IM platforms should substitute with the equivalent messaging integration.
 
-**Package default:** bind `lark-cli` to the same app as Hermes, then run it in `default-as=bot` and `strict-mode=bot`. Treat `lark-cli` as a required operator surface, not an optional extra.
+**Package default:** bind `lark-cli` to the same app as Hermes, then run it in `default-as=bot` and `strict-mode=off`. Treat `lark-cli` as a required operator surface, not an optional extra.
 
 **Delivery channels Leo uses:**
 
