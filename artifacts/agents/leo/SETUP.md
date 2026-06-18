@@ -298,7 +298,7 @@ curl -s -X POST http://localhost:8888/v1/default/banks/{{ORG_PREFIX}}-human-[nam
 | `{{COMPANY_BLOG_URL}}` | cron/jobs.json | Your blog or news URL |
 | `{{CRM_EXTERNAL_URL}}` | SOUL.md, skills | Public-facing CRM URL |
 | `{{AGENT_EMAIL}}` | SOUL.md, skills, .env | Leo's OpenMail address |
-| `{{OPENMAIL_TOKEN}}` | skills/openmail | Leo's OpenMail API token |
+| `{{OPENMAIL_API_KEY}}` | skills/openmail | Leo's OpenMail API token |
 | `{{OPENMAIL_INBOX_ID}}` | skills/openmail, .env | Leo's inbox ID |
 | `{{SALES_DAILY_UPDATE_CHANNEL_ID}}` | SOUL.md, cron | Sales team daily channel ID |
 | `{{OUTREACH_REVIEW_CHANNEL_ID}}` | SOUL.md, cron | Draft review channel ID |

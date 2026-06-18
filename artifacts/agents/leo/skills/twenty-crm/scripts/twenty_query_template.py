@@ -1,14 +1,14 @@
 """
 Twenty CRM — baseline query script template.
 Copy to workspace/, fill in your query, run with:
-  python3 /mnt/disks/data/hermes/profiles/leo/workspace/twenty_query.py
+  python3 ~/.hermes/profiles/leo/workspace/twenty_query.py
 
 Token is loaded from .env at runtime — never hardcode.
 Header is built via list join to avoid tool-level redaction.
 """
-import subprocess, json
+import os, subprocess, json
 
-ENV_PATH = "/mnt/disks/data/hermes/profiles/leo/.env"
+ENV_PATH = os.path.expanduser("~/.hermes/profiles/leo/.env")
 GQL      = "http://localhost:3001/graphql"
 META     = "http://localhost:3001/metadata"
 

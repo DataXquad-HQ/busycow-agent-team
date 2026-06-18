@@ -4,7 +4,7 @@ Verified working pattern from 2026-06-15 session.
 
 Usage: copy to workspace/, edit FIELD_* constants, run with python3.
 """
-import subprocess, json
+import os, subprocess, json
 
 PERSON_OBJECT_ID = "5ae439de-e1d6-40f1-846b-a4b482ad665a"
 
@@ -21,8 +21,11 @@ FIELD_OPTIONS = [
 # ------------------
 
 
-def load_tok():
-    with open("/mnt/disks/data/hermes/profiles/leo/.env") as f:
+ENV_PATH = os.path.expanduser("~/.hermes/profiles/leo/.env")
+
+
+def load_tok(env_path=ENV_PATH):
+    with open(env_path) as f:
         for line in f:
             line = line.strip()
             if "TWENTY_API_KEY" in line and "=" in line:

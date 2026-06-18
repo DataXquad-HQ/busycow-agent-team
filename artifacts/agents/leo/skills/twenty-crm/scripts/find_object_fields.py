@@ -5,7 +5,7 @@ Verified working 2026-06-15.
 
 Usage: python3 find_object_fields.py
 """
-import subprocess, json
+import os, subprocess, json
 
 # Edit this to target a different object
 TARGET_OBJECT_ID = "5ae439de-e1d6-40f1-846b-a4b482ad665a"  # person
@@ -17,8 +17,11 @@ TARGET_OBJECT_ID = "5ae439de-e1d6-40f1-846b-a4b482ad665a"  # person
 # task:        a0ef39a6-8619-4ab7-a6ce-db4b85a33c81
 
 
-def load_tok():
-    with open("/mnt/disks/data/hermes/profiles/leo/.env") as f:
+ENV_PATH = os.path.expanduser("~/.hermes/profiles/leo/.env")
+
+
+def load_tok(env_path=ENV_PATH):
+    with open(env_path) as f:
         for line in f:
             line = line.strip()
             if "TWENTY_API_KEY" in line and "=" in line:

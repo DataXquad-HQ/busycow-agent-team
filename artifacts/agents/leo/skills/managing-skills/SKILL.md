@@ -65,36 +65,29 @@ The quick rules below are a summary — the reference is authoritative.
 ---
 | Tier | Location | Visible to |
 |---|---|---|
-| **Private** | `~/.hermes/skills/<category>/<skill>/` | Only that agent |
-| **Shared** | `~/.hermes/shared_skills/<skill>` (registry) + agent `_shared/` symlinks | All agents + that agent |
-| **Agent private** | `~/.hermes/profiles/<agent>/skills/<skill>/` (real dir) | That agent only |
+| **Canonical source** | `~/.hermes/skills/<category>/<skill>/` | Operator-maintained source of truth |
+| **Agent runtime copy** | `~/.hermes/profiles/<agent>/skills/<skill>/` | That agent only |
 
 ### SOP — Making a skill shared
 
-**1. Create the skill** in `~/.hermes/skills/<category>/<skill-name>/` as usual.
+**1. Create the canonical skill** in `~/.hermes/skills/<category>/<skill-name>/`.
 
-**2. Register + symlink using Python** (never bash loops — produces circular symlinks):
+**2. Copy it into each agent profile that should use it** (real directory, no symlinks):
 
 ```python
-# /tmp/link_skill.py
-import os
+# /tmp/copy_skill.py
+import os, shutil
 
 HOME = os.path.expanduser("~")
 SKILL_NAME = "my-skill"
-SKILL_SRC = HOME + "/.hermes/skills/category/" + SKILL_NAME
-SHARED = HOME + "/.hermes/shared_skills"
+SRC = os.path.join(HOME, ".hermes/skills/category", SKILL_NAME)
 
-# Register in shared_skills/
-link = SHARED + "/" + SKILL_NAME
-if os.path.lexists(link): os.unlink(link)
-os.symlink(SKILL_SRC, link)
-
-# Symlink into each agent profile (point directly to source)
 for agent in ["leo", "maya", "rex"]:
-    agent_link = HOME + f"/.hermes/profiles/{agent}/skills/_shared/{SKILL_NAME}"
-    if os.path.lexists(agent_link): os.unlink(agent_link)
-    os.symlink(SKILL_SRC, agent_link)
-    print(f"{'OK' if os.path.isdir(agent_link) else 'FAIL'} {agent}")
+    dst = os.path.join(HOME, f".hermes/profiles/{agent}/skills", SKILL_NAME)
+    if os.path.isdir(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(SRC, dst)
+    print(f"OK {agent}: {dst}")
 ```
 
 **3. Verify:**
@@ -102,8 +95,8 @@ for agent in ["leo", "maya", "rex"]:
 import os
 skill = "my-skill"
 for agent in ["leo", "maya", "rex"]:
-    p = f"{os.path.expanduser('~')}/.hermes/profiles/{agent}/skills/_shared/{skill}"
-    print(f"{agent}: {'OK' if os.path.isdir(p) else 'BROKEN'}")
+    p = f"{os.path.expanduser('~')}/.hermes/profiles/{agent}/skills/{skill}"
+    print(f"{agent}: {'OK' if os.path.isdir(p) else 'MISSING'}")
 ```
 
 ---
@@ -122,5 +115,5 @@ for agent in ["leo", "maya", "rex"]:
 - `skill_manage(action='delete')` may return "not found" if dir name ≠ frontmatter name — use `terminal("rm -rf ...")` as fallback
 - Descriptions: no person names — `user says`, not `the sales rep says`
 - One-time fixes → GBrain, not a skill
-- Circular symlink: bash `ln -sf $PATH/$skill $PATH/$skill` self-references. Always use Python `os.symlink()` with absolute target paths
+- Do not use `_shared/` symlink trees or `shared_skills/` registries — the live model is canonical source + per-profile copies
 - Agent profile skills are NOT backed up by nightly brain sync — lost on profile delete

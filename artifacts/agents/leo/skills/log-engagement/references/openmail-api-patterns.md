@@ -3,7 +3,7 @@
 Base URL: `https://api.openmail.sh`
 Auth: `Authorization: Bearer <token>`
 Leo's mailbox: `{{AGENT_EMAIL}}`
-Token: stored in env as `OPENMAIL_TOKEN`
+Token: stored in env as `OPENMAIL_API_KEY`
 
 ---
 
