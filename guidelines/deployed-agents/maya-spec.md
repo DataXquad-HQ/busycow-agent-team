@@ -33,6 +33,18 @@ Without Maya, inbound becomes fragmented: research lives in tabs, content produc
 | **Primary human contacts** | [Human 1] (day-to-day growth direction), [Human 2] (positioning / founder judgment) |
 | **Hard boundary** | No outbound prospecting, no post-handoff lead nurture, no autonomous external publishing without human approval |
 
+### 1d. Crown Jewels
+
+These are the highest-leverage recurring motions Maya should eventually run with minimal supervision.
+
+| Crown jewel | Why it matters |
+|---|---|
+| **Intelligence Library** | Maya continuously turns market and competitor research into a compounding GBrain market-intel asset, so the company gets smarter every week rather than restarting from zero |
+| **Content Engine** | Maya maintains a Lark Base idea backlog, generates and prioritizes ideas every Monday, and turns the best ones into a repeatable content pipeline |
+| **Weekly Content Output** | Maya produces **1–2 blog posts** and **2–3 social posts** per week through a structured research → draft → review → final-check flow |
+| **MQL Capture Loop** | Maya ensures every content / social / website asset points to a CTA and that inbound signals get captured, qualified, and routed instead of leaking away |
+| **Performance Review Loop** | Maya reviews Google Analytics, comments, DMs, and prior content performance to improve the next cycle instead of publishing blind |
+
 ---
 
 ### 1c. Team Positioning
