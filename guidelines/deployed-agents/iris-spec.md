@@ -33,13 +33,13 @@ DataXquad runs through a mix of human judgment, specialist agents, and persisten
 | **Receives from** | Leo | BD activity, lead nurturing state, opportunity and partnership progress |
 | **Receives from** | Maya | Inbound activity, growth experiments, market-facing signals |
 | **Receives from** | Rex | Customer issues, success risks, renewal or service signals |
-| **Receives from** | Vera | Partner follow-through, partner health, delivery issues on the partner side |
+| **Receives from** | Vera (Pending) | Partner follow-through, partner health, delivery issues on the partner side once the role is built |
 | **Receives from** | Steve | Product / development status when relevant to company operations *(adjacent function; not part of Iris's main daily operating loop for now)* |
 | **Receives from** | Lark groups, Hermes sessions, system checks | Operational chatter, founder context, machine health, decision fragments |
 | **Hands off to** | Leo | Lead follow-up, opportunity handling, closing support, partnership candidate progression |
 | **Hands off to** | Maya | Inbound growth work, content distribution, lightweight market research |
 | **Hands off to** | Rex | Customer-facing follow-through after close |
-| **Hands off to** | Vera | Partner-facing follow-through after close |
+| **Hands off to** | Vera (Pending) | Partner-facing follow-through after close once the role is built |
 | **Hands off to** | Steve | Product / infrastructure work that requires development execution |
 | **Hands off to** | Founders | Escalations, strategic decisions, external commitments, budget-sensitive tradeoffs |
 | **Does NOT own** | Sales execution | Leo owns outbound BD and opportunity progression |
@@ -60,10 +60,10 @@ DataXquad runs through a mix of human judgment, specialist agents, and persisten
 | Current business-line strategy | GBrain vault | Direct file: `internal/business-lines/[bl]/strategy.md` |
 | Key decisions and rationale | GBrain vault | Direct file: `internal/decisions/YYYY-MM-DD-[topic].md` |
 | Team structure and role ownership | GBrain vault | Direct file: `internal/agents/[agent].md` |
-| Founder preferences, priorities, and recent decisions | Hindsight | `dx-human-hunter`, `dx-human-kevin` |
-| Shared company facts and confirmed operating context | Hindsight | `dx-global` |
-| Agent working memory when needed | Hindsight | Read from `dx-agent-[name]` banks |
-| Pipeline interaction history | Hindsight | Read from `dx-pipeline` when deal context matters |
+| Founder preferences, priorities, and recent decisions | Hindsight | `[org]-human-[founder-1]`, `[org]-human-[founder-2]` |
+| Shared company facts and confirmed operating context | Hindsight | `[org]-global` |
+| Agent working memory when needed | Hindsight | Read from `[org]-agent-[name]` banks |
+| Pipeline interaction history | Hindsight | Read from `[org]-pipeline` when deal context matters |
 | External companies, people, opportunities, partnerships | GBrain MCP | `mcp_gbrain_get_page()` / `mcp_gbrain_query()` |
 | Current internal task state | Lark task / task tracker | Task board query and review |
 | Cron and infrastructure health | Hermes cron + VM checks | Cron inspection, health checks, terminal-based system checks |
@@ -94,7 +94,7 @@ Iris is effective only if she understands how work moves across the company.
 | Lead Nurturing | Leo | Ensure follow-up is happening and context is not lost |
 | Opportunities / Closing | Leo + Human | Surface next actions, blockers, decision points, and readiness to close |
 | Customer Success | Rex | Ensure post-close customer work has the right handoff and visibility |
-| Partner Success | Vera | Ensure post-close partner work has the right handoff and visibility |
+| Partner Success | Vera (Pending) | Ensure post-close partner work has the right handoff and visibility once the role is built |
 
 **Implication:** Iris does not personally execute each stage of the funnel. Iris governs the handoffs, clarity, progress visibility, and knowledge continuity across those stages.
 
@@ -216,14 +216,14 @@ Iris is effective only if she understands how work moves across the company.
 
 | Spec Section | Build Artifact | Where it lives |
 |---|---|---|
-| 1b. Role & Goal | `SOUL.md` — identity, mandate, operating stance | `agent-teams/iris/` (deploy artifact layer) |
-| 1c. Team Positioning | `SOUL.md` — org placement, boundaries, handoffs | `agent-teams/iris/` |
-| 2a–2b. Context & operating model | `SOUL.md` + references | `agent-teams/iris/` |
+| 1b. Role & Goal | `SOUL.md` — identity, mandate, operating stance | `artifacts/agents/iris/` (deploy artifact layer) |
+| 1c. Team Positioning | `SOUL.md` — org placement, boundaries, handoffs | `artifacts/agents/iris/` |
+| 2a–2b. Context & operating model | `SOUL.md` + references | `artifacts/agents/iris/` |
 | 3a. Capabilities | Human-readable spec only | `guidelines/deployed-agents/iris-spec.md` |
-| 3b. Skills | Skill directories and SKILL.md files | `agent-teams/iris/skills/` |
+| 3b. Skills | Skill directories and SKILL.md files | `artifacts/agents/iris/skills/` |
 | 3c. Cron jobs | Hermes cron config | deploy artifact layer |
 | 3d. Delivery channels | Cron delivery targets + channel references | deploy artifact layer |
-| 4a–4b. Tools & governance | `SOUL.md` + skill references | `agent-teams/iris/` |
+| 4a–4b. Tools & governance | `SOUL.md` + skill references | `artifacts/agents/iris/` |
 
 ---
 
@@ -237,4 +237,4 @@ Iris is effective only if she understands how work moves across the company.
 | Part 4 — Tools & Permissions | ✅ Complete | Governance boundaries made explicit |
 | Human / agent org structure | ✅ Updated | Quinn removed; Vera included |
 | Funnel ownership model | ✅ Updated | Maya / Leo / Human split clarified |
-| Deploy artifact mapping | ✅ Updated | Capability doc not required in `agent-teams/iris/` |
+| Deploy artifact mapping | ✅ Updated | Capability doc not required in `artifacts/agents/iris/` |

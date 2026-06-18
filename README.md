@@ -1,66 +1,80 @@
 # BusyCow Agent Package
 
-A framework for deploying a production-grade AI agent team inside a company — built on [Hermes Agent](https://hermes-agent.nousresearch.com).
+A reusable package for deploying a production-grade AI agent operating system inside a company.
 
-BusyCow is DataXquad's methodology for running AI agents as a real operating team: each agent owns a function, operates independently, and shares only data — not infrastructure.
+This repo is designed for **two audiences**:
+- **Humans** who need to understand the architecture and deployment model
+- **Agents** that will execute setup, rollout, migration, and verification work after a base Hermes install already exists
 
 ---
 
-## What's in this package
+## Repository Model
 
-```
+This repo now has **three core layers**:
+
+```text
 busycow-agent-package/
-├── architecture/           ← How the system is designed and why
-├── agent-teams/            ← Per-agent SOUL.md, skills, and capabilities
-├── context/                ← Data schemas (CRM, structural data definitions)
-├── third-party-tools/      ← Every tool in the stack: what it does, how we use it, setup
-├── standards/              ← Doc standards and conventions
-└── SETUP.md                ← Installation guide
+├── guidelines/   ← human-readable specs
+├── playbooks/    ← agent-readable operational instructions
+├── artifacts/    ← actual installable / copyable assets
+├── README.md
+└── SETUP.md      ← entrypoint that routes you into playbooks/
 ```
 
+### 1. `guidelines/`
+Human-readable specifications.
+Use this layer to understand **why** the system is designed this way.
+
+### 2. `playbooks/`
+Agent-readable runbooks.
+Use this layer to tell an already-running Hermes agent **how** to install, upgrade, verify, or repair the system.
+
+### 3. `artifacts/`
+Concrete deployable files.
+Use this layer for the actual SOULs, skills, cron templates, schemas, and knowledge-base templates that get copied into a live install.
+
 ---
 
-## Core principles
+## Reading Paths
 
-**1. Each agent is independent**
-No shared skills, no shared credentials, no shared infrastructure. If two agents need the same capability, duplicate it. Simplicity over elegance.
+### If you are a human evaluator / operator
+Start here:
+1. `guidelines/README.md`
+2. `guidelines/01-infrastructure-spec.md`
+3. `guidelines/02-knowledge-and-memory-spec.md`
+4. `guidelines/deployed-agents/`
 
-**2. Context is layered**
+### If you are an agent performing setup or migration
+Start here:
+1. `playbooks/README.md`
+2. `playbooks/bootstrap/install-core-stack.md`
+3. the relevant files under `playbooks/`
+4. copy or apply the needed files from `artifacts/`
 
-| Layer | What | Where |
+---
+
+## Top-Level Directories
+
+| Directory | Audience | Purpose |
 |---|---|---|
-| Human-readable docs | Policies, decisions, how we operate | GitHub knowledge base (`[org]-internal-kb`) |
-| Contextual memory | Entity knowledge, episodic memory | GBrain + Hindsight |
-| Structural data | Opportunities, contacts, pipeline, records | CRM and other operational systems |
-
-**3. Agent design lives in `prompt.md`**
-Each agent's identity, role, and capabilities are defined in their `SOUL.md`. That file is the agent's operating system.
-
-**4. Credentials are not shared**
-Every agent has its own API tokens and environment credentials. If a credential must be shared, duplicate it into each agent's environment separately.
+| `guidelines/` | Human | Architecture, specs, deployment model, agent specs |
+| `playbooks/` | Agent | Operational setup, rollout, migration, verification instructions |
+| `artifacts/` | Agent / Installer | Files that get installed or copied into a live system |
 
 ---
 
-## Agent roster
+## Current Stack
 
-| Agent | Function |
-|---|---|
-| Iris | Chief of Staff — coordination, knowledge, task dispatch |
-| Leo | BD Lead — outbound, pipeline, lead nurturing |
-| Maya | GTM — inbound, content, market intel |
-| Rex | Customer Success — support, renewals |
-| Steve | Software Development — code, infrastructure |
-
----
-
-## Stack
-
-| Tool | Purpose |
+| Tool | Role |
 |---|---|
 | Hermes Agent | Agent runtime |
-| Lark / Feishu | Workspace — IM, task board, docs |
-| GBrain | Knowledge graph — entity facts, decisions, intel |
-| Hindsight | Episodic memory — what happened, what was said |
-| Twenty CRM | Pipeline — opportunities, contacts, stages |
+| GBrain | Knowledge graph and durable context |
+| Hindsight | Episodic memory |
+| Twenty CRM | Structured pipeline data |
+| Lark / Feishu | Workspace communication and docs |
 
-See `third-party-tools/` for setup and usage details on each.
+---
+
+## Core Rule
+
+**Human reads guidelines, agent runs playbooks, system installs artifacts.**

@@ -38,7 +38,7 @@ these edge cases.
 into GBrain. Without it, insights from every session evaporate. This is
 the agent's memory write path.
 
-**Source:** `agent-teams/leo/skills/capturing-to-gbrain/` — copy to each agent.
+**Source:** `artifacts/agents/leo/skills/capturing-to-gbrain/` — copy to each agent.
 
 ---
 
@@ -48,7 +48,7 @@ the agent's memory write path.
 own skills without human scaffolding. This is the self-improvement loop.
 Also contains the shared skill SOP and Leo cron architecture reference.
 
-**Source:** `agent-teams/leo/skills/managing-skills/` — copy to each agent.
+**Source:** `artifacts/agents/leo/skills/managing-skills/` — copy to each agent.
 Note: the `references/leo-cron-architecture.md` inside is Leo-specific;
 other agents may remove it.
 
@@ -62,7 +62,7 @@ process. Every time an agent builds or patches a skill, it loads this first.
 
 Without it, agents build skills inconsistently and skip quality checks.
 
-**Source:** `agent-teams/[any]/skills/skill-creator/` — copy to each agent.
+**Source:** `artifacts/agents/[any]/skills/skill-creator/` — copy to each agent.
 
 ---
 
@@ -92,7 +92,7 @@ If any are missing, copy from the relevant source above before proceeding.
 ## What Is Not Listed Here
 
 Skills that are role-specific (e.g. `twenty-crm`, `openmail`, `checking-pipeline-health`)
-belong in each agent's own `agent-teams/[name]/skills/` directory, not here.
+belong in each agent's own `artifacts/agents/[name]/skills/` directory, not here.
 
 Bundled Hermes skills (apple, github, lark-base, etc.) are installed
 automatically by Hermes on profile creation and do not need to be
@@ -105,5 +105,5 @@ managed manually.
 When a new skill is determined to be universally required:
 1. Add it to this file with the Why mandatory and Source fields filled in
 2. Copy it into all existing live agent profiles
-3. Copy it into all `agent-teams/[name]/skills/` directories in this package
+3. Copy it into all `artifacts/agents/[name]/skills/` directories in this package
 4. Add it to the Installation Checklist grep above

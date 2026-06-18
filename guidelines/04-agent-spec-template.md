@@ -157,7 +157,7 @@
 | 2a. GBrain content | GBrain vault files | `/mnt/disks/data/dx-gbrain/internal/business-lines/[bl]/` |
 | 3a. Capabilities | `SOUL.md` — Capabilities list | `~/.hermes/profiles/[name]/SOUL.md` |
 | 3b. Skills | Skills directory | `~/.hermes/profiles/[name]/skills/[skill-name]/SKILL.md` |
-| 3c. Cron jobs | Hermes cron config | `agent-teams/[name]/cron/jobs.json` |
+| 3c. Cron jobs | Hermes cron config | `artifacts/agents/[name]/cron/jobs.json` |
 | 3d. Delivery channels | Cron `deliver` targets + channel IDs in skills | Hermes cron + skill references |
 | 4a. Tools | Skills listed in `SOUL.md` | `~/.hermes/profiles/[name]/skills/` |
 | 4b. Credentials | Per-profile `.env` file | `~/.hermes/profiles/[name]/.env` |

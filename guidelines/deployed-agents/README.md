@@ -17,8 +17,8 @@ These specs are the human-readable record of what each agent does, why it exists
 |---|---|---|
 | Maya | Inbound Lead Generation | SOUL.md exists, skills in progress |
 | Rex | Customer Success | SOUL.md exists, skills in progress |
-| Quinn | Product Intelligence | SOUL.md exists, not yet active |
 | Steve | Software Development | SOUL.md exists, not yet active |
+| Vera | Partner Success | Pending — build later |
 
 ## How to Read These Specs
 

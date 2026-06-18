@@ -176,7 +176,7 @@ Leo exists to be the attention the sales rep buys back. Every prospect gets cont
 | 2a. Context sources | `SOUL.md` — Knowledge Sources | `~/.hermes/profiles/leo/SOUL.md` |
 | 3a. Capabilities | `SOUL.md` — Capabilities list | `~/.hermes/profiles/leo/SOUL.md` |
 | 3b. Skills | Skills directory | `~/.hermes/profiles/leo/skills/` |
-| 3c. Cron jobs | Hermes cron config | `agent-teams/leo/cron/jobs.json` |
+| 3c. Cron jobs | Hermes cron config | `artifacts/agents/leo/cron/jobs.json` |
 | 4a. Tools | Skills in SOUL.md | `~/.hermes/profiles/leo/skills/` |
 | 4b. Credentials | Per-profile `.env` | `~/.hermes/profiles/leo/.env` |
 
