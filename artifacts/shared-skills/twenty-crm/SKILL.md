@@ -18,14 +18,14 @@ triggers:
   - "twenty object"
   - "twenty field"
 version: "1.0"
-author: DataXquad
+author: BusyCow
 ---
 
 # Twenty CRM — Universal Access Skill
 
 ## References
 
-- `references/deployment-context.md` — DataXquad instance-specific values: install path, Docker container names, admin credentials, standard + custom object metadata IDs. Load this when you need the actual IDs for this deployment rather than `{{PLACEHOLDER}}` values.
+This shared skill is intentionally generic. Any deployment-specific IDs or credentials should be kept outside the package and injected during installation.
 
 ---
 
@@ -41,8 +41,7 @@ author: DataXquad
 | MCP server | `http://localhost:3001/mcp` |
 | REST API | `http://localhost:3001/api` |
 
-**Never use** the Tailscale IP (`100.118.240.101:3001`) or the Cloudflare external URL in agent code.  
-Tailscale IP is for browser access from user devices only.
+**Never use** external browser-access URLs in agent code. Use the internal localhost endpoint for all agent operations.
 
 ---
 
@@ -53,7 +52,7 @@ Tailscale IP is for browser access from user devices only.
 API keys are long-lived JWTs. Store in a file — never interpolate in shell:
 
 ```bash
-echo "eyJhbG..." > /tmp/twenty_token.txt
+echo "<paste API key token here>" > /tmp/twenty_token.txt
 ```
 
 ```python
@@ -79,7 +78,7 @@ def gql(query, token=None, url=BASE):
     return requests.post(url, json={"query": query}, headers=h).json()
 
 # Step 1: get loginToken
-r1 = gql('mutation { getLoginTokenFromCredentials(email: "hunter.lin@distify.ai", password: "Iris@DataXquad2026", origin: "http://localhost:3001") { loginToken { token } } }')
+r1 = gql('mutation { getLoginTokenFromCredentials(email: "{{TWENTY_ADMIN_EMAIL}}", password: "{{TWENTY_ADMIN_PASSWORD}}", origin: "http://localhost:3001") { loginToken { token } } }')
 login_token = r1["data"]["getLoginTokenFromCredentials"]["loginToken"]["token"]
 
 # Step 2: exchange → accessToken
@@ -88,7 +87,7 @@ r2 = gql(f'mutation {{ getAuthTokensFromLoginToken(loginToken: "{login_token}", 
 access_token = r2["data"]["getAuthTokensFromLoginToken"]["tokens"]["accessOrWorkspaceAgnosticToken"]["token"]
 
 # Step 3: generate API key token
-API_KEY_ID = "529a4913-cc22-4e1b-b8ee-52a53c4c5d3c"
+API_KEY_ID = "{{TWENTY_API_KEY_ID}}"
 r3 = gql(f'mutation {{ generateApiKeyToken(apiKeyId: "{API_KEY_ID}", expiresAt: "2027-01-01T00:00:00Z") {{ token }} }}', access_token)
 api_token = r3["data"]["generateApiKeyToken"]["token"]
 
@@ -103,11 +102,11 @@ print("Token ready.")
 - `generateApiKeyToken` requires the **accessToken** from step 2, not loginToken
 - All three mutations go to `/metadata`, not `/graphql`
 
-**DataXquad credentials:**
-- Email: `hunter.lin@distify.ai`
-- Password: `Iris@DataXquad2026`
-- API Key ID: `529a4913-cc22-4e1b-b8ee-52a53c4c5d3c` (name: "Hermes", expires 2126)
-- Workspace ID: `a352ccf9-ed5f-40d3-910f-706074dc3877`
+**Deployment placeholders:**
+- Admin email: `{{TWENTY_ADMIN_EMAIL}}`
+- Admin password: `{{TWENTY_ADMIN_PASSWORD}}`
+- API Key ID: `{{TWENTY_API_KEY_ID}}`
+- Workspace ID: `{{TWENTY_WORKSPACE_ID}}`
 
 ---
 
@@ -219,10 +218,7 @@ docker exec twenty-db-1 psql -U twenty -d default -c \
   "SELECT \"nameSingular\", id FROM core.\"objectMetadata\" WHERE \"nameSingular\" IN ('company','person','opportunity');"
 ```
 
-**DataXquad standard object IDs:**
-- `company`: `10c93af8-1586-44f5-9554-e862dea90c01`
-- `person`: `a278e81b-bf75-4ce9-9398-cbea2f8e5b9a`
-- `opportunity`: `ab82bc92-fe4b-471f-bed8-7f89e9a4d63b`
+**Standard object metadata IDs are deployment-specific. Query them from DB or metadata when needed.**
 
 ---
 
@@ -303,7 +299,7 @@ r = gql(mutation, url=META, variables=variables)
 
 ---
 
-## DataXquad Object Map
+## Example Object Map
 
 ### Standard objects
 
@@ -318,22 +314,22 @@ r = gql(mutation, url=META, variables=variables)
 
 | Object | Query name | Object ID | Purpose |
 |--------|-----------|-----------|---------|\n| Partnership | `partnerships` | — | Partner relationship pipeline |
-| Engagement | `engagements` | `5de654a0-96b3-484a-b80e-b35b5b276a6d` | Immutable interaction log |
+| Engagement | `engagements` | `{{OBJECT_ID}}` | Immutable interaction log |
 | OutreachMessage | `outreachMessages` | — | Outreach email drafts/queue |
-| Partner | `partners` | `f50bbdce-3732-414d-bcb3-8cd6abd5f6c2` | Partnership pipeline (legacy) |
-| Quotation | `quotations` | `1ecb1a71-de9b-4ef5-9471-06159482d409` | Sales quotations |
-| Quotation Item | `quotationItems` | `26662ed7-b75a-417c-9833-f531e1fdb5b3` | Quotation line items |
-| Invoice | `invoices` | `fd480fa5-824d-4a4a-96a6-dc2687a24fb7` | Invoices |
-| Invoice Item | `invoiceItems` | `e5919d5c-1bcd-425f-897d-1f99b0ac98c0` | Invoice line items |
+| Partner | `partners` | `{{OBJECT_ID}}` | Partnership pipeline (legacy) |
+| Quotation | `quotations` | `{{OBJECT_ID}}` | Sales quotations |
+| Quotation Item | `quotationItems` | `{{OBJECT_ID}}` | Quotation line items |
+| Invoice | `invoices` | `{{OBJECT_ID}}` | Invoices |
+| Invoice Item | `invoiceItems` | `{{OBJECT_ID}}` | Invoice line items |
 
-### Company custom fields (DataXquad additions)
+### Company custom fields (example additions)
 
 | Field | Type | Purpose |
 |-------|------|---------|\n| `shortName` | TEXT | Short/common name |
 | `companyType` | SELECT | Client / Prospect / Partner / Vendor |
 | `source` | SELECT | How we met them |
 
-### Person custom fields (DataXquad additions)
+### Person custom fields (example additions)
 
 | Field | Type | Purpose |
 |-------|------|---------|\n| `decisionRole` | SELECT | Champion / Decision Maker / Influencer / Blocker |
@@ -349,7 +345,7 @@ r = gql(mutation, url=META, variables=variables)
 | Field | Type | Values / Notes |
 |-------|------|---------------|
 | `stage` | SELECT | `NEW` → `SCREENING` → `MEETING` → `PROPOSAL` → `CUSTOMER` |
-| `businessLine` | SELECT | `BUSYCOW`, `GEOKERNEL`, `AQUAOPTIMA`, `TRACI`, `DISTIFY`, `DATAXQUAD` |
+| `businessLine` | SELECT | Deployment-specific values such as product or business-line names |
 | `dealType` | SELECT | `DIRECT`, `PARTNERLED` |
 | `healthCheck` | SELECT | `ON_TRACK`, `NEEDS_FOLLOWUP`, `AWAITING_RESPONSE`, `AT_RISK` |
 | `priority` | SELECT | `HIGH`, `MEDIUM`, `LOW` |
@@ -447,7 +443,7 @@ mutation {
 
 **Cross-cutting rules for outreach:**
 - CRM API calls: always `http://localhost:3001/graphql`
-- Human-facing CRM links: always `https://sales.dataxquad.com/objects/[type]/[UUID]` — never expose localhost
+- Human-facing CRM links: always `{{CRM_EXTERNAL_URL}}/objects/[type]/[UUID]` — never expose localhost
 - Never reference team members by name in messages — use "the team" or "our BD team"
 
 ---
@@ -520,22 +516,10 @@ docker exec twenty-db-1 pg_dump -U twenty default > backup_$(date +%Y%m%d).sql
 
 ---
 
-## Instance Reference
-
-For DataXquad-specific deployment details (install path, docker container names,
-object metadata IDs, API key ID, workspace ID) see:
-`references/deployment-context.md`
-
 ## Official Docs
 
 - User Guide: https://docs.twenty.com/user-guide/introduction
 - Developer Docs: https://docs.twenty.com/developers/introduction
 - Self-hosting: https://docs.twenty.com/developers/self-hosting/docker-compose
 
-## DataXquad deployment reference
-
-See `references/deployment-context.md` for:
-- Instance credentials + object/workspace IDs
-- Repo links (universalized skill, schema, install guide)
-- Access rule rationale
 

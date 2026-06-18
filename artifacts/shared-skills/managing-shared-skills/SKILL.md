@@ -11,9 +11,9 @@ triggers:
   - "sync skill to maya"
   - "shared skills governance"
   - "copy this skill to all agents"
-  - "更新共用 skill"
-  - "同步 skill 到其他 profile"
-  - "管理 shared skill"
+  - "update shared skill"
+  - "sync skill to other profiles"
+  - "manage shared skill"
 version: "1.0"
 owner: Iris
 ---

@@ -10,8 +10,8 @@ triggers:
   - "cron receipt vs full report"
   - "same skill manual and scheduled"
   - "report should go to channel but cron stay short"
-  - "避免 cron 重複報告"
-  - "手動和排程共用報告"
+  - "avoid duplicated cron report"
+  - "shared manual and scheduled report"
   - "backend receipt"
 version: "1.0"
 ---

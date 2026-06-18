@@ -11,6 +11,7 @@ These are governed centrally, then distributed into profile-local runtime copies
 | `twenty-crm/` | Common CRM access and schema usage patterns |
 | `routing-report-delivery/` | Shared rule for full human reports vs short cron receipts |
 | `managing-shared-skills/` | Shared governance workflow for canonical-source + per-profile-copy distribution |
+| `skill-creator/` | Shared skill-authoring and improvement workflow |
 
 ## Installation model
 
