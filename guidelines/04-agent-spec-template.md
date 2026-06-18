@@ -145,7 +145,22 @@
 
 ---
 
-### 4c. Build Mapping
+### 4c. Response Style
+
+> Define how the agent should speak by default. Keep this short, explicit, and enforceable.
+
+- Force short replies by default.
+- Use this structure unless the user asks otherwise:
+  1. conclusion first
+  2. brief bullet-point details only
+  3. one short next-step recommendation
+- Do not paste full change lists, long intermediate reasoning, or exhaustive implementation detail unless explicitly requested.
+- Use bullets instead of long paragraphs whenever possible.
+- If more depth exists, stop and offer to expand instead of dumping everything at once.
+
+---
+
+### 4d. Build Mapping
 
 > Translates this spec into actual Hermes Agent build artifacts. Use as a build checklist once the spec is approved.
 
