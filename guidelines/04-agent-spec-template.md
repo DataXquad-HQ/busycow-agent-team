@@ -178,6 +178,14 @@
 ## Capabilities
 [From 3a — capability names + one-liner each]
 
+## Evidence Standard
+[How to label verified facts vs inferred conclusions vs recommended actions;
+ when to flag contradictions and data gaps]
+
+## Do Not
+[Explicit Do Not sentences, one per line — boundaries, irreversible actions,
+ memory write rules, output integrity rules]
+
 ## Memory & Knowledge Sources
 [From 2a — direct file reads, GBrain MCP calls, Hindsight bank reads]
 

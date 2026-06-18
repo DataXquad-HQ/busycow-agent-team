@@ -24,13 +24,13 @@ version: "2.0"
 
 ## Step 0 — Before writing any skill
 
-**Load and read the Anthropic guide first:**
+**Load the skill-creator skill first:**
 ```
-skill_view(name='managing-skills', file_path='references/anthropic-skill-guide.md')
+skill_view(name='skill-creator')
 ```
 
-Follow those guidelines for structure, naming, description, and frontmatter.
-The quick rules below are a summary — the reference is authoritative.
+Follow those guidelines for structure, naming, description, Quality Bar, and Fallback Behavior.
+The quick rules below are a summary — skill-creator is authoritative.
 
 ---
 

@@ -317,6 +317,25 @@ requests.post(
 
 ---
 
+## Quality Bar
+
+Before posting the Health Report:
+- Every item in **RECOMMENDED ACTIONS** traceable to a specific opportunity, stage count, or CRM data point?
+- Coverage ratio clearly labelled as an estimate (benchmark probabilities, not actuals)?
+- HEALTHY/WATCH/AT_RISK/CRITICAL status includes the specific threshold it hit (e.g. "coverage 1.8x — below 2x threshold")?
+- DATA GAPS section lists every opportunity with missing `amount` or `closeDate`?
+
+If any check fails, fix before posting.
+
+## Fallback Behavior
+
+- **CRM unreachable** — do not produce fake pipeline numbers. State: "CRM unavailable — pipeline data could not be retrieved. Report cannot be generated." Post to `[System] Backend Report` only.
+- **GBrain strategy missing** — already handled in Step 1. Flag prominently; still produce the pipeline snapshot without coverage ratio.
+- **Hindsight empty** — produce report without benchmark comparison. Note: "No prior snapshots — trend analysis not available."
+- **amount/probability null on all opportunities** — state: "Insufficient data for weighted pipeline calculation. Coverage ratio cannot be computed." List all opportunities and their data quality status.
+
+---
+
 ## Pitfalls
 
 - **Never use "deal"** — always "opportunity" (CRM object name).
