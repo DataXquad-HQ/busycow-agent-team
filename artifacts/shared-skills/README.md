@@ -18,6 +18,7 @@ For the full governance model, read:
 | `routing-report-delivery/` | Shared rule for full human reports vs short cron receipts, plus cron recovery / resume handling |
 | `managing-shared-skills/` | Shared governance workflow for canonical-source + per-profile-copy distribution |
 | `skill-creator/` | Shared skill-authoring and improvement workflow |
+| `blog-content-crew/` | Reusable long-form drafting crew for blog-post production with Tavily-backed research |
 
 ## Shared core baseline (current)
 
