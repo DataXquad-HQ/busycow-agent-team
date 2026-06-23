@@ -1,158 +1,241 @@
 # Infrastructure Spec
 
-> This document explains the infrastructure stack behind the BusyCow agent system —
-> what we use, why we chose it, and how each piece fits together.
-> Audience: humans. This is not instructions for an agent.
+> Audience: humans.
+> Purpose: describe the core infrastructure that must exist after base Hermes is installed and before role-owning AI colleagues are activated.
 
 ---
 
-## Philosophy: The Agent as a Digital Employee
+## 1. Architecture Principle
 
-We treat each agent the way you would treat a new hire who is growing into a senior employee.
+A Hermes-native AI colleague is a role-owning teammate, not a generic tool.
 
-A person grows along three dimensions:
+Each colleague needs:
 
-| Dimension | What it means | Agent equivalent |
+- identity: what responsibility it owns
+- context: what it knows, remembers, retrieves, and treats as truth
+- capability: skills, tools, workflows, and integrations
+- authority: what it can decide or change
+- autonomy: routines it may run without being asked
+- evaluation: how work quality is checked
+- governance: logging, approvals, review, and change control
+
+The infrastructure should make those layers concrete.
+
+---
+
+## 2. Runtime Unit: Hermes Profile
+
+For role-owning colleagues, one Hermes profile usually equals one AI colleague.
+
+A profile owns or controls:
+
+- runtime identity
+- short `SOUL.md`
+- profile config
+- profile-local environment variables
+- skills
+- cron jobs
+- memory provider configuration
+- sessions and runtime state
+- tool and MCP configuration
+
+Do not simulate multiple durable colleagues inside one profile.
+
+Expected profile shape:
+
+```text
+~/.hermes/profiles/{{profile_name}}/
+  SOUL.md
+  config.yaml
+  .env              # never committed
+  skills/
+  cron/
+```
+
+`SOUL.md` should stay short. It should carry core identity, mission, top-level behavior principles, highest-priority authority boundaries, context priority rules, and escalation principles. Full operating detail belongs in workspace docs and skills.
+
+---
+
+## 3. Agent Workspace
+
+Each AI colleague should have a role-specific workspace separate from the Hermes profile and separate from GBrain.
+
+Recommended path:
+
+```text
+/srv/ai-colleagues/workspaces/{{profile_name}}/
+```
+
+Expected workspace files:
+
+```text
+AGENTS.md
+role-context.md
+authority.md
+tool-policy.md
+memory-policy.md
+routines.md
+evaluation-policy.md
+operating-notes.md
+drafts/
+notes/
+scratch/
+review-queues/
+```
+
+Workspace is for current work, drafts, queues, and role-local operating context. It is not canonical company truth and not the source of operational state.
+
+---
+
+## 4. Context Infrastructure
+
+The Context Layer has five responsibilities.
+
+| Layer | Runtime system | Purpose |
 |---|---|---|
-| **Capability** | Skills they have + their role understanding + autonomy | Skills + SOUL.md + Cron jobs |
-| **Context** | The information they can access to do their job | Structured data + Memory + Knowledge |
-| **Access** | The tools and systems they are authorised to use | Credentials + Toolsets |
+| GBrain canonical | GBrain | approved, durable, reviewable company truth |
+| GBrain evidence | GBrain | traceable source material, evidence pages, imports, transcripts, meeting notes |
+| Hindsight | Hindsight | experiential memory, corrections, recent signals, learned patterns |
+| Structured operational state | CRM, Plane, approvals, logs, other systems of record | owners, status, deadlines, stages, approval state, workflow state |
+| Agent workspace | filesystem/workspace docs | drafts, queues, notes, role-local operating material |
 
-An agent starts with a defined role and basic skills. Over time, more skills are added, knowledge documents are written, and memory accumulates from real interactions. The agent becomes more useful not because we change its model, but because its context and capability grow.
+Do not collapse all context into Hindsight, GBrain, or workspace.
 
-This is the core design principle behind everything that follows.
+### Source priority
 
----
+When sources conflict, use this priority order:
 
-## Core Framework: Hermes
-
-**What it is:** Hermes is our agent runtime — the framework that runs every agent, manages their memory, handles tool calls, and schedules autonomous work.
-
-**Why we use it:**
-- Single framework for all agents — consistent behaviour, shared tooling
-- Per-profile isolation — each agent has its own identity, credentials, skills, and cron jobs
-- Native MCP support — connects directly to GBrain, Lark, and other tools without custom glue code
-- Built-in skill system — encapsulates reusable logic in a structured, maintainable format
-
-**How we use it:**
-- One Hermes profile per agent (`hermes profile create [agent-name]`)
-- Each profile contains: `SOUL.md`, `skills/`, `.env`, `cron/`
-- Agents are packaged in `busycow-agent-package` (GitHub) for distribution to new organisations
-
-**Agent profiles are the unit of distribution.** When we deploy BusyCow for a new client, we install Hermes and apply the agent profiles from the package.
+1. human explicit instruction in the current session
+2. approved structured state or approval system
+3. GBrain canonical knowledge
+4. GBrain evidence when the question is about what happened or why
+5. workspace context for current in-progress work
+6. Hindsight recent memory and observations
+7. agent inference
 
 ---
 
-## Context Layer 1: Knowledge Base (GitHub Repo)
+## 5. GBrain
 
-**What it is:** A private GitHub repository containing all human-authored knowledge documents in Markdown.
+GBrain is the shared company-brain layer.
 
-**Why we use it:**
-- Version controlled — every change is tracked, full history available via `git log`
-- Human-readable and human-writable — Iris writes here after key decisions; founders can edit directly
-- Single source of truth for knowledge — agents never write here, only Iris
+It should contain both:
 
-**How we use it:**
-- Structured into folders: `knowledge-base/company/`, `knowledge-base/sales/`, `knowledge-base/products/`, `knowledge-base/market/`, `decisions/`, `systems/`
-- Documents follow a standard format with a Changelog section
-- Content flows into GBrain via daily sync — agents never read GitHub directly
+- canonical knowledge: approved durable truth
+- evidence zones: source material and evidence trails
 
-**The knowledge base is Layer 1 of the knowledge stack.** Humans write conclusions here. Agents read via GBrain.
+These must remain distinct.
 
----
+Recommended V1 sources:
 
-## Context Layer 2: GBrain (Facts & Knowledge)
-
-**What it is:** A semantic knowledge graph that indexes all knowledge base content and structures it for agent queries. Bundled with Hermes.
-
-**Why we use it:**
-- Agents cannot efficiently read raw Markdown files at runtime — GBrain makes content queryable
-- Goes beyond plain RAG: adds entity graph (people, companies, relationships), timeline entries, and structured fact extraction
-- Hybrid search (vector + keyword + graph traversal) returns more precise results than embeddings alone
-
-**How we use it:**
-- Knowledge base repo is registered as a GBrain source and synced daily
-- Agents query via `mcp_gbrain_query()` or `mcp_gbrain_get_page(slug=...)`
-- Iris writes new entities (`put_page`), extracts facts (`extract_facts`), and logs milestones (`add_timeline_entry`) after key conversations
-- GBrain is the agent's answer to "what is true about the world right now"
-
-**GBrain is Layer 2 — the queryable index over Layer 1.**
-
----
-
-## Context Layer 3: Hindsight (Contextual Memory)
-
-**What it is:** A self-hosted semantic memory store for episodic, interaction-level memory. Separate from GBrain.
-
-**Why we use it:**
-- GBrain stores facts and knowledge — Hindsight stores what *happened*
-- Enables agents to recall "what did we discuss last time with this company" — something knowledge base documents never capture
-- Bank-based architecture allows clean separation between shared pipeline memory, per-agent working memory, and per-human profiles
-
-**How we use it:**
-- Three bank types (see `02-knowledge-and-memory-spec.md` for details):
-  - `[org]-pipeline` — shared interaction history across all opportunities
-  - `[org]-agent-[name]` — each agent's private working memory
-  - `[org]-human-[name]` — each human's communication style and priorities
-- Agents write to Hindsight after every meaningful interaction (`log-engagement` skill)
-- Agents recall from Hindsight before handling any opportunity
-
-**Hindsight is Layer 3 — the memory of what happened, not what is true.**
-
----
-
-## Structural Data: Third-Party Tools
-
-Beyond the three context layers, agents read from and write to structured databases for operational data. These are not memory systems — they are the source of truth for live business objects.
-
-| Tool | What it stores | Why this tool |
-|---|---|---|
-| **Twenty CRM** | Opportunities, Leads, Contacts, Companies, Tasks | Open-source, self-hosted, GraphQL API — full control, no per-seat cost |
-| **Lark Base** | Internal task tracker, OKRs, operational tables | Already used by the team for communication — reduces context switching |
-
-**The distinction:** CRM holds *what the pipeline looks like now*. Hindsight holds *the story of how it got there*.
-
----
-
-## Agent Capability Framework
-
-Every agent is defined by a spec document (see `00-agent-spec-template.md`) covering:
-
-```
-Capabilities    → what the agent does, grouped for human understanding
-Skills          → the actual executable logic (one skill = one trigger situation)
-Knowledge       → what knowledge base documents must exist before the agent is useful
-Memory          → which Hindsight banks the agent reads and writes
-Credentials     → what third-party accounts must be set up
-Cron jobs       → what runs automatically and on what schedule
+```text
+shared
+customers
+partners
+product-eng
+internal
 ```
 
-**Capabilities are for humans.** They group related skills into named buckets so stakeholders can understand what an agent does without reading code. They do not exist in the agent's runtime — only skills do.
+Use sources as access-control and write-authority boundaries, not as the whole taxonomy.
 
-**Skills are for agents.** Each skill is a Markdown file with step-by-step instructions, tool calls, and pitfalls. Skills are loaded on demand when the agent encounters the relevant trigger situation.
+Rules:
+
+- each AI colleague should usually have one home write source
+- cross-source canonical writes should go through review or publisher flow
+- canonical pages should include owner, status, review date, and source references
+- evidence pages should support claims but should not silently become policy
+- large transcripts and imports should use the appropriate non-repo storage tier where available
 
 ---
 
-## How It All Connects
+## 6. Hindsight
 
-```
-Human writes to knowledge base
-      ↓
-GitHub repo (versioned source of truth)
-      ↓ daily sync
-GBrain (semantic index + entity graph)
-      ↑                    ↑
-Iris writes              Agent queries
-new entities             at runtime
-      
-Agent interacts with humans / CRM
-      ↓
-Hindsight (episodic memory per bank)
-      ↑
-Agent recalls before next interaction
+Hindsight is the hot semantic memory layer for what happened, what the team is learning, and what may matter later.
 
-Agent executes tasks
-      ↓
-Twenty CRM (structured pipeline data)
-Lark (human-facing output)
-```
+Recommended V1:
+
+- one personal Hindsight bank per role-owning profile
+- a small number of shared/domain banks
+- tags for business slicing before creating many more banks
+- profile memory mode: `hybrid`
+- auto-recall enabled
+- auto-retain enabled for the personal bank unless the agent design says otherwise
+- governed write rules for shared/domain banks
+
+Hindsight must not be the only source for operational state, approval state, official policy, or approved external claims.
+
+---
+
+## 7. Structured Systems of Record
+
+Structured data owns mutable operational truth.
+
+Examples:
+
+- CRM account, contact, lead, and deal state
+- Plane or task-board work items
+- approval state
+- workflow stage
+- deadline
+- owner
+- amount
+- routine run logs
+- tool action logs
+- evaluation results
+
+Dangerous writes should go through an action gateway where possible. The gateway should handle permission checks, approval checks, idempotency, risk classification, audit trail, and escalation.
+
+---
+
+## 8. Tools and Credentials
+
+Each AI colleague should have scoped tool access based on role and authority.
+
+Rules:
+
+- do not commit secrets
+- do not invent credentials
+- credentials should be provided through the target team's approved secret process
+- dangerous write tools should be gated
+- tool actions should be logged
+- read access and write access should be configured separately where possible
+
+---
+
+## 9. Package Installation Boundary
+
+This repository assumes base Hermes already exists.
+
+This package should install or guide installation of:
+
+- core workspace conventions
+- GBrain/Hindsight/context routing assumptions
+- shared skills and templates
+- selected AI colleague profiles and artifacts
+- authority, memory, tool, routine, evaluation, and governance docs
+- verification and activation checklists
+
+This package should not silently perform:
+
+- host provisioning
+- credential issuance
+- irreversible external actions
+- production activation without verification
+
+---
+
+## 10. Activation Criteria
+
+Before a colleague is marked active:
+
+- Hermes profile exists and starts
+- workspace exists with required operating docs
+- context priority rules are documented
+- GBrain read/write scope is known
+- Hindsight personal bank is configured and tested
+- structured system access is tested or marked missing
+- authority policy exists
+- dangerous writes require approval or gateway
+- routine logs and tool action logs exist
+- evaluation policy exists
+- human owner has reviewed unresolved gaps

@@ -1,18 +1,11 @@
-# BusyCow Agent Framework — Guidelines
+# Hermes AI Colleague Package Guidelines
 
-This folder contains the **human-readable design specifications** for the BusyCow agent framework.
-These documents explain the architecture, operating model, and deployment philosophy.
+This folder contains the human-readable design specifications for the Hermes AI colleague package.
 
-## This layer is for humans
+Guidelines explain the architecture, operating model, and deployment philosophy. They are for humans who need to understand what this package installs and why it is structured this way.
 
-Guidelines answer:
-- What is this system?
-- Why is it structured this way?
-- What does each agent own?
-- How should a deployment be reasoned about?
-
-If you need the agent to actually perform setup or migration work, go to `../playbooks/`.
-If you need the concrete files that get installed, go to `../artifacts/`.
+If Default Hermes needs to perform setup or migration work, use `../playbooks/`.
+If a file should be copied or adapted into a live runtime, use `../artifacts/`.
 
 ---
 
@@ -20,11 +13,44 @@ If you need the concrete files that get installed, go to `../artifacts/`.
 
 | File | What it covers |
 |---|---|
-| `01-infrastructure-spec.md` | Infrastructure requirements — servers, tools, credentials needed before go-live |
-| `02-knowledge-and-memory-spec.md` | How information flows through the system — knowledge base, GBrain, Hindsight |
-| `03-gbrain-and-hindsight-spec.md` | GBrain entity types, relationship types, Hindsight bank design |
-| `04-agent-spec-template.md` | Template for designing a new agent |
-| `05-mandatory-skills.md` | Cross-agent skill requirements |
+| `00-package-model.md` | What this package is, the three rollout phases, and the repository contract |
+| `01-infrastructure-spec.md` | Core runtime architecture after a base Hermes install exists |
+| `02-knowledge-and-memory-spec.md` | Context Layer rules for GBrain, Hindsight, structured state, and workspace context |
+| `03-gbrain-and-hindsight-spec.md` | Deeper GBrain and Hindsight model; should be updated to match the current Context Layer policy before being treated as canonical |
+| `04-agent-spec-template.md` | Human-facing template for designing a new AI colleague |
+| `05-mandatory-skills.md` | Cross-agent skill requirements and installation expectations |
+
+---
+
+## Design Stack
+
+Every AI colleague should be designed through seven layers:
+
+1. Identity Layer
+2. Context Layer
+3. Capability Layer
+4. Authority Layer
+5. Autonomy Layer
+6. Evaluation Layer
+7. Governance Layer
+
+Do not start by writing a long prompt. Start by defining the colleague's role, context, authority, evaluation, and runtime artifacts.
+
+---
+
+## Context Layer Default
+
+The default context architecture is:
+
+1. GBrain canonical knowledge
+2. GBrain evidence and source material
+3. Hindsight personal and shared/domain memory
+4. Structured operational state
+5. Agent workspace context
+
+These are complementary layers, not substitutes.
+
+---
 
 ## Reference Docs
 
@@ -32,20 +58,25 @@ If you need the concrete files that get installed, go to `../artifacts/`.
 |---|---|
 | `reference/architecture-overview.md` | Overall system and agent-team architecture |
 | `reference/agent-capability-doc-standard.md` | Standard for agent capability documentation |
-| `reference/shared-skill-model.md` | How shared canonical skills, selective installs, and agent-local skills are governed |
-| `reference/repo-structure-migration-map.md` | Old-path → new-path migration map for the package |
+| `reference/shared-skill-model.md` | Shared canonical skills, selective installs, and agent-local skill governance |
+| `reference/repo-structure-migration-map.md` | Old-path to new-path migration map for the package |
 
 ---
 
 ## Deployed Agents
 
-The [`deployed-agents/`](deployed-agents/) folder contains the design specs for agents that have been built and deployed.
-These are human-readable hiring briefs and operating specs — not runtime artifacts.
+The `deployed-agents/` folder contains design specs for agents that have been built or prepared for deployment.
+
+These are human-readable role and operating specs. Runtime assets should live under `../artifacts/agents/`.
 
 ---
 
 ## Relationship to Other Layers
 
-- `guidelines/` = why the system is designed this way
-- `playbooks/` = how an agent performs setup / migration / verification
-- `artifacts/` = the actual files that get installed or copied
+| Layer | Purpose |
+|---|---|
+| `guidelines/` | why the system is designed this way |
+| `playbooks/` | how Default Hermes performs setup, migration, and verification |
+| `artifacts/` | the actual files that get installed or copied |
+
+Keep rationale, instructions, and runtime assets separate so another team can both understand the package and let Hermes execute it safely.

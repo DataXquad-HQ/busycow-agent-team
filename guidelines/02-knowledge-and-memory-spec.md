@@ -1,203 +1,378 @@
-# Knowledge & Memory Guideline
+# Context Layer and Memory Spec
 
-> This document defines the full memory architecture for a BusyCow agent team.
-> Read this alongside `03-gbrain-and-hindsight-spec.md` for the detailed dual-track design.
-
----
-
-## The Four Stores
-
-| Store | What it holds | Who writes | Read by |
-|---|---|---|---|
-| **GBrain repo** | Single source of truth — BL knowledge + external entities + decisions | Humans (direct) + Iris (nightly distillation) | All agents (direct file read + GBrain query) |
-| **Hindsight** | Episodic memory — what happened in every interaction | Agents (bulk, session-end only) | All agents |
-| **Hermes memory** | Agent/Iris session constants — env facts, preferences | Iris | Iris only |
-
-These three stores do not overlap. Each answers a different question.
-
-Structured data stores (CRM, databases, etc.) are out of scope for this spec — add them as needed per agent. The key principle is that structured pipeline objects live separately from memory.
+> Audience: humans designing or evaluating an AI colleague deployment.
+> Purpose: define how AI colleagues use GBrain, Hindsight, structured systems, and workspace context without mixing their responsibilities.
 
 ---
 
-## Architecture: Dual-Track Information Flow
+## 1. Core Rule
 
-```
-External World + Conversations
-         │
-         ▼
-    Agent / Iris receives or produces something
-         │
-         ▼
-[HOT TIER]
-Hindsight pipeline bank
-— bulk write at session end
-— full interaction record
-— auto entity mention graph
-         │
-    (nightly)
-    Iris distillation
-         │
-         ▼
-[COLD TIER]
-GBrain repo (Git + local)
-— compiled truth
-— human-reviewed before merge
-— business-line knowledge
-— external entity graph
-         │
-         ▼
-Agent reads context →
-executes task →
-writes back to Hindsight
-```
+Do not collapse all context into one memory system.
 
----
+A Hermes-native AI colleague uses five context responsibilities:
 
-## GBrain Repo: Folder Structure
-
-The GBrain repo is the single source of truth. It lives on disk, is synced to GitHub, and is indexed by GBrain automatically.
-
-```
-[org]-gbrain/
-│
-├── internal/                        ← Everything about us
-│   ├── company/                     ← Company identity, team, portfolio
-│   ├── business-lines/[bl-name]/    ← Per-BL: strategy, ICP, product, GTM, market
-│   ├── agents/                      ← Agent role specs
-│   ├── systems/                     ← Tool usage guides
-│   └── decisions/                   ← Key decisions with rationale
-│
-├── external/                        ← Everything about the world
-│   ├── entities/
-│   │   ├── companies/               ← External orgs (Iris-maintained)
-│   │   ├── people/                  ← External contacts (Iris-maintained)
-│   │   ├── opportunities/           ← Active deals (Iris-maintained)
-│   │   └── partnerships/            ← Active partnerships (Iris-maintained)
-│   └── intel/
-│       └── market/                  ← Market intelligence, cross-BL
-│
-└── hermes-memory/                   ← Iris session memory (auto-managed)
-```
-
-### Two types of content, one repo
-
-| Folders | Written by | How it enters |
+| Responsibility | System | What it answers |
 |---|---|---|
-| `internal/company/` `internal/business-lines/` `internal/decisions/` | Humans | Direct commit or PR |
-| `external/entities/companies/` `external/entities/people/` `external/entities/opportunities/` `external/entities/partnerships/` | Iris | Nightly distillation → PR → human merge |
+| Canonical knowledge | GBrain canonical | What has the company approved as durable truth? |
+| Evidence and source material | GBrain evidence | What source material supports or explains a claim? |
+| Experiential memory | Hindsight | What happened recently, what patterns are emerging, what did the agent learn? |
+| Operational state | structured systems | What is the current owner, stage, status, deadline, approval, or workflow state? |
+| Current work | agent workspace | What is the agent drafting, reviewing, queueing, or operating on now? |
 
-**Critical:** Never merge Iris-generated PRs from GitHub web UI. Always pull locally and let GBrain's custom merge driver resolve conflicts, then push.
+Each layer has a different job. The package must preserve those boundaries.
 
 ---
 
-## How Agents Load Context Before Acting
+## 2. Source Priority
 
-Strict injection order — cold facts first, hot episodic second:
+When context sources conflict, agents should use this priority order:
 
+1. human explicit instruction in the current session
+2. approved structured state or approval system
+3. GBrain canonical knowledge
+4. GBrain evidence when the question is about what happened or why
+5. workspace context for current in-progress work
+6. Hindsight recent memory and observations
+7. agent inference
+
+Rules:
+
+- Hindsight may inform judgment but must not override GBrain canonical or structured state.
+- Workspace can guide current work but must not become canonical truth.
+- Evidence can challenge canonical knowledge, but that should trigger review instead of silent override.
+- Agent inference is always the weakest source.
+
+---
+
+## 3. GBrain Canonical
+
+GBrain canonical stores approved, durable, reviewable knowledge.
+
+Use it for:
+
+- policies
+- playbooks
+- business-line strategy
+- ICP definitions
+- messaging
+- product principles
+- technical decisions
+- decision records
+- approved customer, partner, or market patterns
+
+Do not use it for:
+
+- private scratch notes
+- raw conversation dumps
+- mutable task state
+- unreviewed assumptions
+- approval state
+
+Recommended frontmatter:
+
+```yaml
+---
+type: {{page_type}}
+business_line: {{business_line}}
+knowledge_state: canonical
+approval_status: approved
+owner: {{owner}}
+reviewers: [{{reviewer}}]
+effective_date: {{YYYY-MM-DD}}
+last_reviewed_at: {{YYYY-MM-DD}}
+source_refs:
+  - {{source_ref}}
+confidence: high
+---
 ```
-1. GBrain cold tier (always trusted — load first)
-   → Direct file read: internal/business-lines/[bl]/icp.md, strategy.md
-   → Direct file read: internal/company/overview.md
-   → mcp_gbrain_get_page("external/entities/companies/[slug]") for external entities
-   → mcp_gbrain_query("[entity] relationships") for graph traversal
 
-2. Hindsight hot tier (context enrichment — load second)
-   → POST /recall {"query": "[entity] recent interactions", "bank": "[org]-pipeline"}
+---
+
+## 4. GBrain Evidence
+
+GBrain evidence stores traceable source material and evidence pages.
+
+Use it for:
+
+- meeting notes
+- call notes
+- transcripts
+- source imports
+- email evidence
+- raw research notes
+- evidence pages tied to a subject page
+
+Rules:
+
+- Keep evidence pages distinct from canonical pages.
+- Organize evidence by primary subject when possible.
+- Use raw `sources/` zones for raw dumps and imports.
+- Large generated transcripts or imports should use a non-repo storage tier where available.
+- Evidence supports claims; it does not automatically become truth.
+
+Recommended evidence metadata:
+
+```yaml
+---
+type: evidence_note
+knowledge_state: evidence
+source_system: {{source_system}}
+source_date: {{YYYY-MM-DD}}
+related_subjects:
+  - {{gbrain_subject_path}}
+owner: {{owner}}
+retention: {{policy}}
+---
 ```
 
-### Rule of Thumb
+---
 
-| Question | Go to |
+## 5. GBrain Source Topology
+
+Recommended V1 sources:
+
+```text
+shared
+customers
+partners
+product-eng
+internal
+```
+
+Use sources for access control and write authority.
+
+Suggested folder shape:
+
+```text
+shared/
+  business-lines/
+  policies/
+  concepts/
+  people/
+  companies/
+customers/
+  customer-pages/
+  companies/
+  people/
+  meetings/
+  product-feedback/
+  objection-patterns/
+  sources/
+partners/
+  partner-pages/
+  companies/
+  people/
+  meetings/
+  partner-feedback/
+  sources/
+product-eng/
+  projects/
+  tech-decisions/
+  meetings/
+  postmortems/
+  sources/
+internal/
+  strategy/
+  finance/
+  legal/
+  people-ops/
+```
+
+Each AI colleague should usually have one home write source. Cross-source canonical writes should go through review or publisher flow.
+
+---
+
+## 6. Hindsight
+
+Hindsight is the hot semantic memory layer.
+
+Use it for:
+
+- recent interactions
+- customer or partner signals
+- corrections
+- learned patterns
+- emerging opportunities
+- campaign or workflow learnings
+- agent behavior notes
+- promotion candidates
+
+Do not use it as the only source for:
+
+- task status
+- approval state
+- CRM stage
+- official policy
+- canonical product claims
+- financial amounts
+- audit logs
+
+Recommended V1 bank model:
+
+| Bank type | Purpose | Write rule |
+|---|---|---|
+| personal agent bank | profile-local experiential memory | auto-retain by default |
+| shared/domain bank | cross-agent patterns or domain observations | governed write or proposal flow |
+| human/context bank, if used | human preferences or relationship context | explicit governance and privacy rules |
+
+Recommended memory mode for role-owning profiles:
+
+```text
+memory_mode = hybrid
+auto_recall = enabled
+auto_retain = enabled for personal bank
+```
+
+Shared banks should not become raw transcript dumps. Important shared memories should keep evidence references.
+
+---
+
+## 7. Memory Object Types
+
+Recommended V1 memory object types:
+
+1. `interaction_memory`
+2. `customer_signal`
+3. `team_decision`
+4. `correction`
+5. `experience_learning`
+6. `research_note`
+7. `product_opportunity_signal`
+8. `campaign_learning`
+9. `agent_behavior_note`
+10. `promotion_candidate`
+
+Recommended metadata:
+
+```yaml
+memory_type: {{memory_type}}
+business_line: {{business_line}}
+source: {{source}}
+source_date: {{YYYY-MM-DD}}
+created_by: {{agent_or_human}}
+confidence: low | medium | high
+status: active | stale | promoted | invalidated
+visibility: personal | shared | restricted
+related_gbrain_docs:
+  - {{path_or_slug}}
+related_structured_records:
+  - {{record_ref}}
+tags:
+  - biz:{{business_line}}
+  - domain:{{domain}}
+promotion_candidate: true | false
+ttl: {{optional_expiry}}
+```
+
+---
+
+## 8. Structured Operational State
+
+Structured data is the source of truth for operational state.
+
+Examples:
+
+- account owner
+- deal stage
+- task status
+- issue status
+- approval state
+- deadline
+- amount
+- workflow state
+- routine run history
+- tool action logs
+- evaluation results
+
+Rule: if the information needs reliable querying, auditability, ownership, workflow state, or approval state, it belongs in a structured system, not only in Hindsight or workspace notes.
+
+---
+
+## 9. Agent Workspace Context
+
+Workspace stores current work and role-local operating material.
+
+Use it for:
+
+- `AGENTS.md`
+- role context
+- authority policy
+- memory policy
+- tool policy
+- routine policy
+- evaluation policy
+- drafts
+- notes
+- scratch material
+- review queues
+
+Workspace should not replace GBrain canonical knowledge, Hindsight memory, or structured systems of record.
+
+---
+
+## 10. Read Router Rules
+
+Use these defaults:
+
+| Question type | First source |
 |---|---|
-| What is our ICP / strategy for this BL? | GBrain repo — direct file read |
-| Who is this external company / person? | GBrain — `mcp_gbrain_get_page` |
-| Who is connected to this deal? | GBrain — `mcp_gbrain_traverse_graph` |
-| What happened last time with this company? | Hindsight `[org]-pipeline` |
-| What are this person's communication patterns? | Hindsight `[org]-human-[name]` |
+| current owner, status, deadline, approval, workflow state | structured system |
+| approved policy, playbook, claim, decision | GBrain canonical |
+| what happened, why a claim exists, source trail | GBrain evidence, then Hindsight |
+| recent interaction pattern or learned experience | Hindsight |
+| current draft, queue, local operating note | workspace |
+| missing or conflicting information | escalate or create review item |
 
 ---
 
-## Hindsight Banks
+## 11. Write Router Rules
 
-Three types. No more.
+Use these defaults:
 
-| Bank | Access | What it stores |
-|---|---|---|
-| `[org]-pipeline` | All agents (bulk write, session-end only) | Interaction records — per deal, company, or partnership. Tag with `business_line` and entity slugs. |
-| `[org]-agent-[name]` | That agent only | Working memory within a session — scratch notes, reasoning, temp state |
-| `[org]-human-[name]` | Read (agents), write (Iris only) | Human communication patterns, priorities, preferences — observed over time |
-
-**Write rule:** `auto_retain` and `auto_reflect` are disabled. Agents never write to Hindsight mid-conversation. Only bulk write at session end.
-
----
-
-## Nightly Distillation (Iris → GBrain)
-
-Every night, Iris reviews Hindsight pipeline observations and promotes high-confidence facts to GBrain:
-
-| What Iris looks for | Action |
+| Claim or artifact type | Destination |
 |---|---|
-| New external person or company first encountered | `put_page external/entities/companies/` or `external/entities/people/` |
-| New relationship discovered | `add_link works_at / involved_in / made` |
-| Opportunity or partnership opened | `put_page external/entities/opportunities/` or `external/entities/partnerships/` |
-| Key decision reached | `put_page internal/decisions/YYYY-MM-DD-topic` |
-| BL strategy or ICP change confirmed | Update `internal/business-lines/[bl]/` files |
-
-What Iris does NOT promote:
-- Temporary states, assumptions, emotional signals
-- Anything unverified or likely to change next week
-
----
-
-## Document Versioning
-
-Every GBrain repo document must include a Changelog section:
-
-```markdown
-**Last Updated:** YYYY-MM-DD
-**Version:** N
-
-## Changelog
-| Date | Change | Reason |
-|---|---|---|
-| YYYY-MM-DD | | |
-```
-
-For significant changes, also add a GBrain timeline entry:
-```
-mcp_gbrain_add_timeline_entry(
-  slug="internal/business-lines/[bl-name]/icp",
-  date="YYYY-MM-DD",
-  summary="Updated ICP — removed SME segment",
-  detail="ACV too low to justify BD effort. Refocusing on enterprise only."
-)
-```
+| operational state | structured system of record |
+| raw evidence | GBrain evidence zone |
+| recent experience | Hindsight personal bank |
+| shared learned pattern | governed shared/domain Hindsight bank |
+| canonical candidate | workspace review queue or GBrain proposal flow |
+| approved canonical knowledge | GBrain canonical |
+| draft context | workspace |
+| tool action or routine result | structured log |
 
 ---
 
-## Setup Checklist
+## 12. Promotion Workflow
 
-**1. GBrain repo**
+Default promotion path:
 
-The GBrain repo IS the knowledge base. Register it once as a GBrain source.
-
-```bash
-# Register as GBrain source
-gbrain sources add --id [org]-gbrain --path /path/to/gbrain-repo --federated true
-gbrain sync --repo /path/to/gbrain-repo
-
-# Push to GitHub (private repo) for human review
-git remote add origin git@github.com:[org]/[org]-gbrain.git
-git push origin master
+```text
+Raw Signal
+  -> Memory Capture / Evidence Capture
+  -> Shared Insight Candidate
+  -> Governed Review
+  -> Canonical Knowledge
 ```
 
-**2. Hindsight banks**
-```
-POST /v1/default/banks {"id": "[org]-pipeline", "name": "Pipeline Memory"}
-POST /v1/default/banks {"id": "[org]-agent-[name]", "name": "[Agent] Working Memory"}
-POST /v1/default/banks {"id": "[org]-human-[founder]", "name": "[Founder] Profile"}
-```
+When a memory becomes canonical, link the Hindsight memory to the GBrain document and mark the memory as promoted.
 
-**3. Nightly cron jobs**
-- GBrain dream cycle (built-in) — auto-runs nightly
-- Iris distillation → GBrain PR — schedule via Hermes cron
+Do not let unreviewed memory silently become canonical truth.
+
+---
+
+## 13. Setup Checklist
+
+For each deployment, confirm:
+
+- [ ] GBrain sources are defined
+- [ ] canonical and evidence zones are separated
+- [ ] schema/page types are documented
+- [ ] each role-owning profile has a personal Hindsight bank
+- [ ] shared/domain banks have write rules
+- [ ] structured systems of record are identified
+- [ ] workspace root and per-agent workspace convention exist
+- [ ] read-router rules are documented
+- [ ] write-router rules are documented
+- [ ] promotion workflow exists
+- [ ] authority and approval rules exist for writes and publishing
+- [ ] logs exist for routine runs, tool actions, and evaluations
