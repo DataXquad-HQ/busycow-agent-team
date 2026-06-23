@@ -1,232 +1,278 @@
-# Agent Design Spec — Template
+# AI Colleague Design Spec Template
 
-> **Purpose:** This is a Product Spec for designing a new agent. Think of it as a hiring brief + job design document. Complete this before building anything.
->
-> **How to use:** Copy this file, rename to `[agent-name]-spec.md`, fill in every section. When done, use the **Build Mapping** table at the bottom to translate each section into actual Hermes Agent artifacts.
->
-> **Philosophy:** An agent is a team member, not a tool. Give them a title, a clear mandate, and the context they need to do their job. If you can't answer "why would we hire this person?", the agent isn't ready to be built.
+> Purpose: design a Hermes-native AI colleague as an operating teammate before implementation.
+> Copy this file, rename it to `{{agent-name}}-design-spec.md`, and complete the sections before building the profile.
+
+A completed spec should answer:
+
+- Who is this colleague?
+- What responsibility does it own?
+- What context does it need?
+- What can it do?
+- What is it allowed to do?
+- What does it do autonomously?
+- How is its work evaluated?
+- How is it governed?
+
+Do not start by writing a prompt. Start by designing the operating architecture.
 
 ---
 
-## Part 1 — Core Need & Positioning
-
-### 1a. Why This Agent Exists
-
-*Why are we hiring this agent? What problem does it solve that a human or existing agent doesn't? What happens if we don't have it?*
-
-> Answer in 2–4 sentences. If you can't articulate this clearly, stop here.
-
----
-
-### 1b. Role & Goal
+## 0. Document Metadata
 
 | Field | Value |
 |---|---|
-| **Name** | |
-| **Title** | e.g. Head of BD, Customer Success Lead, Content Strategist |
-| **One-line goal** | *What does success look like for this agent?* |
-| **The number it owns** | *One metric. This agent is responsible for moving this.* |
-| **Primary human contact** | e.g. Human (day-to-day operations), Human (strategy) |
+| Agent name | {{Agent Name}} |
+| Role | {{Role}} |
+| Human owner | {{Human Owner}} |
+| Design owner | {{Design Owner}} |
+| Status | Draft / Review / Approved / Deprecated |
+| Version | v0.1 |
+| Last updated | {{YYYY-MM-DD}} |
+| Target runtime | Hermes Agent |
+| Target profile name | {{profile_name}} |
+| Primary business line | {{business_line}} |
+| Primary systems of record | {{systems_of_record}} |
+| Primary home write source | {{home_write_source}} |
 
 ---
 
-### 1c. Team Positioning
+## 1. Identity Layer
 
-| | Role | What flows |
-|---|---|---|
-| **Receives from** | | *What context or work arrives to this agent* |
-| **Hands off to** | | *What this agent produces that others consume* |
-| **Does NOT own** | | *Explicit boundary — what this agent must not do* |
+### Mission
 
----
+```text
+{{Mission statement}}
+```
 
-## Part 2 — Context & Data Layer
+### Role Definition
 
-### 2a. What This Agent Needs to Know
+```text
+{{Agent Name}} is the {{Role}}. This AI colleague owns {{responsibility area}} within approved boundaries.
+```
 
-*Before acting, what does this agent need to read? Map each context need to its source.*
+### Responsibilities
 
-| What the agent needs to know | Source | How it reads it |
-|---|---|---|
-| *e.g. Our ICP for this BL* | GBrain vault | Direct file: `internal/business-lines/[bl]/icp.md` |
-| *e.g. Company background* | GBrain vault | Direct file: `internal/company/overview.md` |
-| *e.g. Recent deal interactions* | Hindsight | `[org]-pipeline` bank recall |
-| *e.g. This human's preferences* | Hindsight | `[org]-human-[name]` bank recall |
-| *e.g. Who is this external company* | GBrain MCP | `mcp_gbrain_get_page("external/entities/companies/[slug]")` |
+- {{Responsibility 1}}
+- {{Responsibility 2}}
+- {{Responsibility 3}}
 
-**GBrain content that must exist before this agent is useful:**
+### Non-Responsibilities
 
-| Document | Slug | Status |
-|---|---|---|
-| | `internal/business-lines/[bl]/icp.md` | 📝 To fill |
-| | `internal/business-lines/[bl]/strategy.md` | 📝 To fill |
+- {{Boundary 1}}
+- {{Boundary 2}}
+- {{Boundary 3}}
 
----
+### Success Metrics
 
-## Part 3 — Capabilities
-
-### 3a. Capabilities Overview
-
-> A Capability is a named job function — how humans understand what the agent does. One capability = one area of responsibility.
-> Each Capability maps to one or more Skills. Trigger/output detail belongs in the Skill's SKILL.md, not here.
-
-| # | Capability | What it means in plain English | Skills | Priority |
-|---|---|---|---|---|
-| C1 | | | | 🔴 Must-have |
-| C2 | | | | 🔴 Must-have |
-| C3 | | | | 🟡 Nice-to-have |
-
----
-
-### 3b. Skills
-
-> List every skill this agent needs. Capability Skills are specific to this agent's job. General Skills are shared tooling any agent might use.
-
-**Capability Skills**
-
-| Skill | Capability | What it does |
-|---|---|---|
-| | | |
-
-**General Skills**
-
-| Skill | Purpose |
-|---|---|
-| `capturing-to-gbrain` | Write entities/facts to GBrain |
-| `lark-im` | Send/receive Lark messages |
-| `managing-skills` | Maintain and update own skills |
-| *(add or remove as needed)* | |
-
----
-
-### 3c. Cron Jobs
-
-> Only fill this in after all relevant skills are verified (✅).
-
-| Job | Schedule | Capability | Delivers to |
+| Metric | Definition | Source | Review cadence |
 |---|---|---|---|
-| | | | |
+| {{Metric}} | {{Definition}} | {{Data source}} | Daily / Weekly / Monthly |
+
+### Human Relationships
+
+| Relationship | Person / Role | Notes |
+|---|---|---|
+| Human owner | {{Name}} | Owns direction and final accountability |
+| Approval owner | {{Name or role}} | Approves high-risk actions |
+| Reviewer | {{Name or reviewer agent}} | Reviews output quality and risk |
+| Collaborators | {{Names or roles}} | Works with the colleague regularly |
 
 ---
 
-### 3d. Delivery Channels
+## 2. Context Layer
 
-> Where does this agent send output? Confirm channel IDs before setting up cron jobs.
+### Context Layer Summary
 
-| Channel | Purpose |
+| Layer | What this colleague uses it for | Required sources |
+|---|---|---|
+| GBrain canonical | approved truth, policies, playbooks, decisions | {{sources}} |
+| GBrain evidence | source material, meeting notes, evidence pages | {{sources}} |
+| Hindsight personal bank | personal experience, corrections, learned patterns | {{bank_id}} |
+| Hindsight shared/domain banks | shared patterns, customer voice, product feedback | {{bank_ids}} |
+| Structured systems | owners, stages, approvals, tasks, logs | {{systems}} |
+| Workspace | drafts, queues, local operating docs | {{workspace_path}} |
+
+### Source Priority
+
+Use this priority order unless a higher-level policy says otherwise:
+
+1. current human instruction
+2. approved structured state or approval system
+3. GBrain canonical
+4. GBrain evidence
+5. workspace current-work context
+6. Hindsight memory
+7. agent inference
+
+### Required Canonical Knowledge
+
+| GBrain path or source | Purpose | Status |
+|---|---|---|
+| {{path}} | {{purpose}} | Missing / Draft / Approved |
+
+### Required Evidence Zones
+
+| Evidence zone | Typical material | Status |
+|---|---|---|
+| {{zone}} | {{material}} | Missing / Active |
+
+### Hindsight Banks
+
+| Bank | Access | Write mode | Purpose |
+|---|---|---|---|
+| {{personal_bank}} | Read/write | Auto-retain personal | profile-local experience |
+| {{shared_bank}} | Read / governed write | Propose / governed direct | shared domain learning |
+
+### Structured Systems of Record
+
+| System | Authoritative for | Access | Write rule |
+|---|---|---|---|
+| {{CRM}} | {{state}} | Read / Write / Propose | {{rule}} |
+| {{Plane}} | {{state}} | Read / Write / Propose | {{rule}} |
+| {{Approvals}} | approval state | Read / Propose | write through gateway |
+
+---
+
+## 3. Capability Layer
+
+### Capabilities
+
+| Capability | What it means in plain English | Skills | Priority |
+|---|---|---|---|
+| {{Capability}} | {{Description}} | {{skills}} | Must-have / Later |
+
+### Skills
+
+| Skill | Trigger | Output | Source artifact |
+|---|---|---|---|
+| {{skill-name}} | {{when used}} | {{result}} | `artifacts/...` |
+
+### Tools and Integrations
+
+| Tool | Purpose | Access class | Credential needed | Gateway? |
+|---|---|---|---|---|
+| {{tool}} | {{purpose}} | Read / Write / Dangerous | {{env var or secret ref}} | Yes / No |
+
+---
+
+## 4. Authority Layer
+
+### Allowed Without Approval
+
+- {{allowed action}}
+- {{allowed action}}
+
+### Requires Human Approval
+
+- {{approval action}}
+- {{approval action}}
+
+### Never Allowed
+
+- {{forbidden action}}
+- {{forbidden action}}
+
+### External Write Policy
+
+| Action | Risk | Approval rule | Log destination |
+|---|---|---|---|
+| {{action}} | Low / Medium / High | {{rule}} | {{log}} |
+
+---
+
+## 5. Autonomy Layer
+
+### Autonomous Routines
+
+| Routine | Schedule | Purpose | Output | Stop condition |
+|---|---|---|---|---|
+| {{routine}} | {{schedule}} | {{purpose}} | {{output}} | {{condition}} |
+
+Rules:
+
+- Start with minimal cron jobs.
+- Do not run external write routines unless authority and approval rules are defined.
+- Routine output should be logged.
+
+---
+
+## 6. Evaluation Layer
+
+### Quality Criteria
+
+| Work product | Evaluation criteria | Reviewer | Cadence |
+|---|---|---|---|
+| {{output}} | {{criteria}} | Human / evaluator agent | {{cadence}} |
+
+### Required Tests Before Activation
+
+- [ ] context retrieval test
+- [ ] authority boundary test
+- [ ] tool access test
+- [ ] memory write/read test
+- [ ] routine dry run, if routines exist
+- [ ] human review of unresolved gaps
+
+---
+
+## 7. Governance Layer
+
+### Logging and Audit
+
+| Log | What it records | Required? |
+|---|---|---|
+| routine runs | schedule, result, errors | Yes |
+| tool actions | tool, input summary, risk, result | Yes |
+| approvals | request, approver, decision, timestamp | Yes |
+| evaluations | score, reviewer, notes | Yes |
+
+### Change Management
+
+| Artifact | Change rule |
 |---|---|
-| `[System] Backend Report` | Cron ops logs, errors — internal only |
-| *(add agent-specific channels)* | |
+| `SOUL.md` | review before production activation |
+| workspace docs | agent may draft; human review for authority changes |
+| skills | test before rollout |
+| cron jobs | dry run before activation |
+| shared memory policy | governed review required |
+| GBrain canonical writes | review/publisher flow required |
 
 ---
 
-## Part 4 — Tools & Permissions
+## 8. Build Mapping
 
-### 4a. Tools Required
-
-| Tool / Skill | Purpose |
-|---|---|
-| `lark-im` | Send/receive messages |
-| `capturing-to-gbrain` | Write entities/facts to GBrain |
-| *(add as needed)* | |
-
----
-
-### 4b. Credentials & Environment
-
-> **Principle: every agent owns its own complete set of credentials. No inheritance, no sharing, no cross-profile access.** If a credential is used by multiple agents, it is duplicated into each agent's `.env` independently. Keeping agents independent prevents cascading failures and makes each agent fully self-contained.
-
-| Service | Purpose | `.env` key |
+| Design section | Runtime artifact | Location |
 |---|---|---|
-| Anthropic | LLM inference | `ANTHROPIC_API_KEY` |
-| OpenRouter | LLM fallback | `OPENROUTER_API_KEY` |
-| Feishu Bot | Lark messaging | `FEISHU_APP_ID`, `FEISHU_APP_SECRET` |
-| | | |
+| Identity Layer | `SOUL.md` | `~/.hermes/profiles/{{profile_name}}/SOUL.md` |
+| Identity and operating rules | `AGENTS.md`, `role-context.md` | `/srv/ai-colleagues/workspaces/{{profile_name}}/` |
+| Context Layer | `memory-policy.md`, GBrain source config, Hindsight bank config | workspace + runtime config |
+| Capability Layer | skills and tool config | profile skills + MCP/tool config |
+| Authority Layer | `authority.md`, action gateway rules | workspace + gateway |
+| Autonomy Layer | `routines.md`, cron jobs | workspace + profile cron |
+| Evaluation Layer | `evaluation-policy.md`, evaluator skills, eval logs | workspace + structured logs |
+| Governance Layer | audit/logging/review docs | workspace + structured logs |
 
 ---
 
-### 4c. Response Style
+## 9. Open Questions and Risky Assumptions
 
-> Define how the agent should speak by default. Keep this short, explicit, and enforceable.
+### Open Questions
 
-- Force short replies by default.
-- Use this structure unless the user asks otherwise:
-  1. conclusion first
-  2. brief bullet-point details only
-  3. one short next-step recommendation
-- Do not paste full change lists, long intermediate reasoning, or exhaustive implementation detail unless explicitly requested.
-- Use bullets instead of long paragraphs whenever possible.
-- If more depth exists, stop and offer to expand instead of dumping everything at once.
+- {{question}}
 
----
+### Risky Assumptions
 
-### 4d. Build Mapping
+- Assumption: {{assumption}}
 
-> Translates this spec into actual Hermes Agent build artifacts. Use as a build checklist once the spec is approved.
+### Missing Before Activation
 
-| Spec Section | Build Artifact | Where it lives |
-|---|---|---|
-| 1b. Role & Goal | `SOUL.md` — identity, mandate, the number owned | `~/.hermes/profiles/[name]/SOUL.md` |
-| 1c. Team Positioning | `SOUL.md` — team positioning, boundaries, handoffs | `~/.hermes/profiles/[name]/SOUL.md` |
-| 2a. Context needs | `SOUL.md` — Memory & Knowledge Sources block | `~/.hermes/profiles/[name]/SOUL.md` |
-| 2a. GBrain content | GBrain vault files | `/mnt/disks/data/dx-gbrain/internal/business-lines/[bl]/` |
-| 3a. Capabilities | `SOUL.md` — Capabilities list | `~/.hermes/profiles/[name]/SOUL.md` |
-| 3b. Skills | Skills directory | `~/.hermes/profiles/[name]/skills/[skill-name]/SKILL.md` |
-| 3c. Cron jobs | Hermes cron config | `artifacts/agents/[name]/cron/jobs.json` |
-| 3d. Delivery channels | Cron `deliver` targets + channel IDs in skills | Hermes cron + skill references |
-| 4a. Tools | Skills listed in `SOUL.md` | `~/.hermes/profiles/[name]/skills/` |
-| 4b. Credentials | Per-profile `.env` file | `~/.hermes/profiles/[name]/.env` |
-
-**SOUL.md structure:**
-```
-# [Name] — [Title], [Org]
-
-## Why This Agent Exists
-[From 1a]
-
-## Role & Goal
-[From 1b — title, one-line goal, the number owned]
-
-## Team Positioning
-[From 1c — receives from, hands off to, does NOT own]
-
-## Capabilities
-[From 3a — capability names + one-liner each]
-
-## Evidence Standard
-[How to label verified facts vs inferred conclusions vs recommended actions;
- when to flag contradictions and data gaps]
-
-## Do Not
-[Explicit Do Not sentences, one per line — boundaries, irreversible actions,
- memory write rules, output integrity rules]
-
-## Memory & Knowledge Sources
-[From 2a — direct file reads, GBrain MCP calls, Hindsight bank reads]
-
-## Tools
-[From 4a — skill names]
-
-## Credentials
-[From 4b — .env keys]
-```
-
-**Skill naming rule:** One skill = one trigger situation. Name in gerund form: `nurturing-leads`, `monitoring-inbox`. If two triggers share < 70% of steps, split into two skills.
-
----
-
-## Spec Status
-
-| Section | Status | Notes |
-|---|---|---|
-| Part 1 — Core Need & Positioning | 📝 Draft | |
-| Part 2 — Context & Data Layer | 📝 Draft | |
-| Part 3 — Capabilities | 📝 Draft | |
-| Part 4 — Tools & Permissions | 📝 Draft | |
-| GBrain content exists | ❌ Not yet | |
-| Hindsight banks created | ❌ Not yet | |
-| Credentials in `.env` | ❌ Not yet | |
-| SOUL.md written | ❌ Not yet | |
-| Skills built | ❌ Not yet | |
-| Skills verified in real scenario | ❌ Not yet | |
-| Cron jobs set up | ❌ Not yet | |
+- [ ] credentials
+- [ ] tools
+- [ ] approval rules
+- [ ] GBrain sources
+- [ ] Hindsight banks
+- [ ] structured systems
+- [ ] workspace docs
+- [ ] skills
+- [ ] evaluation path
