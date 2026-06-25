@@ -23,14 +23,15 @@ Read only these first:
 
 ### If you are the installer agent
 Run in this order:
-1. `SETUP.md`
-2. `playbooks/infrastructure/README.md`
-3. `playbooks/infrastructure/01-setup-hermes-runtime.md`
-4. `playbooks/infrastructure/02-setup-contextual-layer.md`
-5. `playbooks/infrastructure/03-setup-collaboration-and-governance.md`
-6. `playbooks/infrastructure/04-verify-infrastructure.md`
-7. `playbooks/agents/README.md`
-8. `playbooks/agents/install-iris.md` or another agent playbook
+1. `artifacts/infrastructure/hermes/installer-agent-mission.md`
+2. `SETUP.md`
+3. `playbooks/infrastructure/README.md`
+4. `playbooks/infrastructure/01-setup-hermes-runtime.md`
+5. `playbooks/infrastructure/02-setup-contextual-layer.md`
+6. `playbooks/infrastructure/03-setup-collaboration-and-governance.md`
+7. `playbooks/infrastructure/04-verify-infrastructure.md`
+8. `playbooks/agents/README.md`
+9. `playbooks/agents/install-iris.md` or another agent playbook
 
 ## Repo Shape
 

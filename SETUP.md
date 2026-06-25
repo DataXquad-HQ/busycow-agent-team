@@ -2,6 +2,9 @@
 
 Use this file as the package entrypoint.
 
+Before starting, the installer agent should read:
+- `artifacts/infrastructure/hermes/installer-agent-mission.md`
+
 ## Assumptions
 
 This package assumes the target environment already has:

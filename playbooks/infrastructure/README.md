@@ -2,6 +2,9 @@
 
 This folder installs the **shared stack** that all agents depend on.
 
+## Installer mission brief
+- `artifacts/infrastructure/hermes/installer-agent-mission.md`
+
 ## Required order
 1. `01-setup-hermes-runtime.md`
 2. `02-setup-contextual-layer.md`
