@@ -3,6 +3,14 @@
 ## Goal
 Install the shared context system that agents will read from and write to.
 
+## Design pack
+Read this first if the installer needs the full framework in one place:
+- `../../contextual-layer/README.md`
+- `../../contextual-layer/01-context-types.md`
+- `../../contextual-layer/02-memory-sharing-model.md`
+- `../../contextual-layer/03-router-model.md`
+- `../../contextual-layer/04-setup-sequence.md`
+
 ## Required artifacts
 - `artifacts/infrastructure/contextual-layer/README.md`
 - `artifacts/infrastructure/contextual-layer/runtime-architecture.md`

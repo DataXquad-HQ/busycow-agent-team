@@ -4,6 +4,7 @@ Use this file as the package entrypoint.
 
 Before starting, the installer agent should read:
 - `artifacts/infrastructure/hermes/installer-agent-mission.md`
+- `contextual-layer/README.md`
 
 ## Assumptions
 

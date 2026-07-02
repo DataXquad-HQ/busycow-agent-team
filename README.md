@@ -20,24 +20,27 @@ Read only these first:
 1. `README.md`
 2. `guidelines/README.md`
 3. `guidelines/agents.md`
+4. `contextual-layer/README.md` if you are designing or reviewing the context stack
 
 ### If you are the installer agent
 Run in this order:
 1. `artifacts/infrastructure/hermes/installer-agent-mission.md`
 2. `SETUP.md`
-3. `playbooks/infrastructure/README.md`
-4. `playbooks/infrastructure/01-setup-hermes-runtime.md`
-5. `playbooks/infrastructure/02-setup-contextual-layer.md`
-6. `playbooks/infrastructure/03-setup-collaboration-and-governance.md`
-7. `playbooks/infrastructure/04-verify-infrastructure.md`
-8. `playbooks/agents/README.md`
-9. `playbooks/agents/install-iris.md` or another agent playbook
+3. `contextual-layer/README.md`
+4. `playbooks/infrastructure/README.md`
+5. `playbooks/infrastructure/01-setup-hermes-runtime.md`
+6. `playbooks/infrastructure/02-setup-contextual-layer.md`
+7. `playbooks/infrastructure/03-setup-collaboration-and-governance.md`
+8. `playbooks/infrastructure/04-verify-infrastructure.md`
+9. `playbooks/agents/README.md`
+10. `playbooks/agents/install-iris.md` or another agent playbook
 
 ## Repo Shape
 
 ```text
 hermes-ai-colleague-package/
 ├── guidelines/                 # minimal human-facing orientation
+├── contextual-layer/           # dedicated contextual-layer reference pack
 ├── playbooks/
 │   ├── infrastructure/         # agent-readable infrastructure setup
 │   ├── agents/                 # agent-readable agent installation flows
@@ -55,6 +58,7 @@ hermes-ai-colleague-package/
 ## Core Install Principle
 
 - `guidelines/` tells a human **what is in the package**.
+- `contextual-layer/` gives a single entrypoint for the context framework, memory model, router, and setup sequence.
 - `playbooks/infrastructure/` tells an installer agent **how to build the shared stack**.
 - `playbooks/agents/` tells an installer agent **how to install a specific agent**.
 - `artifacts/infrastructure/` and `artifacts/agents/` contain **the actual files to copy or adapt**.

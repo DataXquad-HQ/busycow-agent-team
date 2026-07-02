@@ -14,6 +14,7 @@ This folder installs the **shared stack** that all agents depend on.
 ## What this covers
 - Hermes runtime conventions
 - contextual layer
+- the dedicated contextual-layer reference pack in `../../contextual-layer/`
 - collaboration layer
 - governance, approvals, and verification
 

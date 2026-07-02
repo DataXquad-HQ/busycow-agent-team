@@ -7,6 +7,7 @@ Use it only for a fast orientation.
 ## What is here
 
 - infrastructure setup lives in `../playbooks/infrastructure/`
+- the dedicated contextual-layer reference pack lives in `../contextual-layer/`
 - agent setup lives in `../playbooks/agents/`
 - installable files live in `../artifacts/`
 
