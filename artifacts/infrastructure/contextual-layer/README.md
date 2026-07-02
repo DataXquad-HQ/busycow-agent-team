@@ -8,6 +8,7 @@ This folder captures the current package view of the contextual layer.
 - source-of-truth matrix
 - runtime architecture
 - router and governance pattern
+- existing-install alignment checklist
 
 ## Rule
 Installers should understand this split before any agent is activated.

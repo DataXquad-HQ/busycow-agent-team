@@ -3,6 +3,8 @@
 ## Goal
 Install the packaged Iris agent.
 
+If Iris already exists in the target workspace and only the contextual-layer behavior needs alignment, use `align-existing-iris-contextual-layer.md` instead of this full install path.
+
 ## Inputs
 - infrastructure phase completed
 - target profile location known

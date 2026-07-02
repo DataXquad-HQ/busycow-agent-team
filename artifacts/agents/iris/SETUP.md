@@ -8,7 +8,16 @@
 | 2 | artifact copy | `skills/` |
 | 3 | artifact copy | `workspace/` harness |
 | 4 | verification | confirm key skills and workspace files exist |
-| 5 | runtime review | confirm cron expectations from the Iris spec |
+| 5 | runtime review | confirm contextual-layer routine expectations from the Iris spec |
+
+## Existing install shortcut
+
+If the target org already has a live Iris profile, workspace, and GBrain source, do not repeat the full copy flow by default.
+Use:
+- `playbooks/agents/align-existing-iris-contextual-layer.md`
+- `artifacts/infrastructure/contextual-layer/existing-install-alignment-checklist.md`
+
+The shortcut path is for bringing a live Iris into contextual-layer parity rather than reinstalling the agent package.
 
 ## Step 1 — Copy `SOUL.md`
 
@@ -46,7 +55,6 @@ This workspace contains:
 ## Step 4 — Verify key files exist
 
 Required minimum checks:
-- `artifacts/agents/iris/skills/managing-tasks/SKILL.md`
 - `artifacts/agents/iris/skills/checking-context-health/SKILL.md`
 - `artifacts/agents/iris/skills/capturing-to-gbrain/SKILL.md`
 - `artifacts/agents/iris/workspace/AGENTS.md`
@@ -62,12 +70,11 @@ Cron definitions are not stored as directly importable jobs here.
 Use the Iris package README and the workspace harness as the source of truth for which routines Iris should run.
 
 At minimum, confirm the runtime has these workflows:
-- Daily Lark → GBrain Extraction
 - GBrain Dream + Memory Sync
 - `{{GBRAIN_SOURCE_ID}}` Nightly Sync
 - Daily Session → Hindsight Ingest
 - Daily Context Health Check
-- Daily Ops Briefing
+- Weekly Memory & Governance Review
 
 ## Placeholder reference
 
